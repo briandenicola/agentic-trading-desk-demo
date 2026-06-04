@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Demo 5 — Follow-ups &amp; Coverage</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Client 360</div><div class="sub">AI Sales Assistant · Demo 5 of 5</div></div>
+  </div>
+  <div class="who">
+    <div class="avatar">AR</div>
+    <div><div class="nm">A. Rocha</div><div class="rl">Equities · Salesperson</div></div>
+  </div>
+  <div class="meta"><div><b>Thu, Jun 4 2026</b> · 3:00 ET</div><a class="backlink" href="../index.html">← All demos</a></div>
+</div>
+<div class="market-strip">
+  <span class="mq"><b>RFQ response</b> <span class="up">95%</span></span>
+  <span class="mq"><b>Hit ratio</b> 70%</span>
+  <span class="mq"><b>Follow-ups queued</b> 3</span>
+  <span class="mq"><b>Coverage gaps</b> 1 flagged</span>
+</div>
+
+<div class="wrap">
+  <div class="scene-head">
+    <div class="eyebrow">Afternoon · 3:00 PM — Wrap-up &amp; coverage</div>
+    <h1>Close the loop before the day ends</h1>
+    <p>After a day of calls and trades, the assistant has queued the follow-ups, lined up a research call, drafted tomorrow’s new-issue interest list, and scored today’s coverage — so nothing gets dropped and tomorrow has a head start.</p>
+  </div>
+
+  <!-- Coverage scorecard -->
+  <div class="kpis">
+    <div class="kpi"><div class="lbl">RFQ response</div><div class="val">95%</div><div class="delta up">▲ from 80% avg</div></div>
+    <div class="kpi"><div class="lbl">Quote hit ratio</div><div class="val">70%</div><div class="delta up">▲ 6pts</div></div>
+    <div class="kpi"><div class="lbl">Clients touched</div><div class="val">17</div><div class="delta" style="color:var(--muted)">of 22 active</div></div>
+    <div class="kpi"><div class="lbl">Coverage gaps</div><div class="val" style="color:var(--amber)">1</div><div class="delta" style="color:var(--amber)">needs attention</div></div>
+  </div>
+
+  <div class="grid g2">
+    <!-- Follow-up queue -->
+    <div class="card">
+      <h3>📨 Follow-up drafts <span class="editbadge">· review before send</span></h3>
+      <ul class="queue">
+        <li>
+          <div class="qh"><span class="qt">Brookline Bank — structured product detail</span><span class="pill info">draft ready</span></div>
+          <div class="card-note" style="margin:4px 0 8px">Email with research report attached + a 3-point summary of key terms.</div>
+          <div class="acts">
+            <button class="mini-btn primary" data-confirm="Sent to Brookline" data-done="✓ Sent">Approve &amp; send</button>
+            <button class="mini-btn">Edit</button>
+            <button class="mini-btn">View attachment</button>
+          </div>
+        </li>
+        <li>
+          <div class="qh"><span class="qt">Atlas Pension — 10Y swap hedge recap</span><span class="pill info">draft ready</span></div>
+          <div class="card-note" style="margin:4px 0 8px">Recap of this morning’s hedging discussion with indicative levels.</div>
+          <div class="acts">
+            <button class="mini-btn primary" data-confirm="Sent to Atlas Pension" data-done="✓ Sent">Approve &amp; send</button>
+            <button class="mini-btn">Edit</button>
+          </div>
+        </li>
+        <li>
+          <div class="qh"><span class="qt">Cedar Asset Mgmt — reinvestment ideas</span><span class="pill info">draft ready</span></div>
+          <div class="card-note" style="margin:4px 0 8px">Short note with two front-end reinvestment options at higher yields.</div>
+          <div class="acts">
+            <button class="mini-btn primary" data-confirm="Sent to Cedar" data-done="✓ Sent">Approve &amp; send</button>
+            <button class="mini-btn">Edit</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="grid" style="align-content:start">
+      <!-- Research call -->
+      <div class="card">
+        <h3>🎓 Suggested research call</h3>
+        <p style="margin:0 0 8px;font-size:13px">Crestline asked technical questions on ACME’s earnings. Offer a call with <b>S. Park</b>, equity research analyst covering ACME.</p>
+        <div class="card-note" style="margin-bottom:10px">Analyst availability: <b>tomorrow 9:30–10:00 ET</b> (checked via calendar).</div>
+        <div class="acts">
+          <button class="mini-btn primary" data-confirm="Outlook invite drafted for review" data-done="✓ Invite drafted">Schedule with analyst</button>
+          <button class="mini-btn">Pick another time</button>
+        </div>
+        <div class="hint-edit">Human-in-the-loop: drafts the Outlook invite for confirmation — nothing is scheduled without approval.</div>
+      </div>
+
+      <!-- New issue interest list -->
+      <div class="card">
+        <h3>🏛️ Muni auction tomorrow — interest list</h3>
+        <p class="card-note" style="margin:0 0 8px">Preliminary list built from known IOIs + likely buyers from similar past deals.</p>
+        <table>
+          <thead><tr><th>Account</th><th>Basis</th><th class="num">Indic.</th></tr></thead>
+          <tbody>
+            <tr><td>Granite Mutual</td><td class="card-note">IOI on file</td><td class="num">$40M</td></tr>
+            <tr><td>Meridian Funds</td><td class="card-note">Bought 2 similar deals</td><td class="num">$30M</td></tr>
+            <tr><td>Sierra SMA</td><td class="card-note">Retail ladder fit</td><td class="num">$15M</td></tr>
+          </tbody>
+        </table>
+        <div class="acts" style="margin-top:10px">
+          <button class="mini-btn primary" data-confirm="Shared with syndicate" data-done="✓ Shared">Refine &amp; share with syndicate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coverage recommendation -->
+  <div class="card" style="margin-top:16px">
+    <div class="alert macro" style="margin:0">
+      <span class="bang">🔎</span>
+      <div>
+        <div class="hl">Coverage gap</div>
+        <div style="margin-top:4px">High-value client <b>Quail Ridge Capital</b> had <b>no interactions this week</b>. Consider reaching out tomorrow with a personalized idea.</div>
+        <div class="acts" style="margin-top:10px">
+          <button class="mini-btn primary" data-confirm="Added to tomorrow’s priority list" data-done="✓ Added to plan">Add to tomorrow’s plan</button>
+          <button class="mini-btn">Draft an idea now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legal">Demo 5 of 5 · fictional data. <a href="../index.html">← Back to all demos</a></div>
+<script src="../assets/suite.js"></script>
+</body>
+</html>

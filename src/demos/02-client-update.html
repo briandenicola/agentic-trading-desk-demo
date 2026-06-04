@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Demo 2 — Event-Driven Client Update</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Client 360</div><div class="sub">AI Sales Assistant · Demo 2 of 5</div></div>
+  </div>
+  <div class="who">
+    <div class="avatar">JT</div>
+    <div><div class="nm">J. Trainor</div><div class="rl">Macro Rates · Desk Head</div></div>
+  </div>
+  <div class="meta"><div><b>Thu, Jun 4 2026</b> · 8:00 ET</div><a class="backlink" href="../index.html">← All demos</a></div>
+</div>
+<div class="market-strip">
+  <span class="mq"><b>10y UST</b> 4.46% <span class="up">▲ 15bp</span></span>
+  <span class="mq"><b>Mortgage 30y</b> 7.21% <span class="up">▲ 0.18</span></span>
+  <span class="mq"><b>Swap 10y</b> 4.39% <span class="up">▲ 14bp</span></span>
+  <span class="mq"><b>MOVE index</b> 118 <span class="up">▲ 9</span></span>
+  <span class="mq"><b>Distribution list</b> 142 clients</span>
+</div>
+
+<div class="wrap">
+  <div class="scene-head">
+    <div class="eyebrow">Morning · 8:00 AM — Event-driven client update</div>
+    <h1>“Draft a client update on this morning’s rate volatility.”</h1>
+    <p>The desk head needs to get context out to clients fast. The assistant reuses the morning’s macro analysis to draft a clear, compliant broadcast — pre-filled with what happened, why it matters, and how the desk can help. The desk head reviews, tweaks, and sends.</p>
+  </div>
+
+  <div class="prompt" style="margin-bottom:18px">
+    <span class="hint">✦</span>
+    <span class="q">Draft a client update on this morning’s rate volatility.</span>
+    <button class="agent-btn" data-reveal="out"><span class="spark">▶</span> Draft update</button>
+  </div>
+
+  <div id="out" class="agent-out">
+    <div class="grid g2">
+      <!-- The draft -->
+      <div>
+        <div class="card">
+          <h3>✉️ Broadcast draft <span class="editbadge">· editable</span></h3>
+          <div class="draft">
+            <div class="dh">From <b>Macro Rates Desk</b> · To <b>Rates distribution (142)</b> · Channel: Email + BBG broadcast</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Subject: <b style="color:var(--text)">This morning’s rate move — what happened &amp; how we can help</b></div>
+            <div id="msg" class="editable" contenteditable="false">
+              <p>Good morning,</p>
+              <p>Treasury yields spiked ~15&nbsp;bps this morning after the Fed’s surprise hike and a higher signaled terminal rate. The front end repriced hardest, the curve flattened, and 30-year mortgage rates pushed higher.</p>
+              <p>For portfolios, this raises two immediate questions: <b>hedging</b> long-duration exposure and <b>rebalancing</b> where the front-end repricing changes relative value. We’re seeing fresh 10Y swap axes and are happy to talk through specific hedges or reinvestment options.</p>
+              <p>Reach out anytime — we’ll prioritize calls this morning.</p>
+              <p>— Macro Rates Desk</p>
+            </div>
+            <div class="acts">
+              <button class="mini-btn primary" data-confirm="Update sent to 142 clients" data-done="✓ Sent to 142">Approve &amp; send</button>
+              <button class="mini-btn" data-edit="msg">Edit</button>
+              <button class="mini-btn">Save as draft</button>
+            </div>
+            <div class="hint-edit">Human-in-the-loop: kept as an editable draft for compliance &amp; tone. Nothing goes out until the desk head approves.</div>
+          </div>
+        </div>
+      </div>
+      <!-- Side: context + controls -->
+      <div class="grid" style="align-content:start">
+        <div class="card">
+          <h3>🧠 Grounded in this morning’s analysis</h3>
+          <ul class="steps">
+            <li><span class="dot">✓</span><span>Reused the <b>macro narrative</b> from the 7:30 brief.</span></li>
+            <li><span class="dot">✓</span><span>Pulled the <b>mortgage &amp; swap</b> knock-on levels.</span></li>
+            <li><span class="dot">✓</span><span>Framed a <b>“how we help”</b> CTA (hedges, rebalancing).</span></li>
+          </ul>
+          <div class="src-tags">
+            <span class="src-tag">Morning macro brief</span><span class="src-tag">Rates feed</span><span class="src-tag">Swap axes</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🎚️ Tone &amp; audience</h3>
+          <div class="card-note" style="margin-bottom:8px">Adjust before sending — the draft updates to match.</div>
+          <div class="acts">
+            <button class="mini-btn">Tone: Reassuring ✓</button>
+            <button class="mini-btn">Tone: Concise</button>
+            <button class="mini-btn">Tone: Technical</button>
+          </div>
+          <div class="acts" style="margin-top:6px">
+            <button class="mini-btn">Audience: All rates ✓</button>
+            <button class="mini-btn">Audience: Insurers only</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legal">Demo 2 of 5 · fictional data. <a href="../index.html">← Back to all demos</a></div>
+<script src="../assets/suite.js"></script>
+</body>
+</html>

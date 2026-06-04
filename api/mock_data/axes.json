@@ -1,7 +1,0 @@
-[
-  { "cusip": "13077DKL2", "desc": "CA GO 4s '40", "sector": "State GO", "state": "CA", "side": "offer", "level": "2.95%", "size_usd": 25000000 },
-  { "cusip": "882723YK9", "desc": "TX Water Dev 4s '44", "sector": "Revenue", "state": "TX", "side": "offer", "level": "3.10%", "size_usd": 15000000 },
-  { "cusip": "13063DRW4", "desc": "IL GO 5s '38", "sector": "State GO", "state": "IL", "side": "bid", "level": "+18bp/MMD", "size_usd": 45000000 },
-  { "cusip": "167560NZ9", "desc": "Chicago BOE 5s '42 (HY)", "sector": "HY Muni", "state": "IL", "side": "offer", "level": "5.85%", "size_usd": 10000000 },
-  { "cusip": "64971WJ40", "desc": "NYC TFA 5s '39", "sector": "Revenue", "state": "NY", "side": "offer", "level": "3.42%", "size_usd": 20000000 }
-]

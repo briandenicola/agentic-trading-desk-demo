@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Integrated AI Sales Assistant — Demo Suite</title>
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .hero { padding: 40px 26px 10px; max-width: 1160px; margin: 0 auto; }
+  .hero h1 { font-size: 30px; margin: 10px 0 8px; }
+  .hero p { color: var(--muted); max-width: 760px; font-size: 15px; }
+  .daystrip { display: flex; gap: 0; max-width: 1160px; margin: 22px auto 0; padding: 0 26px; flex-wrap: wrap; }
+  .daystrip .seg { font-size: 11px; color: var(--faint); border-top: 2px solid var(--line); padding: 8px 14px 0; flex: 1; min-width: 120px; }
+  .cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; max-width: 1160px; margin: 6px auto 0; padding: 18px 26px 40px; }
+  @media (max-width: 820px){ .cards{ grid-template-columns: 1fr; } }
+  .democard { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; transition: transform .15s, border-color .15s; }
+  .democard:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .democard .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .democard .time { font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+  .democard h2 { font-size: 17px; margin: 8px 0 6px; color: var(--text); }
+  .democard p { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  .democard .feats { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .democard .feats li { font-size: 10.5px; color: var(--muted); background: var(--panel-2); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px; }
+  .num-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Integrated AI Sales Assistant</div><div class="sub">End-to-End PoC · Demo Suite</div></div>
+  </div>
+  <div class="meta"><div><b>Sales &amp; Trading</b> · all desks</div><div>One assistant · full sales day</div></div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Proof of Concept</div>
+  <h1>One assistant, the whole sales day</h1>
+  <p>A unified AI assistant that supports sales &amp; trading across every desk — proactive (outbound) and reactive (inbound) — with a human-in-the-loop at every step. Each module below is a standalone demo sharing one cockpit experience. <b>Green = PoC-now, Amber = Phase&nbsp;2.</b></p>
+</div>
+
+<div class="daystrip">
+  <div class="seg">7:30 AM · Pre-market</div>
+  <div class="seg">8:00 AM · Event update</div>
+  <div class="seg">10:15 AM · Inbound</div>
+  <div class="seg">1:00 PM · Alerts</div>
+  <div class="seg">3:00 PM · Wrap-up</div>
+</div>
+
+<div class="cards">
+  <a class="democard" href="demos/01-morning-prep.html">
+    <div class="row"><span class="num-circle">1</span><span class="phase poc">PoC now</span></div>
+    <div class="time">Morning · 7:30 AM</div>
+    <h2>Pre-Market Planning &amp; Outbound Prioritization</h2>
+    <p>“What do I need to know this morning?” — macro event analysis, impacted-client flags, and a ranked, editable outreach plan.</p>
+    <ul class="feats"><li>Client 360</li><li>Macro narrative</li><li>Ranked call list</li><li>Editable plan</li></ul>
+  </a>
+
+  <a class="democard" href="demos/02-client-update.html">
+    <div class="row"><span class="num-circle">2</span><span class="phase poc">PoC now</span></div>
+    <div class="time">Morning · 8:00 AM</div>
+    <h2>Event-Driven Client Update Broadcast</h2>
+    <p>“Draft a client update on this morning’s rate volatility.” — a pre-filled, editable broadcast email/chat ready for review &amp; send.</p>
+    <ul class="feats"><li>Macro Rates desk</li><li>Editable draft</li><li>Distribution list</li><li>Approve &amp; send</li></ul>
+  </a>
+
+  <a class="democard" href="demos/03-inbound-response.html">
+    <div class="row"><span class="num-circle">3</span><span class="phase poc">PoC now</span></div>
+    <div class="time">Intraday · 10:15 AM</div>
+    <h2>Inbound Query &amp; Instant Contextual Response</h2>
+    <p>A Bloomberg chat asks for a price <em>and</em> context. The assistant compiles client + market context and drafts a reply with a quote.</p>
+    <ul class="feats"><li>Distressed Credit</li><li>Client briefing</li><li>Draft + quote</li><li>Auto CRM log</li></ul>
+  </a>
+
+  <a class="democard" href="demos/04-event-alerts.html">
+    <div class="row"><span class="num-circle">4</span><span class="phase p2">Phase 2</span></div>
+    <div class="time">Midday · 1:00 PM</div>
+    <h2>Event-Driven Alerts &amp; Proactive Outreach</h2>
+    <p>Continuous monitoring surfaces a competitor-trade alert and a market-opportunity alert — each with a suggested, draftable outreach.</p>
+    <ul class="feats"><li>Competitor alert</li><li>Opportunity alert</li><li>Live monitoring</li><li>Suggested action</li></ul>
+  </a>
+
+  <a class="democard" href="demos/05-followups-coverage.html">
+    <div class="row"><span class="num-circle">5</span><span class="phase p2">Phase 2</span></div>
+    <div class="time">Afternoon · 3:00 PM</div>
+    <h2>Post-Interaction Follow-ups &amp; Coverage</h2>
+    <p>Queued follow-up drafts, schedule-with-analyst, a new-issue interest list, and an end-of-day coverage scorecard with gap flags.</p>
+    <ul class="feats"><li>Follow-up queue</li><li>Analyst scheduling</li><li>New-issue list</li><li>Coverage metrics</li></ul>
+  </a>
+
+  <div class="democard" style="cursor:default">
+    <div class="row"><span class="num-circle" style="background:var(--purple-soft);color:var(--purple)">✦</span><span class="phase poc">Theme</span></div>
+    <div class="time">Shared experience</div>
+    <h2>One cockpit, human-in-the-loop</h2>
+    <p>Every module opens in the same cockpit and keeps the salesperson in control — the assistant suggests and drafts; nothing sends or schedules without approval.</p>
+    <ul class="feats"><li>Consistent UI</li><li>Edit before send</li><li>Cross-desk</li><li>Compliance-aware</li></ul>
+  </div>
+</div>
+
+<div class="legal">Demo suite for illustration only. All clients, securities, prices, news events, and metrics are <b>fictional</b> and do not represent any real entity or market data.</div>
+<script src="assets/suite.js"></script>
+</body>
+</html>

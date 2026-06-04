@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Demo 1 — Morning Pre-Market Planning</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Client 360</div><div class="sub">AI Sales Assistant · Demo 1 of 5</div></div>
+  </div>
+  <div class="who">
+    <div class="avatar">DK</div>
+    <div><div class="nm">D. Khan</div><div class="rl">Sales VP · Cross-Asset</div></div>
+  </div>
+  <div class="meta"><div><b>Thu, Jun 4 2026</b> · 7:30 ET</div><a class="backlink" href="../index.html">← All demos</a></div>
+</div>
+<div class="market-strip">
+  <span class="mq"><b>10y UST</b> 4.46% <span class="up">▲ 15bp</span></span>
+  <span class="mq"><b>2y UST</b> 4.92% <span class="up">▲ 19bp</span></span>
+  <span class="mq"><b>S&amp;P fut</b> <span class="down">▼ 1.1%</span></span>
+  <span class="mq"><b>IG credit</b> <span class="up">+7bp wider</span></span>
+  <span class="mq"><b>VIX</b> 21.4 <span class="up">▲ 3.2</span></span>
+  <span class="mq"><b>Tone</b> Risk-off</span>
+</div>
+
+<div class="wrap">
+  <div class="scene-head">
+    <div class="eyebrow">Morning · 7:30 AM — Pre-market planning</div>
+    <h1>“What do I need to know this morning?”</h1>
+    <p>Overnight, a surprise Fed move drove rate volatility. The assistant turns that into a market narrative, flags the clients most affected, and builds a ranked outreach plan — all editable before the VP starts dialing.</p>
+  </div>
+
+  <div class="prompt" style="margin-bottom:18px">
+    <span class="hint">✦</span>
+    <span class="q">What do I need to know this morning?</span>
+    <button class="agent-btn" data-reveal="brief"><span class="spark">▶</span> Run morning brief</button>
+  </div>
+
+  <div id="brief" class="agent-out">
+    <div class="card" style="margin-bottom:16px">
+      <h3>✦ Agent reasoning</h3>
+      <ul class="steps">
+        <li><span class="dot">✓</span><span>Pulled overnight <b>macro events</b> + market reaction (rates, equities, credit).</span></li>
+        <li><span class="dot">✓</span><span>Scored <b>client portfolios</b> for rate sensitivity (duration, swap books).</span></li>
+        <li><span class="dot">✓</span><span>Blended wallet, recent engagement &amp; strategic importance into an <b>outreach rank</b>.</span></li>
+        <li><span class="dot">✓</span><span>Generated <b>personalized talking points</b> per priority client.</span></li>
+      </ul>
+    </div>
+
+    <!-- Macro narrative -->
+    <div class="card" style="margin-bottom:16px">
+      <h3>📰 Macro event analysis <span class="card-note" style="font-weight:400">— a narrative you can share with clients</span></h3>
+      <p style="font-size:14px;margin:0 0 8px">The Fed delivered a <b>surprise 25bp hike</b> and signaled a higher terminal rate. Treasury yields jumped (10y +15bp, 2y +19bp), equity futures fell ~1.1%, and IG credit spreads widened ~7bp — a clear <b>risk-off</b> tone into the open.</p>
+      <p class="card-note" style="margin:0">Why it matters: the move repriced the front end hardest (curve flatter), pressuring long-duration holders and anyone carrying unhedged floating exposure.</p>
+      <div class="src-tags">
+        <span class="src-tag">Fed statement</span><span class="src-tag">Overnight rates feed</span>
+        <span class="src-tag">Equity futures</span><span class="src-tag">Credit spread monitor</span>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <!-- Impacted clients -->
+      <div class="card flush">
+        <div class="section-head"><h3 style="margin-bottom:4px">🎯 Most-affected clients</h3><div class="card-note" style="padding-bottom:10px">Flagged by portfolio rate sensitivity</div></div>
+        <table>
+          <thead><tr><th>Client</th><th>Exposure</th><th>Concern</th></tr></thead>
+          <tbody>
+            <tr><td><b>Client A — Atlas Pension</b><div class="card-note">Tier 1</div></td><td>Heavy long-duration bonds</td><td><span class="pill sell">Price drop</span></td></tr>
+            <tr><td><b>Client B — Brookline Bank</b><div class="card-note">Tier 1</div></td><td>Interest-rate swaps book</td><td><span class="pill warm">Hedge adjust</span></td></tr>
+            <tr><td><b>Client C — Cedar Asset Mgmt</b><div class="card-note">Tier 2</div></td><td>Floating-rate notes</td><td><span class="pill info">Reinvest</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Ranked outreach -->
+      <div class="card flush">
+        <div class="section-head"><h3 style="margin-bottom:4px">📞 Outbound priority</h3><div class="card-note" style="padding-bottom:10px">Wallet + engagement + today’s events</div></div>
+        <table>
+          <thead><tr><th>#</th><th>Client</th><th>Suggested topic</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td><b>Atlas Pension</b></td><td class="card-note">Discuss hedging; mention new 10Y swap axes available.</td></tr>
+            <tr><td class="num">2</td><td><b>Brookline Bank</b></td><td class="card-note">Review swap hedges vs higher terminal rate.</td></tr>
+            <tr><td class="num">3</td><td><b>Cedar Asset Mgmt</b></td><td class="card-note">Reinvestment ideas at higher front-end yields.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Human-in-the-loop plan -->
+    <div class="card" style="margin-top:16px">
+      <h3>✅ Your outreach plan <span class="editbadge">· editable</span></h3>
+      <div id="plan" class="draft" style="border-left-color:var(--green)">
+        <div class="dh">Call plan for <b>Thu Jun 4</b> · 3 priority clients</div>
+        <div id="planbody" class="editable" contenteditable="false">
+          <p><b>1. Atlas Pension</b> — Lead with the duration impact; offer a 10Y swap to hedge price risk. <i>Add a personal note: ask about their Q3 reallocation.</i></p>
+          <p><b>2. Brookline Bank</b> — Walk through swap-book sensitivity to the higher terminal rate.</p>
+          <p><b>3. Cedar Asset Mgmt</b> — Reinvestment ideas at the higher front end.</p>
+        </div>
+        <div class="acts">
+          <button class="mini-btn primary" data-confirm="Plan approved — ready to dial" data-done="✓ Plan approved">Approve plan</button>
+          <button class="mini-btn" data-edit="planbody">Edit</button>
+          <button class="mini-btn">Remove a client</button>
+        </div>
+        <div class="hint-edit">Human-in-the-loop: the VP edits, removes, or adds a personal note before any call. Nothing is sent automatically.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legal">Demo 1 of 5 · fictional data. <a href="../index.html">← Back to all demos</a></div>
+<script src="../assets/suite.js"></script>
+</body>
+</html>

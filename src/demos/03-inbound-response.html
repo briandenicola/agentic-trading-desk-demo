@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Demo 3 — Inbound Query &amp; Instant Response</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Client 360</div><div class="sub">AI Sales Assistant · Demo 3 of 5</div></div>
+  </div>
+  <div class="who">
+    <div class="avatar">EL</div>
+    <div><div class="nm">E. Liberman</div><div class="rl">Distressed Credit · Sales Director</div></div>
+  </div>
+  <div class="meta"><div><b>Thu, Jun 4 2026</b> · 10:15 ET</div><a class="backlink" href="../index.html">← All demos</a></div>
+</div>
+<div class="market-strip">
+  <span class="mq"><b>ACME 2030</b> 78.0 <span class="down">▼ 2.0</span></span>
+  <span class="mq"><b>ACME CDS 5y</b> 640bp <span class="up">▲ 85</span></span>
+  <span class="mq"><b>HY index</b> <span class="down">▼ 0.4%</span></span>
+  <span class="mq"><b>Desk axe</b> ACME 2030 bid $5MM</span>
+</div>
+
+<div class="wrap">
+  <div class="scene-head">
+    <div class="eyebrow">Intraday · 10:15 AM — Inbound client query</div>
+    <h1>A client wants a price <em>and</em> the story — in seconds</h1>
+    <p>A client pings on Bloomberg asking for a quote and what’s driving it. One hotkey compiles the client briefing, the latest news, and the trader’s axe — then drafts a reply with the quote and the context, ready to verify and send.</p>
+  </div>
+
+  <div class="grid g2">
+    <!-- Incoming chat -->
+    <div class="card">
+      <h3>💬 Bloomberg chat</h3>
+      <div class="chat" style="margin-bottom:12px">
+        <div class="bubble in"><div class="nm">M. Reyes — Crestline Credit Fund · 10:15</div>Price on ACME Corp 2030 bonds? What’s driving it today?</div>
+      </div>
+      <button class="agent-btn" data-reveal="resp"><span class="spark">⌨</span> Ask assistant (hotkey ⌘K)</button>
+    </div>
+
+    <!-- Context panel -->
+    <div id="ctx" class="grid" style="align-content:start">
+      <div class="card">
+        <h3>🧾 Client briefing — Crestline Credit Fund</h3>
+        <ul class="steps" style="margin-bottom:0">
+          <li><span class="dot">✓</span><span><b>Holdings:</b> $8MM ACME 2030 (added Q1).</span></li>
+          <li><span class="dot">✓</span><span><b>Recent trades:</b> bought ACME 2028 last month.</span></li>
+          <li><span class="dot">✓</span><span><b>Past interest:</b> asked for ACME color twice this week.</span></li>
+          <li><span class="dot">✓</span><span><b>Trader axe:</b> desk is <b>bid $5MM</b> ACME 2030.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📰 Market context — ACME Corp</h3>
+        <p style="margin:0 0 6px;font-size:13px">Bonds down ~2pts since yesterday on a <b>weak earnings miss</b> (cost overruns). Moody’s placed ACME on review; market is pricing possible restructuring.</p>
+        <div class="src-tags"><span class="src-tag">Earnings wire</span><span class="src-tag">Ratings action</span><span class="src-tag">Desk runs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drafted response -->
+  <div id="resp" class="agent-out">
+    <div class="card" style="margin-top:16px">
+      <h3>✉️ Suggested reply <span class="card-note" style="font-weight:400">— verify price with trader, then send</span> <span class="editbadge">· editable</span></h3>
+      <div class="draft">
+        <div class="dh">To <b>M. Reyes — Crestline</b> · via Bloomberg chat</div>
+        <div id="reply" class="editable" contenteditable="false">
+          <p>We can <b>bid 78 for $5MM</b> of ACME 2030 (down ~2pts since yesterday on the weak print). ACME missed on cost overruns and is on ratings review — market’s pricing a possible restructuring, which is driving today’s selling. Happy to work an order or show you our latest thoughts on the cap structure.</p>
+        </div>
+        <div class="acts">
+          <button class="mini-btn" data-confirm="Price confirmed within bounds" data-done="✓ Price verified">Verify price with trader</button>
+          <button class="mini-btn primary" data-confirm="Reply sent · RFQ logged to CRM" data-done="✓ Sent &amp; logged">Send reply</button>
+          <button class="mini-btn" data-edit="reply">Edit</button>
+        </div>
+        <div class="hint-edit">Human-in-the-loop: the sales user confirms the quote is within pre-approved bounds and edits tone before sending. The inquiry (RFQ + context) is auto-logged to the CRM.</div>
+      </div>
+    </div>
+    <div class="banner" style="margin-top:16px">⚡ <b>Time to respond:</b> seconds instead of scrambling across pricing, holdings, news and chat systems — the difference between catching and missing the trade.</div>
+  </div>
+</div>
+
+<div class="legal">Demo 3 of 5 · fictional data. <a href="../index.html">← Back to all demos</a></div>
+<script src="../assets/suite.js"></script>
+</body>
+</html>

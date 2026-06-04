@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Demo 4 — Event-Driven Alerts</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="brandbar">
+    <div class="logo">AI</div>
+    <div><div class="name">Client 360</div><div class="sub">AI Sales Assistant · Demo 4 of 5</div></div>
+  </div>
+  <div class="who">
+    <div class="avatar">AR</div>
+    <div><div class="nm">A. Rocha</div><div class="rl">Equities · Salesperson</div></div>
+  </div>
+  <div class="meta"><div><b>Thu, Jun 4 2026</b> · 1:00 ET</div><a class="backlink" href="../index.html">← All demos</a></div>
+</div>
+<div class="market-strip">
+  <span class="mq"><b>Monitoring</b> <span class="up">● live</span></span>
+  <span class="mq"><b>XYZ Corp</b> 41.2 <span class="down">▼ 0.8%</span></span>
+  <span class="mq"><b>ABC Corp</b> 58.9 <span class="up">▲ 20%</span></span>
+  <span class="mq"><b>Alerts today</b> 2 new</span>
+</div>
+
+<div class="wrap">
+  <div class="scene-head">
+    <div class="eyebrow">Midday · 1:00 PM — Continuous monitoring</div>
+    <h1>Proactive alerts when something needs a salesperson</h1>
+    <p>The assistant watches market data and internal activity in the background. When it spots a missed flow or a fresh opportunity, it pushes an alert with the context and a suggested, draftable outreach — the salesperson decides whether to act.</p>
+  </div>
+
+  <div class="banner">Two alerts fired in the last few minutes. Each links the event to a specific client and a recommended next step. <span class="phase p2">Phase 2</span> — depends on real-time market &amp; sales-log feeds.</div>
+
+  <!-- Competitor trade alert -->
+  <div id="alert1" class="card" style="margin-bottom:16px">
+    <div class="alert risk" style="margin:-2px 0 12px">
+      <span class="bang">⚠️</span>
+      <div>
+        <div class="hl">Competitor trade — possible missed flow</div>
+        <div style="margin-top:4px">Client Z (<b>Zephyr Capital</b>) just sold <b>200k shares of XYZ Corp</b> via another bank at 12:58 PM.</div>
+        <div class="src">Source: market prints + internal sales logs · 12:59 ET</div>
+      </div>
+    </div>
+    <div class="card-note" style="margin-bottom:10px">Suggested action: reach out to understand the context and protect future flow.</div>
+    <button class="agent-btn ghost" data-reveal="d1"><span class="spark">✦</span> Draft debrief outreach</button>
+    <div id="d1" class="agent-out">
+      <div class="draft" style="border-left-color:var(--red)">
+        <div class="dh">To <b>Zephyr Capital</b> · suggested call note</div>
+        <div id="d1b" class="editable" contenteditable="false">
+          <p>Hi — saw some activity in XYZ today. Wanted to check in: anything we could have helped with on the execution side? Happy to share our axe and color on XYZ, and make sure we’re set up for your next one.</p>
+        </div>
+        <div class="acts">
+          <button class="mini-btn primary" data-confirm="Logged — call Zephyr to debrief" data-done="✓ Queued call">Approve &amp; call</button>
+          <button class="mini-btn" data-edit="d1b">Edit</button>
+          <button class="mini-btn" data-dismiss="alert1">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market opportunity alert -->
+  <div id="alert2" class="card">
+    <div class="alert opp" style="margin:-2px 0 12px">
+      <span class="bang">🚀</span>
+      <div>
+        <div class="hl">Opportunity — structured note re-strike</div>
+        <div style="margin-top:4px">ABC Corp jumped <b>+20%</b> on a takeover rumor. <b>Client Y (Yorktown Advisors)</b> holds a structured note tied to ABC — a candidate to restructure or re-strike.</div>
+        <div class="src">Source: vol monitor + structured-products book · 1:00 ET</div>
+      </div>
+    </div>
+    <div class="card-note" style="margin-bottom:10px">Note terms on file: 18-mo autocall, strike 49.00, barrier 70%. The move puts it well in-the-money — a re-strike or hedge could lock in value.</div>
+    <button class="agent-btn ghost" data-reveal="d2"><span class="spark">✦</span> Draft opportunity pitch</button>
+    <div id="d2" class="agent-out">
+      <div class="draft" style="border-left-color:var(--green)">
+        <div class="dh">To <b>Yorktown Advisors</b> · suggested outreach</div>
+        <div id="d2b" class="editable" contenteditable="false">
+          <p>ABC’s 20% move today puts your structured note comfortably in-the-money. Given the takeover headlines and the vol spike, it may be a good moment to discuss a <b>re-strike or partial hedge</b> to lock in gains. I can run a couple of scenarios on your existing terms — want me to send them over?</p>
+        </div>
+        <div class="acts">
+          <button class="mini-btn primary" data-confirm="Pitch queued for Yorktown" data-done="✓ Queued pitch">Approve &amp; reach out</button>
+          <button class="mini-btn" data-edit="d2b">Edit</button>
+          <button class="mini-btn" data-dismiss="alert2">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legal">Demo 4 of 5 · fictional data. <a href="../index.html">← Back to all demos</a></div>
+<script src="../assets/suite.js"></script>
+</body>
+</html>

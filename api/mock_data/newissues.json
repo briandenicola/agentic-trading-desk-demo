@@ -1,7 +1,0 @@
-[
-  { "id": "CA-GO", "name": "State of California GO", "type": "Negotiated", "par_usd": 1200000000, "rating": "Aa2 / AA-", "sector": "State GO", "state": "CA", "status": "Retail order period" },
-  { "id": "NYC-TFA", "name": "NYC Transitional Finance", "type": "Negotiated", "par_usd": 850000000, "rating": "Aaa / AAA", "sector": "Revenue", "state": "NY", "status": "Pricing 2pm" },
-  { "id": "TX-WATER", "name": "Texas Water Dev Board", "type": "Negotiated", "par_usd": 600000000, "rating": "Aaa / AAA", "sector": "Revenue", "state": "TX", "status": "Retail order period" },
-  { "id": "CHI-BOE", "name": "Chicago Board of Education", "type": "Negotiated", "par_usd": 450000000, "rating": "Ba1 / BB+", "sector": "HY Muni", "state": "IL", "status": "High yield" },
-  { "id": "METRO", "name": "Metro Transit Auth", "type": "Competitive", "par_usd": 300000000, "rating": "A1 / A+", "sector": "Revenue", "state": "Multi", "status": "Bid 11am" }
-]
