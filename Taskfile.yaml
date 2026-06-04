@@ -1,0 +1,52 @@
+version: '3'
+
+vars:
+  TAG: "client-cv-muni-demo"
+
+tasks:
+  default:
+    cmds:
+    - task --list
+
+  run:
+    desc: Start the dev server (demo mode, no keys needed)
+    cmds:
+    - uvicorn api.main:app --reload --port 8000
+
+  lint:
+    desc: Run ruff linter
+    cmds:
+    - ruff check .
+
+  format:
+    desc: Run ruff formatter
+    cmds:
+    - ruff format .
+
+  format-check:
+    desc: Check formatting without modifying
+    cmds:
+    - ruff format --check .
+
+  test:
+    desc: Run full test suite
+    cmds:
+    - pytest
+
+  test-v:
+    desc: Run tests with verbose output
+    cmds:
+    - pytest -v
+
+  secrets:
+    desc: Scan for secrets with gitleaks
+    cmds:
+    - gitleaks detect --source .
+
+  check:
+    desc: Run all quality gates (lint + format-check + test + secrets)
+    cmds:
+    - task: lint
+    - task: format-check
+    - task: test
+    - task: secrets

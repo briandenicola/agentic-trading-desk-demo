@@ -1,0 +1,12 @@
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated artifacts and documented fake examples"
+paths = [
+  '''(.*/)?dist/.*''',
+  '''(.*/)?\.venv/.*''',
+  '''(.*/)?mock_data/.*''',
+]

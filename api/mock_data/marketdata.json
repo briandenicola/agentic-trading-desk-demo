@@ -1,0 +1,15 @@
+{
+  "mmd": { "aaa_10y": "2.78%", "aaa_10y_chg_bp": 1.5 },
+  "ust": { "y10": "4.31%", "y10_chg_bp": -2.0 },
+  "ratios": { "m_t_10y": "64.5%" },
+  "supply": { "visible_30d_usd": "$14.2B" },
+  "flows": { "muni_funds_usd": "+$1.1B" },
+  "hy_muni_spread": { "level_bp": 212, "chg_bp": 6 },
+  "relval_events": {
+    "IL_GO_downgrade": {
+      "il_go_spread_to_mmd_chg_bp": 18,
+      "comparable_bbb_states": ["NJ", "CT"],
+      "commentary": "IL GO gapping ~+18bp to MMD on the open; HY muni and lower-rated state GOs (NJ, CT) trading in sympathy."
+    }
+  }
+}

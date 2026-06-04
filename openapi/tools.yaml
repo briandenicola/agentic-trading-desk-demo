@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Client CV — Mock System-of-Record APIs (agent tools)
+  version: 0.1.0
+  description: >
+    The mock data layer exposed as tools for the agents. Import this spec into
+    Azure AI Foundry (as an OpenAPI tool) or wrap it as an MCP server. Swap the
+    server URL for real Tableau / Dynamics / trading / Coalition gateways when
+    you go live — the operation contract stays the same.
+servers:
+  - url: http://localhost:8000
+paths:
+  /mock/tableau/clients:
+    get:
+      operationId: get_client_value_all
+      summary: All clients with revenue, rankings, share of wallet (Tableau).
+      responses: { "200": { description: OK } }
+  /mock/tableau/clients/{cid}:
+    get:
+      operationId: get_client_value
+      summary: One client's revenue, rankings, share of wallet (Tableau).
+      parameters:
+        - { name: cid, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/dynamics/clients/{cid}/engagement:
+    get:
+      operationId: get_engagement
+      summary: Coverage + 30/60/90/180d engagement footprint (Dynamics).
+      parameters:
+        - { name: cid, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/trading/axes:
+    get:
+      operationId: get_axes
+      summary: Live axes / IOIs from the trading book.
+      responses: { "200": { description: OK } }
+  /mock/trading/holdings:
+    get:
+      operationId: search_holdings
+      summary: Find clients holding a cusip / state / sector.
+      parameters:
+        - { name: cusip, in: query, schema: { type: string } }
+        - { name: state, in: query, schema: { type: string } }
+        - { name: sector, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/calendar/newissues:
+    get:
+      operationId: get_new_issues
+      summary: Today's new-issue calendar.
+      responses: { "200": { description: OK } }
+  /mock/marketdata:
+    get:
+      operationId: get_market_data
+      summary: MMD levels, ratios, supply, flows, HY spread.
+      responses: { "200": { description: OK } }
+  /mock/marketdata/relval/{event_id}:
+    get:
+      operationId: get_relative_value
+      summary: Relative-value context for a market event.
+      parameters:
+        - { name: event_id, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/news/{event_id}:
+    get:
+      operationId: get_news
+      summary: Resolve a news event into entities/sectors/states.
+      parameters:
+        - { name: event_id, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/coalition/{cid}:
+    get:
+      operationId: get_coalition
+      summary: Competitive benchmarking for a client (rank, capture/miss).
+      parameters:
+        - { name: cid, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/coalition/sector/{sector}:
+    get:
+      operationId: get_coalition_sector
+      summary: Firm rank within a deal sector.
+      parameters:
+        - { name: sector, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "rules": {
+    "max_agents": 5,
+    "require_charter": true,
+    "require_skills": false
+  }
+}

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Client CV — Muni Sales Desk Prototype</title>
+<style>
+  :root {
+    --bg: #0c1018;
+    --panel: #141b27;
+    --panel-2: #1b2433;
+    --panel-3: #222d3f;
+    --line: #2a3548;
+    --text: #e6ecf5;
+    --muted: #8e9bb3;
+    --faint: #5e6b82;
+    --accent: #2f81f7;
+    --accent-soft: rgba(47,129,247,0.14);
+    --green: #3fb950;
+    --green-soft: rgba(63,185,80,0.14);
+    --amber: #d29922;
+    --amber-soft: rgba(210,153,34,0.15);
+    --red: #f85149;
+    --red-soft: rgba(248,81,73,0.14);
+    --purple: #a371f7;
+    --radius: 10px;
+    --shadow: 0 8px 30px rgba(0,0,0,0.35);
+    font-synthesis: none;
+  }
+  @media (prefers-color-scheme: light) {
+    /* Prototype is designed dark-first; light viewers still get a usable palette. */
+    :root {
+      --bg: #0c1018; --panel: #141b27; --text: #e6ecf5;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased;
+  }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  /* ===== Sidebar ===== */
+  .side { background: var(--panel); border-inline-end: 1px solid var(--line); padding: 18px 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; }
+  .brand .logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--purple)); display: grid; place-items: center; font-weight: 700; font-size: 15px; color: #fff; }
+  .brand .name { font-weight: 700; font-size: 15px; letter-spacing: .2px; }
+  .brand .sub { font-size: 11px; color: var(--faint); }
+  .nav-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .9px; color: var(--faint); padding: 14px 10px 6px; }
+  .nav-item { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: start; background: transparent; border: 0; color: var(--muted); padding: 9px 10px; border-radius: 8px; cursor: pointer; font: inherit; margin-bottom: 2px; }
+  .nav-item:hover { background: var(--panel-2); color: var(--text); }
+  .nav-item.active { background: var(--accent-soft); color: var(--text); }
+  .nav-item .tnum { font-size: 11px; color: var(--faint); min-width: 34px; font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .nav-item.active .tnum { color: var(--accent); }
+  .nav-item .ttl { font-size: 13px; font-weight: 600; }
+  .nav-item .desc { font-size: 11px; color: var(--faint); }
+  .tag { font-size: 9.5px; padding: 1px 6px; border-radius: 20px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+  .tag.deep { background: var(--green-soft); color: var(--green); }
+  .tag.preview { background: var(--panel-3); color: var(--faint); }
+  .side-foot { margin-top: 18px; padding: 12px 10px; border-top: 1px solid var(--line); font-size: 11px; color: var(--faint); }
+
+  /* ===== Main ===== */
+  .main { overflow-y: auto; height: 100vh; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 26px; border-bottom: 1px solid var(--line); background: rgba(20,27,39,0.7); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 5; }
+  .topbar .who { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#3a4a63,#56688a); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .who .nm { font-weight: 600; }
+  .who .rl { font-size: 11.5px; color: var(--muted); }
+  .topbar .meta { text-align: end; font-size: 11.5px; color: var(--muted); }
+  .topbar .meta b { color: var(--text); }
+  .market-strip { display: flex; gap: 18px; padding: 8px 26px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12px; overflow-x: auto; }
+  .mq { white-space: nowrap; color: var(--muted); }
+  .mq b { color: var(--text); }
+  .up { color: var(--green); } .down { color: var(--red); }
+
+  .scene { padding: 26px; max-width: 1180px; }
+  .scene.hidden { display: none; }
+  .scene-head { margin-bottom: 18px; }
+  .scene-head .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700; }
+  .scene-head h1 { font-size: 23px; margin: 4px 0 6px; }
+  .scene-head p { color: var(--muted); margin: 0; max-width: 760px; }
+
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3,1fr); }
+  @media (max-width: 980px){ .g2,.g3{ grid-template-columns: 1fr; } .app{ grid-template-columns: 1fr; } .side{ position: static; height: auto; } }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+  .card.flush { padding: 0; overflow: hidden; }
+  .card h3 { margin: 0 0 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .ic { font-size: 15px; }
+  .card-note { font-size: 11.5px; color: var(--faint); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+  .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .kpi .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .kpi .val { font-size: 24px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi .delta { font-size: 11.5px; margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: start; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--faint); padding: 10px 14px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--panel-2); }
+  .num { font-variant-numeric: tabular-nums; text-align: end; }
+  .pill { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: .3px; }
+  .pill.t1 { background: var(--accent-soft); color: var(--accent); }
+  .pill.t2 { background: var(--amber-soft); color: var(--amber); }
+  .pill.t3 { background: var(--panel-3); color: var(--muted); }
+  .pill.buy { background: var(--green-soft); color: var(--green); }
+  .pill.sell { background: var(--red-soft); color: var(--red); }
+  .pill.hot { background: var(--red-soft); color: var(--red); }
+  .pill.warm { background: var(--amber-soft); color: var(--amber); }
+
+  .agent-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--accent), #1f6fe0); color: #fff; border: 0; padding: 9px 16px; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(47,129,247,.3); }
+  .agent-btn:hover { filter: brightness(1.08); }
+  .agent-btn.ghost { background: var(--panel-2); border: 1px solid var(--line); box-shadow: none; color: var(--text); }
+  .agent-btn .spark { font-size: 14px; }
+
+  .agent-out { margin-top: 14px; display: none; }
+  .agent-out.show { display: block; animation: fade .35s ease; }
+  @keyframes fade { from{ opacity: 0; transform: translateY(6px);} to{opacity:1;transform:none;} }
+  .steps { list-style: none; margin: 0 0 14px; padding: 0; }
+  .steps li { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: 12.5px; color: var(--muted); }
+  .steps li .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--green-soft); color: var(--green); display: grid; place-items: center; font-size: 10px; flex: none; margin-top: 1px; }
+  .steps li b { color: var(--text); font-weight: 600; }
+
+  .draft { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 14px 16px; margin-top: 10px; }
+  .draft .dh { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .draft .dh b { color: var(--text); }
+  .draft p { margin: 8px 0; font-size: 13px; }
+  .draft .acts { margin-top: 12px; display: flex; gap: 8px; }
+  .mini-btn { font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-3); color: var(--text); cursor: pointer; }
+  .mini-btn.primary { background: var(--green); border-color: var(--green); color: #08130a; font-weight: 600; }
+
+  .alert { background: var(--red-soft); border: 1px solid rgba(248,81,73,.35); border-radius: var(--radius); padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+  .alert .bang { font-size: 20px; }
+  .alert .hl { font-weight: 700; color: #ff8a82; }
+  .alert .src { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .reason { font-size: 12.5px; color: var(--muted); }
+  .bar { height: 7px; border-radius: 4px; background: var(--panel-3); overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg,var(--accent),var(--purple)); }
+  .sow-row { display: grid; grid-template-columns: 120px 1fr 48px; gap: 10px; align-items: center; padding: 5px 0; font-size: 12.5px; }
+
+  .footprint { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .fp { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .fp .n { font-size: 19px; font-weight: 700; }
+  .fp .l { font-size: 10.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .4px; }
+
+  .talk { list-style: none; margin: 0; padding: 0; }
+  .talk li { padding: 9px 0; border-bottom: 1px solid var(--line); display: flex; gap: 10px; font-size: 13px; }
+  .talk li:last-child { border-bottom: 0; }
+  .talk li .ix { color: var(--accent); font-weight: 700; }
+
+  .preview-wrap { display: grid; place-items: center; min-height: 50vh; text-align: center; }
+  .preview-card { max-width: 520px; background: var(--panel); border: 1px dashed var(--line); border-radius: 14px; padding: 36px; }
+  .preview-card .ic { font-size: 34px; }
+  .preview-card h2 { margin: 12px 0 6px; }
+  .preview-card p { color: var(--muted); margin: 0 0 6px; }
+  .preview-card .scene-quote { margin-top: 14px; font-style: italic; color: var(--faint); font-size: 12.5px; }
+
+  .banner { background: linear-gradient(90deg, var(--accent-soft), transparent); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; font-size: 12.5px; color: var(--muted); margin-bottom: 18px; }
+  .banner b { color: var(--text); }
+  .legal { font-size: 11px; color: var(--faint); padding: 8px 26px 28px; }
+  .src-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .src-tag { font-size: 10.5px; color: var(--muted); background: var(--panel-2); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">CV</div>
+      <div>
+        <div class="name">Client&nbsp;CV</div>
+        <div class="sub">Muni Sales Cockpit</div>
+      </div>
+    </div>
+    <div class="nav-label">A day on the desk</div>
+    <nav id="nav">
+      <button class="nav-item active" data-scene="s1">
+        <span class="tnum">7:30a</span>
+        <span><span class="ttl">Morning Prioritization</span><br><span class="desc">Ranked call list</span></span>
+      </button>
+      <button class="nav-item" data-scene="s2">
+        <span class="tnum">9:05a</span>
+        <span><span class="ttl">Inbound Call</span> <span class="tag preview">Preview</span><br><span class="desc">Instant Client CV</span></span>
+      </button>
+      <button class="nav-item" data-scene="s3">
+        <span class="tnum">10:42a</span>
+        <span><span class="ttl">Breaking News</span> <span class="tag deep">Deep</span><br><span class="desc">Exposure + nearest-neighbor</span></span>
+      </button>
+      <button class="nav-item" data-scene="s4">
+        <span class="tnum">1:15p</span>
+        <span><span class="ttl">Big New-Issue Day</span> <span class="tag deep">Deep</span><br><span class="desc">Allocation + benchmarking</span></span>
+      </button>
+      <button class="nav-item" data-scene="s5">
+        <span class="tnum">3:00p</span>
+        <span><span class="ttl">Meeting Prep</span> <span class="tag deep">Deep</span><br><span class="desc">Client360 master record</span></span>
+      </button>
+      <button class="nav-item" data-scene="s6">
+        <span class="tnum">4:20p</span>
+        <span><span class="ttl">Quiet Afternoon</span> <span class="tag preview">Preview</span><br><span class="desc">Behavioral outreach ideas</span></span>
+      </button>
+    </nav>
+    <div class="side-foot">
+      <b style="color:var(--text)">Demo prototype</b><br>
+      Fictional data. Built from the Muni Head of Sales interview.
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <div class="main">
+    <div class="topbar">
+      <div class="who">
+        <div class="avatar">RM</div>
+        <div>
+          <div class="nm">R. Marino</div>
+          <div class="rl">Head of Municipal Sales · Managing Director</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div><b>Thu, Jun 4 2026</b> · 10:42 ET</div>
+        <div>Muni Sales &amp; Trading · MPG</div>
+      </div>
+    </div>
+    <div class="market-strip">
+      <span class="mq"><b>AAA MMD 10y</b> 2.78% <span class="up">▲ 1.5bp</span></span>
+      <span class="mq"><b>10y UST</b> 4.31% <span class="down">▼ 2bp</span></span>
+      <span class="mq"><b>10y M/T ratio</b> 64.5%</span>
+      <span class="mq"><b>30d visible supply</b> $14.2B</span>
+      <span class="mq"><b>Muni fund flows</b> <span class="up">+$1.1B</span></span>
+      <span class="mq"><b>HY muni spread</b> +212bp <span class="up">▲ 6bp</span></span>
+    </div>
+
+    <!-- ============ SCENE 1: MORNING ============ -->
+    <section id="s1" class="scene">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 1 · 7:30am — Markets pre-open</div>
+        <h1>Morning Prioritization</h1>
+        <p>The agent reads the internal morning call and overnight market context, then ranks today's outbound coverage by <b>client value</b> against live axes and the new-issue calendar — so balance sheet goes to the highest-quality clients first.</p>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="lbl">Priority Clients</div><div class="val">7</div><div class="delta" style="color:var(--muted)">flagged for outreach</div></div>
+        <div class="kpi"><div class="lbl">Axes Matched</div><div class="val">23</div><div class="delta up">+5 vs yesterday</div></div>
+        <div class="kpi"><div class="lbl">New Issues Today</div><div class="val">5</div><div class="delta" style="color:var(--amber)">$3.4B par</div></div>
+        <div class="kpi"><div class="lbl">YTD Desk Revenue</div><div class="val">$41.6M</div><div class="delta up">102% to plan</div></div>
+      </div>
+
+      <div class="banner">The list is sorted by a blended <b>opportunity score</b> — client revenue &amp; share-of-wallet, axe/IOI match strength, behavioral signal, and relative-value fit. <b>Why each client</b> is shown so coverage isn't guessing.</div>
+
+      <div class="card flush">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Client</th><th>Tier</th><th class="num">YTD Rev</th><th class="num">Wallet</th><th>Signal</th><th>Why call today</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num">1</td><td><b>Keystone Asset Mgmt</b></td><td><span class="pill t1">Tier 1</span></td><td class="num">$4.2M</td><td class="num">68%</td><td><span class="pill hot">Hot</span></td><td class="reason">Holds IL GO — overnight headline risk. Two axes match their curve buys.</td></tr>
+            <tr><td class="num">2</td><td><b>Meridian Bond Funds</b></td><td><span class="pill t1">Tier 1</span></td><td class="num">$3.7M</td><td class="num">60%</td><td><span class="pill warm">Warm</span></td><td class="reason">Cash to deploy from June 1 coupon roll; axed bonds fit their ladder.</td></tr>
+            <tr><td class="num">3</td><td><b>Granite Mutual Insurance</b></td><td><span class="pill t1">Tier 1</span></td><td class="num">$3.1M</td><td class="num">41%</td><td><span class="pill warm">Warm</span></td><td class="reason">Long-duration buyer; CA GO retail order period is a fit. Wallet upside.</td></tr>
+            <tr><td class="num">4</td><td><b>Cardinal Pension Trust</b></td><td><span class="pill t1">Tier 1</span></td><td class="num">$2.9M</td><td class="num">33%</td><td><span class="pill hot">Hot</span></td><td class="reason">Holds IL Toll Hwy revenue — adjacent risk to today's news.</td></tr>
+            <tr><td class="num">5</td><td><b>Sierra SMA Advisors</b></td><td><span class="pill t2">Tier 2</span></td><td class="num">$2.4M</td><td class="num">55%</td><td><span class="pill warm">Warm</span></td><td class="reason">Retail ladder demand; TX Water AAA paper matches recent RFQs.</td></tr>
+            <tr><td class="num">6</td><td><b>Harborview Capital</b></td><td><span class="pill t2">Tier 2</span></td><td class="num">$1.8M</td><td class="num">22%</td><td><span class="pill hot">Hot</span></td><td class="reason">Relative-value HY shop; volatility in IL/HY names = their wheelhouse.</td></tr>
+            <tr><td class="num">7</td><td><b>Lakeshore Bank Portfolio</b></td><td><span class="pill t3">Tier 3</span></td><td class="num">$0.6M</td><td class="num">12%</td><td><span class="pill warm">Warm</span></td><td class="reason">Whitespace account — low wallet, under-covered. Coalition shows miss vs peers.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3><span class="ic">🔌</span> Grounded in</h3>
+        <div class="src-tags">
+          <span class="src-tag">Internal morning call notes</span>
+          <span class="src-tag">Trading axes / IOI book</span>
+          <span class="src-tag">Tableau — client revenue &amp; rankings</span>
+          <span class="src-tag">Dynamics — coverage &amp; engagement</span>
+          <span class="src-tag">New-issue calendar</span>
+          <span class="src-tag">MMD / relative-value feed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 2: PREVIEW ============ -->
+    <section id="s2" class="scene hidden">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 2 · 9:05am — A client chats in</div>
+        <h1>Inbound Call — Instant Client CV</h1>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-card">
+          <div class="ic">💬</div>
+          <h2>Preview scene</h2>
+          <p>When a client calls or chats, their <b>Client CV</b> opens instantly — coverage, revenue, engagement footprint, recent trades / RFQs / holdings / curve activity, and where they <i>don't</i> do business with the firm.</p>
+          <p class="card-note">Reuses the same Client360 record built deep in Scene 5.</p>
+          <div class="scene-quote">"Faster, more contextual responses … improved client interaction quality."</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 3: BREAKING NEWS (DEEP) ============ -->
+    <section id="s3" class="scene hidden">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 3 · 10:42am — Headline hits the tape</div>
+        <h1>Breaking News → Exposure</h1>
+        <p>A market-moving headline fires. The agent links it to client exposures, surfaces <b>directly-impacted</b> and <b>nearest-neighbor</b> accounts, frames the relative-value move, and drafts grounded outreach — turning volatility into targeted coverage in seconds.</p>
+      </div>
+
+      <div class="alert" style="margin-bottom:16px">
+        <span class="bang">⚠️</span>
+        <div>
+          <div class="hl">Illinois pension funding bill fails in committee; Moody's flags possible IL GO downgrade to Baa2 (neg watch)</div>
+          <div class="reason" style="margin-top:6px;color:var(--text)">IL GO spreads gapping ~+18bp to MMD on the open. HY muni and lower-rated state GOs (NJ, CT) trading in sympathy.</div>
+          <div class="src">Source: StreetAccount · 10:41 ET · cross-checked vs MMD relative-value feed</div>
+        </div>
+      </div>
+
+      <button class="agent-btn" data-target="s3out"><span class="spark">✦</span> Run exposure agent</button>
+
+      <div id="s3out" class="agent-out">
+        <div class="card" style="margin-top:16px">
+          <h3><span class="ic">✦</span> Agent reasoning</h3>
+          <ul class="steps">
+            <li><span class="dot">✓</span><span>Parsed headline → entity <b>State of Illinois GO</b>, event type <b>downgrade risk</b>, sector <b>state GO / HY muni</b>.</span></li>
+            <li><span class="dot">✓</span><span>Scanned holdings + IOI book for <b>direct exposure</b> to IL GO and IL-issuer credits.</span></li>
+            <li><span class="dot">✓</span><span>Expanded to <b>nearest-neighbor</b> exposures — adjacent low-grade state GOs and HY muni positions.</span></li>
+            <li><span class="dot">✓</span><span>Pulled relative-value context (spread move vs comparable BBB states) and matched to coverage owners.</span></li>
+          </ul>
+        </div>
+
+        <div class="grid g2" style="margin-top:16px">
+          <div class="card flush">
+            <div style="padding:14px 18px 0"><h3 style="margin-bottom:4px"><span class="ic">🎯</span> Directly impacted</h3><div class="card-note" style="padding-bottom:10px">Hold IL GO or IL-issuer credits</div></div>
+            <table>
+              <thead><tr><th>Client</th><th class="num">Position</th><th>Side fit</th></tr></thead>
+              <tbody>
+                <tr><td><b>Keystone Asset Mgmt</b><div class="card-note">Tier 1 · 68% wallet</div></td><td class="num">$45M IL GO 5s '38</td><td><span class="pill sell">Likely sell</span></td></tr>
+                <tr><td><b>Cardinal Pension Trust</b><div class="card-note">Tier 1 · 33% wallet</div></td><td class="num">$28M IL Toll Hwy 4s '41</td><td><span class="pill warm">Hold / watch</span></td></tr>
+                <tr><td><b>Sierra SMA Advisors</b><div class="card-note">Tier 2 · 55% wallet</div></td><td class="num">$9M IL GO (SMA blocks)</td><td><span class="pill sell">Likely sell</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card flush">
+            <div style="padding:14px 18px 0"><h3 style="margin-bottom:4px"><span class="ic">🧭</span> Nearest-neighbor</h3><div class="card-note" style="padding-bottom:10px">Adjacent risk — no direct IL position</div></div>
+            <table>
+              <thead><tr><th>Client</th><th>Adjacent exposure</th><th>Side fit</th></tr></thead>
+              <tbody>
+                <tr><td><b>Harborview Capital</b><div class="card-note">HY relative-value</div></td><td>NJ / CT GO, HY muni book</td><td><span class="pill buy">Opportunistic buy</span></td></tr>
+                <tr><td><b>Granite Mutual Insurance</b><div class="card-note">Long-duration</div></td><td>BBB state GO ladder</td><td><span class="pill buy">Add on weakness</span></td></tr>
+                <tr><td><b>Meridian Bond Funds</b><div class="card-note">Core AM</div></td><td>Benchmark IL weight</td><td><span class="pill warm">Inquiry likely</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3><span class="ic">✉️</span> Suggested outreach <span class="card-note" style="font-weight:400">— review before send</span></h3>
+          <button class="agent-btn ghost" data-target="s3draft" style="margin-bottom:4px"><span class="spark">✦</span> Draft message to Keystone</button>
+          <div id="s3draft" class="agent-out">
+            <div class="draft">
+              <div class="dh">To <b>J. Alvarez, Keystone Asset Mgmt</b> · via Bloomberg chat · coverage: R. Marino</div>
+              <p>Quick heads-up on the IL pension headline this morning — Moody's flagged possible downgrade to Baa2. IL GO 5s '38 (your ~$45M line) are ~+18bp wider to MMD on the open.</p>
+              <p>We're seeing two-way interest. If you're looking to lighten, I can show a firm bid on the '38s and work it carefully. If you'd rather hold, happy to send the relative-value vs comparable BBB states so you can frame it for the PM. Either way — wanted you to hear it from us first.</p>
+              <div class="acts">
+                <button class="mini-btn primary">Send</button>
+                <button class="mini-btn">Edit</button>
+                <button class="mini-btn">Log IOI</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 4: NEW ISSUE DAY (DEEP) ============ -->
+    <section id="s4" class="scene hidden">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 4 · 1:15pm — Five deals to allocate</div>
+        <h1>Big New-Issue Day → Allocation</h1>
+        <p>Five deals price today. The agent recommends allocation per client using full <b>relationship value</b> and <b>Coalition benchmarking</b> — so every order is defensible and balance sheet flows to where the firm earns (or wants to win) the wallet.</p>
+      </div>
+
+      <div class="card flush" style="margin-bottom:16px">
+        <div style="padding:14px 18px 0"><h3><span class="ic">📅</span> Today's new-issue calendar</h3></div>
+        <table>
+          <thead><tr><th>Deal</th><th>Type</th><th class="num">Par</th><th>Rating</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><b>State of California GO</b></td><td>Negotiated</td><td class="num">$1.2B</td><td>Aa2 / AA−</td><td><span class="pill warm">Retail order period</span></td></tr>
+            <tr><td><b>NYC Transitional Finance</b></td><td>Negotiated</td><td class="num">$850M</td><td>Aaa / AAA</td><td><span class="pill warm">Pricing 2pm</span></td></tr>
+            <tr><td><b>Texas Water Dev Board</b></td><td>Negotiated</td><td class="num">$600M</td><td>Aaa / AAA</td><td><span class="pill warm">Retail order period</span></td></tr>
+            <tr><td><b>Chicago Board of Education</b></td><td>Negotiated</td><td class="num">$450M</td><td>Ba1 / BB+</td><td><span class="pill hot">High yield</span></td></tr>
+            <tr><td><b>Metro Transit Auth</b></td><td>Competitive</td><td class="num">$300M</td><td>A1 / A+</td><td><span class="pill t3">Bid 11am</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="agent-btn" data-target="s4out"><span class="spark">✦</span> Recommend allocations</button>
+
+      <div id="s4out" class="agent-out">
+        <div class="banner" style="margin-top:16px">Allocation logic blends <b>client tier &amp; revenue</b>, <b>deal fit</b> (sector / duration / rating appetite), <b>recent participation</b>, and <b>Coalition rank</b> — flagging where the firm <span style="color:var(--green)">captures</span> vs <span style="color:var(--red)">misses</span> business.</div>
+        <div class="card flush">
+          <div style="padding:14px 18px 0"><h3><span class="ic">📊</span> Recommended — California State GO ($1.2B)</h3><div class="card-note" style="padding-bottom:8px">Coalition: firm ranks <b>#2</b> of dealers into CA GO buyers · 1 notable miss flagged</div></div>
+          <table>
+            <thead><tr><th>Client</th><th>Tier</th><th>Fit</th><th class="num">Suggested</th><th class="num">Est. rev</th><th>Justification</th></tr></thead>
+            <tbody>
+              <tr><td><b>Granite Mutual Insurance</b></td><td><span class="pill t1">T1</span></td><td><span class="pill buy">Strong</span></td><td class="num">$140M</td><td class="num">$310K</td><td class="reason">Long-duration insurer; under-allocated last 2 CA deals. Wallet upside.</td></tr>
+              <tr><td><b>Meridian Bond Funds</b></td><td><span class="pill t1">T1</span></td><td><span class="pill buy">Strong</span></td><td class="num">$120M</td><td class="num">$265K</td><td class="reason">Benchmark CA weight; reliable secondary follow-through.</td></tr>
+              <tr><td><b>Keystone Asset Mgmt</b></td><td><span class="pill t1">T1</span></td><td><span class="pill warm">Good</span></td><td class="num">$90M</td><td class="num">$200K</td><td class="reason">#2 revenue account; rotating out of IL into high-grade GO.</td></tr>
+              <tr><td><b>Lakeshore Bank Portfolio</b></td><td><span class="pill t3">T3</span></td><td><span class="pill warm">Win-back</span></td><td class="num">$25M</td><td class="num">$55K</td><td class="reason"><span style="color:var(--red)">Coalition miss</span> — buys CA GO away from firm. Small allo to re-engage.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid g3" style="margin-top:16px">
+          <div class="kpi"><div class="lbl">Allocated</div><div class="val">$375M</div><div class="delta" style="color:var(--muted)">of $1.2B book</div></div>
+          <div class="kpi"><div class="lbl">Est. revenue</div><div class="val">$830K</div><div class="delta up">across 4 clients</div></div>
+          <div class="kpi"><div class="lbl">Wallet actions</div><div class="val">1</div><div class="delta" style="color:var(--amber)">win-back flagged</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 5: MEETING PREP / CLIENT360 (DEEP) ============ -->
+    <section id="s5" class="scene hidden">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 5 · 3:00pm — Client meeting prep</div>
+        <h1>Client360 — The "Client CV"</h1>
+        <p>One firmwide master record — the single source of truth the desk asked for. Revenue by business line, rankings, share of wallet, engagement footprint, and agent-built talking points. <b>Whitespace</b> surfaced so the conversation grows the relationship.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div class="avatar" style="width:48px;height:48px;font-size:16px;background:linear-gradient(135deg,var(--accent),var(--purple))">KA</div>
+            <div>
+              <div style="font-size:18px;font-weight:700">Keystone Asset Management</div>
+              <div class="card-note">Asset Manager · <span class="pill t1">Tier 1</span> · Coverage: R. Marino · Relationship since 2014</div>
+            </div>
+          </div>
+          <div style="text-align:end">
+            <div class="card-note">Firmwide revenue YTD</div>
+            <div style="font-size:24px;font-weight:700">$6.4M</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h3><span class="ic">💵</span> Revenue by business line</h3>
+          <div class="sow-row"><span>Municipals</span><div class="bar"><span style="width:66%"></span></div><span class="num">$4.2M</span></div>
+          <div class="sow-row"><span>Rates</span><div class="bar"><span style="width:17%"></span></div><span class="num">$1.1M</span></div>
+          <div class="sow-row"><span>Credit</span><div class="bar"><span style="width:12%"></span></div><span class="num">$0.8M</span></div>
+          <div class="sow-row"><span>Equity</span><div class="bar"><span style="width:5%"></span></div><span class="num">$0.3M</span></div>
+          <div class="card-note" style="margin-top:8px">Concentrated in Muni — <b style="color:var(--amber)">whitespace in Rates &amp; Credit</b>.</div>
+        </div>
+        <div class="card">
+          <h3><span class="ic">🏆</span> Rankings &amp; share of wallet</h3>
+          <div class="footprint" style="grid-template-columns:repeat(2,1fr)">
+            <div class="fp"><div class="n">#2</div><div class="l">Muni dealer to client</div></div>
+            <div class="fp"><div class="n">#5</div><div class="l">Firmwide dealer</div></div>
+            <div class="fp"><div class="n">68%</div><div class="l">Muni wallet</div></div>
+            <div class="fp"><div class="n">31%</div><div class="l">Firmwide wallet</div></div>
+          </div>
+          <div class="card-note" style="margin-top:10px">Coalition: <b>#2 of dealers</b> in muni to this client — <span style="color:var(--green)">strong capture</span>, room to grow firmwide.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3><span class="ic">📈</span> Engagement footprint — trailing windows</h3>
+        <div class="footprint">
+          <div class="fp"><div class="n">42</div><div class="l">Trades · 30d</div></div>
+          <div class="fp"><div class="n">7</div><div class="l">RFQs · 30d</div></div>
+          <div class="fp"><div class="n">$1.3B</div><div class="l">Holdings</div></div>
+          <div class="fp"><div class="n">11d</div><div class="l">Last touch</div></div>
+        </div>
+        <div class="card-note" style="margin-top:10px">Behavioral shift: curve activity moved <b>5y → 15y</b> over the last 90 days; IL GO weight trimmed this week.</div>
+      </div>
+
+      <button class="agent-btn" data-target="s5out" style="margin-top:16px"><span class="spark">✦</span> Build meeting talking points</button>
+      <div id="s5out" class="agent-out">
+        <div class="card" style="margin-top:14px">
+          <h3><span class="ic">🗒️</span> Agent-built talking points</h3>
+          <ul class="talk">
+            <li><span class="ix">1</span><span><b>Lead with the IL move.</b> They trimmed IL GO this week — bring the relative-value vs BBB states and offer secondary bids on the residual '38s.</span></li>
+            <li><span class="ix">2</span><span><b>Position CA GO.</b> Rotating to high-grade; we can allocate $90M today (Scene 4) to keep their CA book balanced.</span></li>
+            <li><span class="ix">3</span><span><b>Open the wallet.</b> 68% muni but only 31% firmwide — tee up an intro to Rates coverage on the 15y curve shift.</span></li>
+            <li><span class="ix">4</span><span><b>Open ask.</b> They flagged interest in water/sewer revenue paper — TX Water AAA on the calendar is a fit.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 6: PREVIEW ============ -->
+    <section id="s6" class="scene hidden">
+      <div class="scene-head">
+        <div class="eyebrow">Scene 6 · 4:20pm — Slow day</div>
+        <h1>Quiet Afternoon — Proactive Engine</h1>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-card">
+          <div class="ic">🔭</div>
+          <h2>Preview scene</h2>
+          <p>On a slow day the agent scans behavioral data across <b>30 / 60 / 90 / 180-day</b> windows, spots pattern shifts, and generates <b>targeted outreach ideas</b> for untouched high-value accounts — so quiet time becomes pipeline.</p>
+          <p class="card-note">Powered by the same engagement footprint shown in Scene 5.</p>
+          <div class="scene-quote">"Targeted client engagement ideas … proactive outreach instead of idle time."</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="legal">
+      Prototype for demonstration only. All clients, securities, holdings, revenue figures, rankings, and headlines are <b>fictional</b> and do not represent any real entity, position, or market data. Built to illustrate agentic AI concepts from the Municipal Head of Sales interview.
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // Scene navigation
+    var nav = document.getElementById('nav');
+    var items = nav.querySelectorAll('.nav-item');
+    var scenes = document.querySelectorAll('.scene');
+    function show(id) {
+      scenes.forEach(function (s) { s.classList.toggle('hidden', s.id !== id); });
+      items.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-scene') === id); });
+      document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    items.forEach(function (b) {
+      b.addEventListener('click', function () { show(b.getAttribute('data-scene')); });
+    });
+
+    // Reveal agent outputs / drafts
+    document.querySelectorAll('[data-target]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var el = document.getElementById(btn.getAttribute('data-target'));
+        if (!el) return;
+        el.classList.toggle('show');
+        btn.style.opacity = el.classList.contains('show') ? '0.6' : '1';
+      });
+    });
+
+    // Mock send confirmation
+    document.querySelectorAll('.mini-btn.primary').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.textContent = '✓ Sent';
+        b.style.cursor = 'default';
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "KEYS": {
+    "id": "KEYS", "name": "Keystone Asset Management", "type": "Asset Manager",
+    "tier": 1, "coverage": "R. Marino", "since": 2014,
+    "revenue": { "muni": 4.2, "rates": 1.1, "credit": 0.8, "equity": 0.3 },
+    "firmwide_revenue": 6.4, "muni_rank": 2, "firmwide_rank": 5,
+    "muni_wallet": 68, "firmwide_wallet": 31,
+    "engagement": { "trades_30d": 42, "rfqs_30d": 7, "holdings_usd": "$1.3B", "last_touch_days": 11 },
+    "signal": "hot",
+    "behavior": "Curve activity shifted 5y to 15y over last 90 days; trimmed IL GO this week.",
+    "open_asks": "Interested in water/sewer revenue paper."
+  },
+  "MERI": {
+    "id": "MERI", "name": "Meridian Bond Funds", "type": "Asset Manager",
+    "tier": 1, "coverage": "R. Marino", "since": 2011,
+    "revenue": { "muni": 3.7, "rates": 0.9, "credit": 0.6, "equity": 0.2 },
+    "firmwide_revenue": 5.4, "muni_rank": 2, "firmwide_rank": 6,
+    "muni_wallet": 60, "firmwide_wallet": 28,
+    "engagement": { "trades_30d": 38, "rfqs_30d": 5, "holdings_usd": "$1.1B", "last_touch_days": 4 },
+    "signal": "warm",
+    "behavior": "Cash to deploy from June 1 coupon roll; benchmark CA weight.",
+    "open_asks": "Ladder fill needs in 10-15y AAA."
+  },
+  "GRAN": {
+    "id": "GRAN", "name": "Granite Mutual Insurance", "type": "P&C Insurer",
+    "tier": 1, "coverage": "R. Marino", "since": 2009,
+    "revenue": { "muni": 3.1, "rates": 1.4, "credit": 1.0, "equity": 0.1 },
+    "firmwide_revenue": 5.6, "muni_rank": 4, "firmwide_rank": 7,
+    "muni_wallet": 41, "firmwide_wallet": 24,
+    "engagement": { "trades_30d": 19, "rfqs_30d": 3, "holdings_usd": "$2.4B", "last_touch_days": 18 },
+    "signal": "warm",
+    "behavior": "Long-duration buyer; under-allocated last 2 CA deals.",
+    "open_asks": "Wants more high-grade GO allocation."
+  },
+  "CARD": {
+    "id": "CARD", "name": "Cardinal Pension Trust", "type": "Public Pension",
+    "tier": 1, "coverage": "R. Marino", "since": 2013,
+    "revenue": { "muni": 2.9, "rates": 0.7, "credit": 0.5, "equity": 0.2 },
+    "firmwide_revenue": 4.3, "muni_rank": 3, "firmwide_rank": 9,
+    "muni_wallet": 33, "firmwide_wallet": 19,
+    "engagement": { "trades_30d": 14, "rfqs_30d": 2, "holdings_usd": "$3.1B", "last_touch_days": 22 },
+    "signal": "hot",
+    "behavior": "Buy-and-hold; holds IL Toll Hwy revenue (adjacent risk).",
+    "open_asks": "Reviewing IL exposure post-headline."
+  },
+  "SIER": {
+    "id": "SIER", "name": "Sierra SMA Advisors", "type": "SMA / Wealth",
+    "tier": 2, "coverage": "T. Okafor", "since": 2017,
+    "revenue": { "muni": 2.4, "rates": 0.2, "credit": 0.1, "equity": 0.0 },
+    "firmwide_revenue": 2.7, "muni_rank": 6, "firmwide_rank": 14,
+    "muni_wallet": 55, "firmwide_wallet": 33,
+    "engagement": { "trades_30d": 61, "rfqs_30d": 12, "holdings_usd": "$680M", "last_touch_days": 6 },
+    "signal": "warm",
+    "behavior": "Retail ladder demand; recent RFQs in TX Water AAA paper.",
+    "open_asks": "Needs odd-lot AAA supply for SMA blocks."
+  },
+  "HARB": {
+    "id": "HARB", "name": "Harborview Capital", "type": "Hedge Fund",
+    "tier": 2, "coverage": "T. Okafor", "since": 2019,
+    "revenue": { "muni": 1.8, "rates": 0.3, "credit": 0.9, "equity": 0.4 },
+    "firmwide_revenue": 3.4, "muni_rank": 9, "firmwide_rank": 12,
+    "muni_wallet": 22, "firmwide_wallet": 16,
+    "engagement": { "trades_30d": 88, "rfqs_30d": 21, "holdings_usd": "$420M", "last_touch_days": 2 },
+    "signal": "hot",
+    "behavior": "Relative-value HY shop; thrives on dislocation in IL/HY names.",
+    "open_asks": "Wants axes on stressed/HY muni names."
+  },
+  "LAKE": {
+    "id": "LAKE", "name": "Lakeshore Bank Portfolio", "type": "Bank Portfolio",
+    "tier": 3, "coverage": "Unassigned", "since": 2022,
+    "revenue": { "muni": 0.6, "rates": 0.1, "credit": 0.0, "equity": 0.0 },
+    "firmwide_revenue": 0.7, "muni_rank": 18, "firmwide_rank": 31,
+    "muni_wallet": 12, "firmwide_wallet": 8,
+    "engagement": { "trades_30d": 4, "rfqs_30d": 1, "holdings_usd": "$210M", "last_touch_days": 47 },
+    "signal": "warm",
+    "behavior": "Under-covered whitespace; buys CA GO away from the firm.",
+    "open_asks": "None on file (re-engagement candidate)."
+  }
+}
