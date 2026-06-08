@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using OrchestrationApi;
+using OrchestrationApi.Agents;
+using OrchestrationApi.Agents.Demo;
+using OrchestrationApi.Agents.Tools;
+using OrchestrationApi.Models;
 using WF.Garage.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +25,13 @@ builder.Services.AddHttpClient<MockApiClient>(client =>
     client.BaseAddress = new Uri(mockBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(10);
 });
+
+// --- Morning-brief agents: DEMO composer (offline) + LIVE tools/runner (Foundry) ---
+// Both are registered, but the LIVE path (AgentRunner) only constructs Foundry clients
+// and DefaultAzureCredential when it is actually invoked — never in DEMO (FR-008).
+builder.Services.AddScoped<MorningBriefComposer>();
+builder.Services.AddScoped<MorningBriefTools>();
+builder.Services.AddScoped<AgentRunner>();
 
 // --- CORS for the React cockpit (tightened for deployment in Phase 8) ---
 var corsOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"];
@@ -73,8 +84,28 @@ app.UseAuthorization();
 app.MapGet("/healthz", () => Results.Json(new { status = "ok" }));
 app.MapGet("/readyz", (ModeOptions m) => Results.Json(new { status = "ready", mode = m.Mode }));
 
-// NOTE: POST /api/agent/morning-brief is implemented in Phase 3 (T015-T016).
-// Tests T013/T014 are written now and skipped until then (TDD red placeholder).
+// --- Scene endpoint: POST /api/agent/morning-brief (T016, per contracts/agent-api.yaml) ---
+// Same MorningBrief shape in both modes (Principle III). DEMO → deterministic composer;
+// LIVE → Foundry agent. The composer degrades to a structured brief with notes on
+// upstream failure rather than throwing (FR-011), so the response is always JSON.
+app.MapPost("/api/agent/morning-brief", async (
+    MorningBriefRequest? request,
+    ModeOptions modeOpts,
+    MorningBriefComposer composer,
+    AgentRunner runner,
+    CancellationToken ct) =>
+{
+    var eventId = string.IsNullOrWhiteSpace(request?.Payload?.EventId)
+        ? "fed_surprise_hike"
+        : request!.Payload!.EventId!;
+    var date = request?.Payload?.Date;
+
+    var brief = modeOpts.DemoMode
+        ? await composer.ComposeAsync(eventId, date, ct)
+        : await runner.RunAsync(eventId, date, ct);
+
+    return Results.Json(brief, MorningBriefJson.Options);
+});
 
 app.Run();
 

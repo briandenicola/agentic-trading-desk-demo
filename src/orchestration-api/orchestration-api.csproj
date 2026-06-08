@@ -10,13 +10,24 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Serilog.AspNetCore" />
     <!--
-      Microsoft Agent Framework + Foundry packages are added in Phase 3 (T018-T020,
-      LIVE path). Phase 2 only needs the DEMO/HTTP plumbing below.
+      Microsoft Agent Framework (.NET) + Azure AI Foundry for the LIVE path (T018-T020).
+      Microsoft.Agents.AI.AzureAI is a prerelease (1.0.0-rc5). The DEMO path does not
+      depend on any of these; the LIVE path is guarded behind the mode switch.
     -->
+    <PackageReference Include="Microsoft.Agents.AI" />
+    <PackageReference Include="Microsoft.Agents.AI.AzureAI" />
+    <PackageReference Include="Azure.AI.Agents.Persistent" />
+    <PackageReference Include="Azure.Identity" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\shared\Observability\Observability.csproj" />
+  </ItemGroup>
+
+  <!-- The agent prompt travels with the build output so the LIVE runner + provisioner
+       can read it at runtime (T017/T019/T020). -->
+  <ItemGroup>
+    <Content Include="Prompts\**\*.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

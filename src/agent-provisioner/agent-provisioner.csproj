@@ -7,9 +7,20 @@
   </PropertyGroup>
 
   <!--
-    Stub for Phase 1/2. The Foundry registration job (PersistentAgentsClient via
-    Microsoft.Agents.AI.AzureAI / Azure.AI.Projects / Azure.Identity) is implemented
-    in Phase 3 (T020); package references are added there to keep this phase's build green.
+    T020: idempotently registers the morning-brief agent version in Azure AI Foundry
+    via PersistentAgentsClient + DefaultAzureCredential. No-ops without Foundry creds.
   -->
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.Agents.Persistent" />
+    <PackageReference Include="Azure.Identity" />
+  </ItemGroup>
+
+  <!-- Ship the agent prompt (authored in orchestration-api/Prompts) with this job so it
+       can read the same instructions the LIVE runner uses (T017/T019 parity). -->
+  <ItemGroup>
+    <Content Include="..\orchestration-api\Prompts\morning-brief.md"
+             Link="Prompts\morning-brief.md"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
 </Project>

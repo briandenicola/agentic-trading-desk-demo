@@ -12,24 +12,21 @@ namespace OrchestrationApi.Tests;
 /// <summary>
 /// User Story 1 (MVP) tests for <c>POST /api/agent/morning-brief</c>.
 ///
-/// Written now per TDD, but SKIPPED until the scene endpoint + DEMO composer land
-/// in Phase 3 (T015-T016, and the tool functions in T018). Skipping keeps the suite
-/// GREEN while the contract is captured up-front. Remove the Skip when Phase 3 ships.
+/// T013 exercises the happy path against the real mock-api hosted in-memory
+/// (<see cref="MockApiBackedFactory"/>); T014 forces a mock-api 5xx to verify the
+/// brief degrades with a <c>notes</c> entry and structured JSON (FR-011).
 /// </summary>
 public sealed class UserStory1MorningBriefTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private const string PendingReason =
-        "Pending Phase 3: POST /api/agent/morning-brief is implemented in T015 (DEMO composer) + T016 (endpoint).";
-
     private readonly WebApplicationFactory<Program> _factory;
 
     public UserStory1MorningBriefTests(WebApplicationFactory<Program> factory) => _factory = factory;
 
-    [Fact(Skip = PendingReason)] // T013 [US1]
+    [Fact] // T013 [US1]
     public async Task MorningBrief_demo_returns_200_schema_valid_and_populated()
     {
-        var client = _factory.WithWebHostBuilder(b =>
-            b.UseSetting("DEMO_MODE", "1")).CreateClient();
+        using var backing = new MockApiBackedFactory();
+        var client = backing.CreateDemoClient(_factory);
 
         var response = await client.PostAsJsonAsync("/api/agent/morning-brief",
             new { payload = new { eventId = "fed_surprise_hike", date = "2026-06-04" } });
@@ -47,7 +44,7 @@ public sealed class UserStory1MorningBriefTests : IClassFixture<WebApplicationFa
         body["outreach"]!.AsArray().Count.Should().BeGreaterThan(0);
     }
 
-    [Fact(Skip = PendingReason)] // T014 [US1] — FR-011 tool-error degradation
+    [Fact] // T014 [US1] — FR-011 tool-error degradation
     public async Task MorningBrief_degrades_with_notes_when_mock_api_returns_5xx()
     {
         var client = _factory.WithWebHostBuilder(b =>

@@ -18,6 +18,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\orchestration-api\orchestration-api.csproj" />
+    <!-- The real mock-api is hosted in-memory (TestServer) so the orchestration-api's
+         typed MockApiClient resolves source data over HTTP during T013/T047. Aliased to
+         avoid the global `Program` clash with orchestration-api's own entry point. -->
+    <ProjectReference Include="..\..\src\mock-api\mock-api.csproj" Aliases="MockApiHost" />
   </ItemGroup>
 
   <!-- The canonical response contract travels with the test output for the validator helper (T012). -->
