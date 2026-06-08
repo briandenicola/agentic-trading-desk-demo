@@ -44,3 +44,5 @@ src/ui-app/dist/
 crash.log
 override.tf
 .terraform.lock.hcl
+tfplan
+*.tfplan

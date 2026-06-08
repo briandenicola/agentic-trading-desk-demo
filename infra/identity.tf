@@ -23,14 +23,16 @@ resource "azurerm_role_assignment" "kv_secrets_user" {
 
 # Cognitive Services OpenAI User for Foundry model access
 resource "azurerm_role_assignment" "openai_user" {
-  scope                = azapi_resource.ai_account.id
+  count                = var.enable_foundry ? 1 : 0
+  scope                = azapi_resource.ai_account[0].id
   role_definition_name = "Cognitive Services OpenAI User"
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
 
 # Azure AI Project Manager for Foundry project operations
 resource "azurerm_role_assignment" "ai_project_manager" {
-  scope                = azapi_resource.ai_project.id
+  count                = var.enable_foundry ? 1 : 0
+  scope                = azapi_resource.ai_project[0].id
   role_definition_name = "Azure AI Developer"
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }

@@ -52,6 +52,19 @@ variable "foundry_model_capacity" {
   default     = 10
 }
 
+# Foundry provisioning toggle
+# When false, all Azure AI Foundry resources (AI account, model deployment,
+# project, connections, capability host, and Foundry-scoped role assignments)
+# are skipped. The container apps still receive the COMPUTED
+# local.foundry_project_endpoint / local.model_deployment_name strings, which
+# are never resolved at runtime because DEMO_MODE=1. Use enable_foundry=false
+# for demo-only deployments.
+variable "enable_foundry" {
+  description = "Provision Azure AI Foundry resources (true) or skip them for demo-only deploys (false)"
+  type        = bool
+  default     = true
+}
+
 # Runtime configuration
 variable "demo_mode" {
   description = "Enable demo mode (1) or live mode (0) for API"

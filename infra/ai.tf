@@ -5,6 +5,7 @@ locals {
 
 # Azure AI Services account (kind: AIServices)
 resource "azapi_resource" "ai_account" {
+  count     = var.enable_foundry ? 1 : 0
   type      = "Microsoft.CognitiveServices/accounts@2024-10-01"
   name      = local.ai_account_name
   parent_id = azurerm_resource_group.main.id
@@ -25,9 +26,10 @@ resource "azapi_resource" "ai_account" {
 
 # Model deployment within AI account
 resource "azapi_resource" "model_deployment" {
+  count     = var.enable_foundry ? 1 : 0
   type      = "Microsoft.CognitiveServices/accounts/deployments@2024-10-01"
   name      = local.model_deployment_name
-  parent_id = azapi_resource.ai_account.id
+  parent_id = azapi_resource.ai_account[0].id
 
   body = {
     sku = {
@@ -46,9 +48,10 @@ resource "azapi_resource" "model_deployment" {
 
 # Azure AI Foundry project with SystemAssigned identity
 resource "azapi_resource" "ai_project" {
+  count     = var.enable_foundry ? 1 : 0
   type      = "Microsoft.CognitiveServices/accounts/projects@2025-06-01"
   name      = local.ai_project_name
-  parent_id = azapi_resource.ai_account.id
+  parent_id = azapi_resource.ai_account[0].id
   location  = azurerm_resource_group.main.location
   tags      = local.common_tags
 
@@ -67,7 +70,8 @@ resource "azapi_resource" "ai_project" {
 
 # Role assignment for project identity (needed before capability host)
 resource "azurerm_role_assignment" "project_openai_user" {
-  scope                = azapi_resource.ai_account.id
+  count                = var.enable_foundry ? 1 : 0
+  scope                = azapi_resource.ai_account[0].id
   role_definition_name = "Cognitive Services OpenAI User"
-  principal_id         = azapi_resource.ai_project.identity[0].principal_id
+  principal_id         = azapi_resource.ai_project[0].identity[0].principal_id
 }

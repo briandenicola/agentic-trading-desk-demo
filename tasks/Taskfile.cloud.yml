@@ -3,6 +3,12 @@ version: '3'
 vars:
   INFRA_DIR: infra
   TAG: '{{default "latest" .TAG}}'
+  # Deployment region + naming inputs — override on the CLI, e.g.
+  #   task cloud:up LOCATION=eastus2 ENVIRONMENT=dev
+  LOCATION: '{{default "swedencentral" .LOCATION}}'
+  PROJECT_PREFIX: '{{default "wfgarage" .PROJECT_PREFIX}}'
+  ENVIRONMENT: '{{default "demo" .ENVIRONMENT}}'
+  TF_VARS: -var=location={{.LOCATION}} -var=project_prefix={{.PROJECT_PREFIX}} -var=environment={{.ENVIRONMENT}}
 
 tasks:
   init:
@@ -12,22 +18,22 @@ tasks:
       - terraform init
 
   plan:
-    desc: Plan Terraform changes
+    desc: Plan Terraform changes (LOCATION/PROJECT_PREFIX/ENVIRONMENT overridable)
     dir: '{{.INFRA_DIR}}'
     cmds:
-      - terraform plan
+      - terraform plan {{.TF_VARS}}
 
   up:
     desc: Apply Terraform configuration (creates/updates infrastructure)
     dir: '{{.INFRA_DIR}}'
     cmds:
-      - terraform apply
+      - terraform apply {{.TF_VARS}}
 
   destroy:
     desc: Destroy all Terraform-managed infrastructure
     dir: '{{.INFRA_DIR}}'
     cmds:
-      - terraform destroy
+      - terraform destroy {{.TF_VARS}}
 
   output-env:
     desc: Export Terraform outputs to .env file

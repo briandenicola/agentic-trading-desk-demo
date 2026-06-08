@@ -1,17 +1,20 @@
 locals {
-  # Generate unique suffix for resource naming
-  suffix = "${random_pet.main.id}-${random_id.main.hex}"
+  # Dynamic, collision-free naming: a single unique token (random_id) is applied
+  # to every resource so repeated or parallel deployments never clash. Names that
+  # disallow dashes (ACR, Key Vault) are stripped and length-capped to their limits.
+  name_prefix = "${var.project_prefix}-${var.environment}"
+  unique      = random_id.main.hex
 
-  # Resource naming
-  resource_group_name = "${var.project_prefix}-${var.environment}-rg"
-  acr_name            = replace("${var.project_prefix}${var.environment}${random_id.main.hex}", "-", "")
-  ai_account_name     = "${var.project_prefix}-${var.environment}-ai-${random_id.main.hex}"
-  ai_project_name     = "${var.project_prefix}-${var.environment}-project"
-  key_vault_name      = "${var.project_prefix}-${var.environment}-kv-${random_id.main.hex}"
-  uai_name            = "${var.project_prefix}-${var.environment}-identity"
-  log_workspace_name  = "${var.project_prefix}-${var.environment}-logs"
-  app_insights_name   = "${var.project_prefix}-${var.environment}-ai-insights"
-  cae_name            = "${var.project_prefix}-${var.environment}-cae"
+  # Resource naming (all carry the unique token)
+  resource_group_name = "${local.name_prefix}-rg-${local.unique}"
+  acr_name            = substr(replace("${local.name_prefix}acr${local.unique}", "-", ""), 0, 50)
+  key_vault_name      = substr(replace("${local.name_prefix}kv${local.unique}", "-", ""), 0, 24)
+  uai_name            = "${local.name_prefix}-id-${local.unique}"
+  log_workspace_name  = "${local.name_prefix}-logs-${local.unique}"
+  app_insights_name   = "${local.name_prefix}-appi-${local.unique}"
+  cae_name            = "${local.name_prefix}-cae-${local.unique}"
+  ai_account_name     = "${local.name_prefix}-ai-${local.unique}"
+  ai_project_name     = "${local.name_prefix}-project-${local.unique}"
 
   # Container app names
   ui_app_name            = "ui-app"
