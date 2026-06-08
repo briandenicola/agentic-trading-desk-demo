@@ -1,33 +1,61 @@
 version: '3'
 
+# Container image builds via `az acr build` (server-side; no local Docker).
+#
+# OneDrive Files-On-Demand note: this repo lives under OneDrive and is reached
+# through a symlink (C:\Users\<u>\Code\WF-Garage -> OneDrive\...). Files are
+# dehydrated reparse-point placeholders, which `az acr build`'s tar packer
+# silently skips. The `stage` task robocopies a clean, fully-hydrated build
+# context to a REAL non-OneDrive path (%TEMP%\wf-garage-build) first; all image
+# builds run from there. ACR_NAME/RG_NAME auto-derive from terraform output and
+# can be overridden on the CLI (e.g. task build:all ACR_NAME=... RG_NAME=...).
+
 vars:
   TAG: '{{default "latest" .TAG}}'
-  ACR_NAME: '{{default "" .ACR_NAME}}'
-  RG_NAME: '{{default "" .RG_NAME}}'
+  STAGE_DIR:
+    sh: powershell -NoProfile -ExecutionPolicy Bypass -File tasks/stage-dir.ps1
+  ACR_NAME:
+    sh: terraform -chdir=infra output -raw acr_name 2>/dev/null || true
+  RG_NAME:
+    sh: terraform -chdir=infra output -raw resource_group_name 2>/dev/null || true
 
 tasks:
+  stage:
+    desc: Stage a clean, hydrated (non-OneDrive) build context for az acr build
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File "tasks\stage-build-context.ps1" -Source "." -Destination "{{.STAGE_DIR}}"
+
+  clean:
+    desc: Remove the staged build context
+    cmds:
+      - powershell -NoProfile -Command "if (Test-Path '{{.STAGE_DIR}}') { Remove-Item -Recurse -Force '{{.STAGE_DIR}}' }"
+
   mock-api:
     desc: Build mock-api container image and push to ACR
+    deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image mock-api:{{.TAG}} --image mock-api:latest --file src\mock-api\Dockerfile .
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image mock-api:{{.TAG}} --image mock-api:latest --file "{{.STAGE_DIR}}\src\mock-api\Dockerfile" "{{.STAGE_DIR}}"
 
   orchestration-api:
     desc: Build orchestration-api container image and push to ACR
+    deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image orchestration-api:{{.TAG}} --image orchestration-api:latest --file src\orchestration-api\Dockerfile .
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image orchestration-api:{{.TAG}} --image orchestration-api:latest --file "{{.STAGE_DIR}}\src\orchestration-api\Dockerfile" "{{.STAGE_DIR}}"
 
   agent-provisioner:
     desc: Build agent-provisioner container image and push to ACR
+    deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image agent-provisioner:{{.TAG}} --image agent-provisioner:latest --file src\agent-provisioner\Dockerfile .
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image agent-provisioner:{{.TAG}} --image agent-provisioner:latest --file "{{.STAGE_DIR}}\src\agent-provisioner\Dockerfile" "{{.STAGE_DIR}}"
 
   ui-app:
     desc: Build ui-app container image and push to ACR
+    deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image ui-app:{{.TAG}} --image ui-app:latest --file src\ui-app\Dockerfile src\ui-app
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image ui-app:{{.TAG}} --image ui-app:latest --file "{{.STAGE_DIR}}\src\ui-app\Dockerfile" "{{.STAGE_DIR}}\src\ui-app"
 
   all:
-    desc: Build all container images
+    desc: Build all container images (stages once, then builds each)
     deps:
       - mock-api
       - orchestration-api

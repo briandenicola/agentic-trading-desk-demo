@@ -27,9 +27,10 @@ RUN dotnet publish src/mock-api/mock-api.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 
-# Create non-root user
+# Reuse the non-root user provided by the base image (uid from APP_UID env);
+# adduser is idempotent here since the base already defines this uid.
 ARG APP_UID=1000
-RUN adduser -D -u $APP_UID appuser
+RUN adduser -D -u $APP_UID appuser 2>/dev/null || true
 USER $APP_UID
 
 # Copy published output

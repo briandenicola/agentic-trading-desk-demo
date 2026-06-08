@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OrchestrationApi;
 using OrchestrationApi.Agents;
 using OrchestrationApi.Agents.Demo;
@@ -89,7 +91,7 @@ app.MapGet("/readyz", (ModeOptions m) => Results.Json(new { status = "ready", mo
 // LIVE → Foundry agent. The composer degrades to a structured brief with notes on
 // upstream failure rather than throwing (FR-011), so the response is always JSON.
 app.MapPost("/api/agent/morning-brief", async (
-    MorningBriefRequest? request,
+    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] MorningBriefRequest? request,
     ModeOptions modeOpts,
     MorningBriefComposer composer,
     AgentRunner runner,

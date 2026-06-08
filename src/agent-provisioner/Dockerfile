@@ -28,9 +28,10 @@ RUN dotnet publish src/agent-provisioner/agent-provisioner.csproj \
 FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine AS runtime
 WORKDIR /app
 
-# Create non-root user
+# Reuse the non-root user provided by the base image (uid from APP_UID env);
+# adduser is idempotent here since the base already defines this uid.
 ARG APP_UID=1000
-RUN adduser -D -u $APP_UID appuser
+RUN adduser -D -u $APP_UID appuser 2>/dev/null || true
 USER $APP_UID
 
 # Copy published output
