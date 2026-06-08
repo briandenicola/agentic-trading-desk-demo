@@ -1,0 +1,5 @@
+# ui-app build artifacts & deps
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/

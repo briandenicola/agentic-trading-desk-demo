@@ -1,0 +1,6 @@
+[
+  { "id": "AX-1001", "instrument": "10Y UST swap", "side": "offer", "size": 50000000, "relevanceTags": ["duration", "hedge", "rates"] },
+  { "id": "AX-1002", "instrument": "2Y UST", "side": "bid", "size": 25000000, "relevanceTags": ["front-end", "rates"] },
+  { "id": "AX-1003", "instrument": "5Y IG corporate", "side": "offer", "size": 10000000, "relevanceTags": ["credit", "spread"] },
+  { "id": "AX-1004", "instrument": "30Y UST", "side": "bid", "size": 15000000, "relevanceTags": ["duration", "long-end", "rates"] }
+]

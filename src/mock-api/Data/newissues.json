@@ -1,0 +1,5 @@
+[
+  { "id": "NI-501", "issuer": "State of New York", "sector": "Municipals", "state": "NY", "size": 750000000, "maturity": "2046", "pxTalk": "5.10% area" },
+  { "id": "NI-502", "issuer": "Brookline Utility Authority", "sector": "Municipals", "state": "MA", "size": 300000000, "maturity": "2039", "pxTalk": "4.85% area" },
+  { "id": "NI-503", "issuer": "Cedar Ridge Water District", "sector": "Municipals", "state": "CT", "size": 180000000, "maturity": "2034", "pxTalk": "4.40% area" }
+]

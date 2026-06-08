@@ -1,0 +1,11 @@
+version: '3'
+
+# Cloud provisioning + deploy (Terraform + Azure Container Apps + Foundry).
+# Implemented in Phase 7 (T040): terraform apply, ACA revision rolls, run the
+# agent-provisioner job, and export the runtime env. Placeholder for now.
+tasks:
+  default:
+    desc: "Cloud tasks are implemented in Phase 7 (T040)."
+    cmds:
+      - cmd: echo "cloud tasks not yet implemented (see tasks.md T038-T040)"
+        silent: true

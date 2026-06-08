@@ -1,0 +1,9 @@
+[
+  { "cid": "ATLAS", "cusip": "912828ZZ9", "sector": "Treasuries", "state": "NY", "exposureType": "long-duration" },
+  { "cid": "ATLAS", "cusip": "MUNI-NY-2044", "sector": "Municipals", "state": "NY", "exposureType": "long-duration" },
+  { "cid": "BROOK", "cusip": "SWAP-10Y-001", "sector": "Rates", "state": "MA", "exposureType": "swap-book" },
+  { "cid": "BROOK", "cusip": "SWAP-5Y-014", "sector": "Rates", "state": "MA", "exposureType": "swap-book" },
+  { "cid": "CEDAR", "cusip": "FRN-2027-AA", "sector": "Corporates", "state": "CT", "exposureType": "floating-rate" },
+  { "cid": "DELTA", "cusip": "MUNI-CA-2031", "sector": "Municipals", "state": "CA", "exposureType": "long-duration" },
+  { "cid": "EVER", "cusip": "MUNI-TX-2029", "sector": "Municipals", "state": "TX", "exposureType": "floating-rate" }
+]

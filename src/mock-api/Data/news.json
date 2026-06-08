@@ -1,0 +1,11 @@
+{
+  "fed_surprise_hike": {
+    "eventId": "fed_surprise_hike",
+    "headline": "Fed delivers surprise 25bp hike, signals higher terminal rate",
+    "summary": "The Federal Reserve raised the policy rate by a surprise 25bp overnight and signaled a higher terminal rate. Treasury yields jumped (10y +15bp, 2y +19bp), equity futures fell ~1.1%, and IG credit widened ~7bp into a clear risk-off open.",
+    "entities": ["Federal Reserve"],
+    "sectors": ["Treasuries", "Rates", "Corporates", "Municipals"],
+    "states": ["NY", "MA", "CT", "CA", "TX"],
+    "sources": ["Fed statement", "Overnight rates feed", "Equity futures", "Credit spread monitor"]
+  }
+}

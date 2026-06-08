@@ -1,0 +1,52 @@
+<Project>
+  <!--
+    Central NuGet package version management (T001) for the WF-Garage solution (net10.0).
+    Per plan.md / ADR-0002. Projects reference packages without a Version attribute;
+    versions are pinned here. Substitutions vs plan.md are noted inline and in
+    .squad/decisions.md (see the T001 row).
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!-- Microsoft Agent Framework (.NET) + Azure AI Foundry — used by the LIVE path (Phase 3, T018-T020). -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Agents.AI" Version="1.9.0" />
+    <!-- No stable release yet; latest is a release candidate. LIVE/Foundry path only. -->
+    <PackageVersion Include="Microsoft.Agents.AI.AzureAI" Version="1.0.0-rc5" />
+    <PackageVersion Include="Azure.AI.Agents.Persistent" Version="1.1.0" />
+    <PackageVersion Include="Azure.AI.Projects" Version="2.0.1" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
+  </ItemGroup>
+
+  <!-- Web / API -->
+  <ItemGroup>
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
+  </ItemGroup>
+
+  <!-- Observability: Serilog + OpenTelemetry -->
+  <ItemGroup>
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.5.0" />
+  </ItemGroup>
+
+  <!-- Testing -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <!-- FluentAssertions 8.x changed to a paid commercial license (Xceed); pin the last Apache-2.0 release. -->
+    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.8" />
+    <!-- JSON Schema (draft 2020-12) validator for the morning-brief contract (T012/T013). -->
+    <PackageVersion Include="JsonSchema.Net" Version="9.2.1" />
+  </ItemGroup>
+</Project>

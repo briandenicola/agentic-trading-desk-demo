@@ -1,0 +1,10 @@
+version: '3'
+
+# Image builds (az acr build per image). Implemented in Phase 7 (T040) once the
+# Dockerfiles land in T035. Placeholder for now.
+tasks:
+  default:
+    desc: "Image-build tasks are implemented in Phase 7 (T040)."
+    cmds:
+      - cmd: echo "build tasks not yet implemented (see tasks.md T035/T040)"
+        silent: true

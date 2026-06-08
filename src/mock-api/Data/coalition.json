@@ -1,0 +1,15 @@
+{
+  "clients": {
+    "ATLAS": { "cid": "ATLAS", "rank": 2, "capture": 0.34, "miss": 0.66 },
+    "BROOK": { "cid": "BROOK", "rank": 3, "capture": 0.41, "miss": 0.59 },
+    "CEDAR": { "cid": "CEDAR", "rank": 8, "capture": 0.22, "miss": 0.78 },
+    "DELTA": { "cid": "DELTA", "rank": 11, "capture": 0.18, "miss": 0.82 },
+    "EVER": { "cid": "EVER", "rank": 19, "capture": 0.09, "miss": 0.91 }
+  },
+  "sectors": {
+    "Municipals": { "sector": "Municipals", "rank": 3, "capture": 0.21, "miss": 0.79 },
+    "Treasuries": { "sector": "Treasuries", "rank": 5, "capture": 0.15, "miss": 0.85 },
+    "Rates": { "sector": "Rates", "rank": 4, "capture": 0.19, "miss": 0.81 },
+    "Corporates": { "sector": "Corporates", "rank": 9, "capture": 0.11, "miss": 0.89 }
+  }
+}

@@ -1,0 +1,19 @@
+version: '3'
+
+# Local stack orchestration (docker compose). Fully realized in Phase 7 (T040);
+# the Dockerfiles referenced by docker-compose.yml are added in T035.
+tasks:
+  up:
+    desc: Start the demo stack (ui-app, orchestration-api, mock-api)
+    cmds:
+      - docker compose up -d --build
+
+  down:
+    desc: Stop and remove the demo stack
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Tail logs for the demo stack
+    cmds:
+      - docker compose logs -f

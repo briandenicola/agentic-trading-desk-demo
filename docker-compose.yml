@@ -1,0 +1,45 @@
+# Demo stack for local development (T005). DEMO mode runs fully offline — no
+# Foundry credentials required. Dockerfiles are added in Phase 7 (T035); until then
+# this compose file documents the topology and wiring.
+services:
+  mock-api:
+    build:
+      context: .
+      dockerfile: src/mock-api/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  orchestration-api:
+    build:
+      context: .
+      dockerfile: src/orchestration-api/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - DEMO_MODE=${DEMO_MODE:-1}
+      - MOCK_API_BASEURL=http://mock-api:8080
+      - FOUNDRY_PROJECT_ENDPOINT=${FOUNDRY_PROJECT_ENDPOINT:-}
+      - FOUNDRY_MODEL=${FOUNDRY_MODEL:-}
+      - MAX_TOOL_HOPS=${MAX_TOOL_HOPS:-8}
+    depends_on:
+      mock-api:
+        condition: service_healthy
+    expose:
+      - "8080"
+
+  ui-app:
+    build:
+      context: .
+      dockerfile: src/ui-app/Dockerfile
+    environment:
+      - ORCHESTRATION_API_URL=http://orchestration-api:8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - orchestration-api

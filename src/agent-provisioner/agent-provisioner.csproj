@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AgentProvisioner</RootNamespace>
+    <AssemblyName>agent-provisioner</AssemblyName>
+  </PropertyGroup>
+
+  <!--
+    Stub for Phase 1/2. The Foundry registration job (PersistentAgentsClient via
+    Microsoft.Agents.AI.AzureAI / Azure.AI.Projects / Azure.Identity) is implemented
+    in Phase 3 (T020); package references are added there to keep this phase's build green.
+  -->
+
+</Project>

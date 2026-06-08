@@ -1,0 +1,13 @@
+{
+  "fed_surprise_hike": {
+    "eventId": "fed_surprise_hike",
+    "curve": "flatter",
+    "frontEndReprice": "hardest",
+    "commentary": "Front end repriced hardest; 2s10s flattened ~4bp. Long-duration cash underperforms while swap spreads richen. Floating-rate resets move higher into the next coupon.",
+    "relativeValue": [
+      { "sector": "Treasuries", "signal": "cheapen long end vs swaps" },
+      { "sector": "Rates", "signal": "receive belly on the flattening" },
+      { "sector": "Corporates", "signal": "floating-rate coupons reset higher" }
+    ]
+  }
+}

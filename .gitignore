@@ -25,3 +25,12 @@ Thumbs.db
 
 # Node (if frontend migrates to React/Vite)
 node_modules/
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+*.user
+
+# Vite / React build output
+src/ui-app/dist/
+*.tsbuildinfo

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "universe_usage": [
+    {
+      "universe": "oceans-eleven",
+      "first_used_at": "2026-06-08T17:32:19Z",
+      "last_used_at": "2026-06-08T17:32:19Z",
+      "times_used": 1
+    }
+  ],
+  "assignments": [
+    {
+      "assignment_id": "2026-06-08T17:32:19Z-demo1-crew",
+      "created_at": "2026-06-08T17:32:19Z",
+      "universe": "oceans-eleven",
+      "feature": "001-morning-planning-outreach",
+      "requested_by": "Brian Denicola",
+      "size": 5,
+      "shape": "implementation-team (lead + backend + frontend + platform + qa)",
+      "resonance": "financial muni-sales heist-crew theme; specialists assembled for one high-stakes job",
+      "names": ["Rusty", "Livingston", "Linus", "Basher", "Yen"],
+      "exempt": ["Scribe", "Ralph"]
+    }
+  ]
+}

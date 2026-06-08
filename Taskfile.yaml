@@ -1,52 +1,58 @@
 version: '3'
 
+# Root orchestrator for the WF-Garage solution (T004). Per ADR-0002 the stack is
+# C#/.NET 10 + React; this replaces the prior Python Taskfile (retired in T043).
+dotenv: ['.env']
+
 vars:
-  TAG: "client-cv-muni-demo"
+  SOLUTION: WF-Garage.sln
+  TAG: wf-garage
+
+includes:
+  local: ./tasks/Taskfile.local.yml
+  cloud: ./tasks/Taskfile.cloud.yml
+  build: ./tasks/Taskfile.build.yml
 
 tasks:
   default:
     cmds:
-    - task --list
+      - task --list
 
-  run:
-    desc: Start the dev server (demo mode, no keys needed)
+  restore:
+    desc: Restore NuGet packages
     cmds:
-    - uvicorn api.main:app --reload --port 8000
+      - dotnet restore {{.SOLUTION}}
 
-  lint:
-    desc: Run ruff linter
+  build:
+    desc: Build the .NET solution
     cmds:
-    - ruff check .
-
-  format:
-    desc: Run ruff formatter
-    cmds:
-    - ruff format .
-
-  format-check:
-    desc: Check formatting without modifying
-    cmds:
-    - ruff format --check .
+      - dotnet build {{.SOLUTION}} -c Debug
 
   test:
-    desc: Run full test suite
+    desc: Run the .NET test suite
     cmds:
-    - pytest
+      - dotnet test {{.SOLUTION}} -c Debug --nologo
 
-  test-v:
-    desc: Run tests with verbose output
+  ui:install:
+    desc: Install the React cockpit dependencies
+    dir: src/ui-app
     cmds:
-    - pytest -v
+      - npm install
+
+  ui:build:
+    desc: Build the React cockpit
+    dir: src/ui-app
+    cmds:
+      - npm run build
 
   secrets:
-    desc: Scan for secrets with gitleaks
+    desc: Scan for committed secrets
     cmds:
-    - gitleaks detect --source .
+      - gitleaks detect --source .
 
   check:
-    desc: Run all quality gates (lint + format-check + test + secrets)
+    desc: Run all quality gates (build + test + secret scan)
     cmds:
-    - task: lint
-    - task: format-check
-    - task: test
-    - task: secrets
+      - task: build
+      - task: test
+      - task: secrets

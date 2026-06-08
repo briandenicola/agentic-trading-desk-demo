@@ -1,0 +1,7 @@
+[
+  { "id": "ATLAS", "name": "Atlas Pension", "tier": "Tier 1", "revenueYtd": 4200000, "shareOfWallet": 0.34, "rankings": { "deskRank": 2, "firmRank": 5 } },
+  { "id": "BROOK", "name": "Brookline Bank", "tier": "Tier 1", "revenueYtd": 3800000, "shareOfWallet": 0.41, "rankings": { "deskRank": 3, "firmRank": 7 } },
+  { "id": "CEDAR", "name": "Cedar Asset Mgmt", "tier": "Tier 2", "revenueYtd": 1900000, "shareOfWallet": 0.22, "rankings": { "deskRank": 8, "firmRank": 15 } },
+  { "id": "DELTA", "name": "Delta Insurance Group", "tier": "Tier 2", "revenueYtd": 1500000, "shareOfWallet": 0.18, "rankings": { "deskRank": 11, "firmRank": 21 } },
+  { "id": "EVER", "name": "Everest Municipal Fund", "tier": "Tier 3", "revenueYtd": 620000, "shareOfWallet": 0.09, "rankings": { "deskRank": 19, "firmRank": 40 } }
+]

@@ -1,0 +1,12 @@
+{
+  "asOf": "2026-06-04T07:30:00-04:00",
+  "rates": {
+    "ust10y": { "level": 4.46, "changeBp": 15 },
+    "ust2y": { "level": 4.92, "changeBp": 19 },
+    "ust30y": { "level": 4.61, "changeBp": 11 }
+  },
+  "equities": { "spFuturesPct": -1.1 },
+  "credit": { "igChangeBp": 7, "hyChangeBp": 18 },
+  "vix": { "level": 21.4, "change": 3.2 },
+  "tone": "Risk-off"
+}

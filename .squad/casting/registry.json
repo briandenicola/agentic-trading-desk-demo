@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "universe": "oceans-eleven",
+  "agents": [
+    {
+      "persistent_name": "Rusty",
+      "role": "Lead / Architect",
+      "folder": "rusty",
+      "universe": "oceans-eleven",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Livingston",
+      "role": "Backend Engineer (.NET / Agent Framework)",
+      "folder": "livingston",
+      "universe": "oceans-eleven",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Linus",
+      "role": "Frontend Engineer (React / TypeScript / MUI)",
+      "folder": "linus",
+      "universe": "oceans-eleven",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Basher",
+      "role": "Platform / Infra Engineer (Terraform / Azure / CI-CD)",
+      "folder": "basher",
+      "universe": "oceans-eleven",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Yen",
+      "role": "QA / Test Engineer (xUnit / Vitest / RTL)",
+      "folder": "yen",
+      "universe": "oceans-eleven",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Scribe",
+      "role": "Memory & Logs",
+      "folder": "scribe",
+      "universe": "exempt",
+      "created_at": "2026-06-08T17:32:19Z",
+      "legacy_named": false,
+      "status": "active"
+    }
+  ]
+}

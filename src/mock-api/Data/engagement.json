@@ -1,0 +1,37 @@
+[
+  {
+    "cid": "ATLAS", "coverage": "D. Khan",
+    "last30d": { "meetings": 3, "calls": 5, "emails": 12 },
+    "last60d": { "meetings": 5, "calls": 9, "emails": 21 },
+    "last90d": { "meetings": 7, "calls": 14, "emails": 33 },
+    "last180d": { "meetings": 12, "calls": 25, "emails": 60 }
+  },
+  {
+    "cid": "BROOK", "coverage": "D. Khan",
+    "last30d": { "meetings": 2, "calls": 4, "emails": 9 },
+    "last60d": { "meetings": 4, "calls": 7, "emails": 16 },
+    "last90d": { "meetings": 6, "calls": 11, "emails": 24 },
+    "last180d": { "meetings": 10, "calls": 20, "emails": 48 }
+  },
+  {
+    "cid": "CEDAR", "coverage": "R. Santos",
+    "last30d": { "meetings": 1, "calls": 2, "emails": 5 },
+    "last60d": { "meetings": 2, "calls": 4, "emails": 10 },
+    "last90d": { "meetings": 3, "calls": 6, "emails": 15 },
+    "last180d": { "meetings": 5, "calls": 11, "emails": 28 }
+  },
+  {
+    "cid": "DELTA", "coverage": "R. Santos",
+    "last30d": { "meetings": 0, "calls": 1, "emails": 3 },
+    "last60d": { "meetings": 1, "calls": 2, "emails": 6 },
+    "last90d": { "meetings": 1, "calls": 3, "emails": 9 },
+    "last180d": { "meetings": 3, "calls": 7, "emails": 18 }
+  },
+  {
+    "cid": "EVER", "coverage": "R. Santos",
+    "last30d": { "meetings": 0, "calls": 0, "emails": 1 },
+    "last60d": { "meetings": 0, "calls": 1, "emails": 2 },
+    "last90d": { "meetings": 1, "calls": 1, "emails": 4 },
+    "last180d": { "meetings": 1, "calls": 3, "emails": 8 }
+  }
+]
