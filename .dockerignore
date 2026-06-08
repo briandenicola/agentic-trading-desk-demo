@@ -1,0 +1,54 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+
+# Git and version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation and planning (not needed in build)
+*.md
+!README.md
+docs/
+specs/
+mockup/
+.squad/
+.specify/
+.github/
+
+# IDE and local config
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Terraform
+infra/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# Tasks and scripts
+tasks/
+Taskfile.yml
+
+# Test results
+TestResults/
+coverage/
+*.trx
+*.coverage
+
+# Logs
+*.log
+logs/

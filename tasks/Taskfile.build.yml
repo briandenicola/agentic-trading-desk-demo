@@ -1,10 +1,35 @@
 version: '3'
 
-# Image builds (az acr build per image). Implemented in Phase 7 (T040) once the
-# Dockerfiles land in T035. Placeholder for now.
+vars:
+  TAG: '{{default "latest" .TAG}}'
+  ACR_NAME: '{{default "" .ACR_NAME}}'
+  RG_NAME: '{{default "" .RG_NAME}}'
+
 tasks:
-  default:
-    desc: "Image-build tasks are implemented in Phase 7 (T040)."
+  mock-api:
+    desc: Build mock-api container image and push to ACR
     cmds:
-      - cmd: echo "build tasks not yet implemented (see tasks.md T035/T040)"
-        silent: true
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image mock-api:{{.TAG}} --image mock-api:latest --file src\mock-api\Dockerfile .
+
+  orchestration-api:
+    desc: Build orchestration-api container image and push to ACR
+    cmds:
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image orchestration-api:{{.TAG}} --image orchestration-api:latest --file src\orchestration-api\Dockerfile .
+
+  agent-provisioner:
+    desc: Build agent-provisioner container image and push to ACR
+    cmds:
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image agent-provisioner:{{.TAG}} --image agent-provisioner:latest --file src\agent-provisioner\Dockerfile .
+
+  ui-app:
+    desc: Build ui-app container image and push to ACR
+    cmds:
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image ui-app:{{.TAG}} --image ui-app:latest --file src\ui-app\Dockerfile src\ui-app
+
+  all:
+    desc: Build all container images
+    deps:
+      - mock-api
+      - orchestration-api
+      - agent-provisioner
+      - ui-app

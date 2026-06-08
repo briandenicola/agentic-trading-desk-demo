@@ -34,3 +34,13 @@ node_modules/
 # Vite / React build output
 src/ui-app/dist/
 *.tsbuildinfo
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+override.tf
+.terraform.lock.hcl

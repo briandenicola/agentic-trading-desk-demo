@@ -1,11 +1,61 @@
 version: '3'
 
-# Cloud provisioning + deploy (Terraform + Azure Container Apps + Foundry).
-# Implemented in Phase 7 (T040): terraform apply, ACA revision rolls, run the
-# agent-provisioner job, and export the runtime env. Placeholder for now.
+vars:
+  INFRA_DIR: infra
+  TAG: '{{default "latest" .TAG}}'
+
 tasks:
-  default:
-    desc: "Cloud tasks are implemented in Phase 7 (T040)."
+  init:
+    desc: Initialize Terraform
+    dir: '{{.INFRA_DIR}}'
     cmds:
-      - cmd: echo "cloud tasks not yet implemented (see tasks.md T038-T040)"
-        silent: true
+      - terraform init
+
+  plan:
+    desc: Plan Terraform changes
+    dir: '{{.INFRA_DIR}}'
+    cmds:
+      - terraform plan
+
+  up:
+    desc: Apply Terraform configuration (creates/updates infrastructure)
+    dir: '{{.INFRA_DIR}}'
+    cmds:
+      - terraform apply
+
+  destroy:
+    desc: Destroy all Terraform-managed infrastructure
+    dir: '{{.INFRA_DIR}}'
+    cmds:
+      - terraform destroy
+
+  output-env:
+    desc: Export Terraform outputs to .env file
+    cmds:
+      - |
+        terraform -chdir={{.INFRA_DIR}} output -json | powershell -Command "$json = $input | ConvertFrom-Json; @('VITE_API_BASE_URL=' + $json.ui_app_url.value, 'ACR_NAME=' + $json.acr_name.value, 'RESOURCE_GROUP=' + $json.resource_group_name.value, 'FOUNDRY_PROJECT_ENDPOINT=' + $json.foundry_project_endpoint.value, 'FOUNDRY_MODEL=' + $json.foundry_model_deployment.value) | Out-File -Encoding utf8 .env"
+
+  deploy:
+    desc: Update container apps with new images and trigger provisioner job
+    vars:
+      RG_NAME:
+        sh: terraform -chdir={{.INFRA_DIR}} output -raw resource_group_name
+      ACR_LOGIN_SERVER:
+        sh: terraform -chdir={{.INFRA_DIR}} output -raw acr_login_server
+    cmds:
+      - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.TAG}}
+      - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}}
+      - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}}
+      - az containerapp job start --name agent-provisioner-job --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/agent-provisioner:{{.TAG}}
+
+  fmt:
+    desc: Format Terraform files
+    dir: '{{.INFRA_DIR}}'
+    cmds:
+      - terraform fmt
+
+  validate:
+    desc: Validate Terraform configuration
+    dir: '{{.INFRA_DIR}}'
+    cmds:
+      - terraform validate

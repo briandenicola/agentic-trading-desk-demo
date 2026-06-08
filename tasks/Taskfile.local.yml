@@ -1,7 +1,7 @@
 version: '3'
 
-# Local stack orchestration (docker compose). Fully realized in Phase 7 (T040);
-# the Dockerfiles referenced by docker-compose.yml are added in T035.
+# Local stack orchestration (docker compose). Requires Docker Desktop.
+# Fully realized in Phase 7 (T040); the Dockerfiles referenced by docker-compose.yml are added in T035.
 tasks:
   up:
     desc: Start the demo stack (ui-app, orchestration-api, mock-api)
@@ -17,3 +17,20 @@ tasks:
     desc: Tail logs for the demo stack
     cmds:
       - docker compose logs -f
+
+  build:
+    desc: Build all containers locally (requires Docker)
+    cmds:
+      - docker compose build
+
+  rebuild:
+    desc: Rebuild and restart local environment
+    cmds:
+      - task: down
+      - task: build
+      - task: up
+
+  status:
+    desc: Show status of local containers
+    cmds:
+      - docker compose ps
