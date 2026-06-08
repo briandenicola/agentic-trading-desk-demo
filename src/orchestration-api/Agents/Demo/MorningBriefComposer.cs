@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using OrchestrationApi.Models;
 
@@ -18,30 +20,15 @@ namespace OrchestrationApi.Agents.Demo;
 /// </summary>
 public sealed class MorningBriefComposer(MockApiClient mockApi)
 {
-    // Documented ranking weights (data-model.md). compositeScore =
-    // 0.40·wallet + 0.30·engagement + 0.30·eventRelevance.
-    public const double WalletWeight = 0.40;
-    public const double EngagementWeight = 0.30;
-    public const double EventRelevanceWeight = 0.30;
-
     // How many flagged clients to surface (matches the storyboard's curated set).
     private const int TopAffected = 3;
-
-    // Event-relevance / rate-sensitivity by exposure type (1.0 = most exposed to the move).
-    private static double RateSensitivity(string exposureType) => exposureType switch
-    {
-        "long-duration" => 1.00,
-        "swap-book" => 0.80,
-        "floating-rate" => 0.60,
-        _ => 0.50,
-    };
 
     public async Task<MorningBrief> ComposeAsync(string eventId, string? date, CancellationToken ct = default)
     {
         var notes = new List<string>();
 
         var market = await TryGetAsync("/mock/marketdata", notes, ct);
-        var news = await TryGetAsync($"/mock/news/{eventId}", notes, ct);
+        var news = await TryGetNewsAsync(eventId, notes, ct);
         var relval = await TryGetAsync($"/mock/marketdata/relval/{eventId}", notes, ct);
         var clientsNode = await TryGetAsync("/mock/tableau/clients", notes, ct);
         var holdingsNode = await TryGetAsync("/mock/trading/holdings", notes, ct);
@@ -104,62 +91,21 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
             })
             .ToList();
 
-        // ---- Baseline outreach ranking over the affected set (US1; US2 refines) ----
-        var axes = axesNode as JsonArray ?? [];
-        var maxRevenue = clientIndex.Values.Max(c => c.RevenueYtd);
-
-        // Engagement (recent 30d touches) per affected client — tolerate per-client failure.
-        var engagementTotals = new Dictionary<string, int>(StringComparer.Ordinal);
+        var rankerInputs = new List<OutreachRanker.RankingInput>(affected.Count);
         foreach (var a in affected)
         {
-            var eng = await TryGetAsync($"/mock/dynamics/clients/{a.Cid}/engagement", notes, ct);
-            engagementTotals[a.Cid] = eng is null ? 0 : Last30dTouches(eng);
+            var engagement = await TryGetAsync($"/mock/dynamics/clients/{a.Cid}/engagement", notes, ct);
+            rankerInputs.Add(new OutreachRanker.RankingInput(
+                a.Cid,
+                a.Client.Name,
+                a.Client.RevenueYtd,
+                a.Exposure.ExposureType,
+                a.Exposure.Cusip,
+                engagement));
         }
-        var maxEngagement = Math.Max(1, engagementTotals.Values.DefaultIfEmpty(0).Max());
 
-        var scored = affected.Select(x =>
-        {
-            var wallet = Round(maxRevenue <= 0 ? 0 : x.Client.RevenueYtd / maxRevenue);
-            var engagement = Round((double)engagementTotals[x.Cid] / maxEngagement);
-            var eventRelevance = Round(RateSensitivity(x.Exposure.ExposureType));
-            var composite = Round(WalletWeight * wallet + EngagementWeight * engagement + EventRelevanceWeight * eventRelevance);
-            return new
-            {
-                x.Cid,
-                x.Client,
-                x.Exposure,
-                Wallet = wallet,
-                Engagement = engagement,
-                EventRelevance = eventRelevance,
-                Composite = composite,
-            };
-        })
-        .OrderByDescending(s => s.Composite)
-        .ThenByDescending(s => s.Client.RevenueYtd)
-        .ThenBy(s => s.Cid, StringComparer.Ordinal)
-        .ToList();
-
-        var outreach = new List<OutreachItem>(scored.Count);
-        for (var i = 0; i < scored.Count; i++)
-        {
-            var s = scored[i];
-            outreach.Add(new OutreachItem
-            {
-                Rank = i + 1,
-                Cid = s.Cid,
-                Name = s.Client.Name,
-                SuggestedTopic = SuggestedTopic(s.Exposure.ExposureType),
-                TalkingPoints = TalkingPoints(s.Client.Name, s.Exposure, axes),
-                Rationale = new RankingRationale
-                {
-                    WalletScore = s.Wallet,
-                    EngagementScore = s.Engagement,
-                    EventRelevanceScore = s.EventRelevance,
-                    CompositeScore = s.Composite,
-                    Explanation = Explanation(i + 1, s.Wallet, s.Engagement, s.EventRelevance, s.Composite, s.Exposure.ExposureType),
-                },
-            });
-        }
+        var axes = axesNode as JsonArray ?? [];
+        var outreach = OutreachRanker.Rank(rankerInputs, axes);
 
         return new MorningBrief
         {
@@ -181,6 +127,31 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
         try
         {
             return await mockApi.GetJsonAsync(path, ct);
+        }
+        catch (Exception)
+        {
+            notes.Add($"Upstream data unavailable: GET {path} failed; the brief was composed without it.");
+            return null;
+        }
+    }
+
+    private async Task<JsonNode?> TryGetNewsAsync(string eventId, List<string> notes, CancellationToken ct)
+    {
+        var path = $"/mock/news/{eventId}";
+        try
+        {
+            using var response = await mockApi.GetAsync(path, ct);
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UnknownMorningBriefEventException(eventId);
+            }
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<JsonNode>(ct);
+        }
+        catch (UnknownMorningBriefEventException)
+        {
+            throw;
         }
         catch (Exception)
         {
@@ -284,15 +255,6 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
         return map;
     }
 
-    private static int Last30dTouches(JsonNode engagement)
-    {
-        var d = engagement["last30d"];
-        if (d is null) return 0;
-        return (d["meetings"]?.GetValue<int>() ?? 0)
-             + (d["calls"]?.GetValue<int>() ?? 0)
-             + (d["emails"]?.GetValue<int>() ?? 0);
-    }
-
     private static string ExposureLabel(string exposureType) => exposureType switch
     {
         "long-duration" => "Heavy long-duration bonds",
@@ -308,77 +270,6 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
         "floating-rate" => new Concern { Label = "Reinvest", Kind = "info" },
         _ => new Concern { Label = "Review", Kind = "info" },
     };
-
-    private static string SuggestedTopic(string exposureType) => exposureType switch
-    {
-        "long-duration" => "Discuss hedging; mention new 10Y swap axes available.",
-        "swap-book" => "Review swap hedges vs higher terminal rate.",
-        "floating-rate" => "Reinvestment ideas at higher front-end yields.",
-        _ => "Review portfolio positioning vs the rate move.",
-    };
-
-    private static List<string> TalkingPoints(string name, ExposureRow exposure, JsonArray axes)
-    {
-        switch (exposure.ExposureType)
-        {
-            case "long-duration":
-                var hedgeAxis = FindAxis(axes, "duration") ?? FindAxis(axes, "hedge");
-                return
-                [
-                    $"The surprise Fed hike repriced the front end hardest — {name}'s long-duration positions ({exposure.Cusip}) face the most price pressure.",
-                    hedgeAxis is { } ha
-                        ? $"We're showing a {ha.Instrument} axis ({ha.Side}, ${ha.SizeMm:0}mm) that can hedge the duration risk."
-                        : "We can offer a 10Y UST swap to hedge the duration risk.",
-                ];
-            case "swap-book":
-                return
-                [
-                    $"With the Fed signaling a higher terminal rate, {name}'s interest-rate swap book ({exposure.Cusip}) sensitivity is worth reviewing.",
-                    "Relative value favors receiving the belly on the flattening — relevant to the existing swap positions.",
-                ];
-            case "floating-rate":
-                var frontAxis = FindAxis(axes, "front-end");
-                return
-                [
-                    $"Floating-rate coupons reset higher after the hike — {name}'s {exposure.Cusip} position benefits at the next reset.",
-                    frontAxis is { } fa
-                        ? $"Higher front-end yields open reinvestment ideas; the {fa.Instrument} is {fa.Side} here."
-                        : "Higher front-end yields open reinvestment ideas at the short end.",
-                ];
-            default:
-                return [$"Review {name}'s positioning against the overnight rate move."];
-        }
-    }
-
-    private static string Explanation(int rank, double wallet, double engagement, double eventRelevance, double composite, string exposureType)
-    {
-        var driver = exposureType switch
-        {
-            "long-duration" => "direct long-duration price exposure",
-            "swap-book" => "swap-book sensitivity to the higher terminal rate",
-            "floating-rate" => "floating-rate reset / reinvestment angle",
-            _ => "rate-sensitive exposure",
-        };
-        return $"Ranked #{rank}: composite {WalletWeight:0.00}·wallet({wallet:0.00}) + {EngagementWeight:0.00}·engagement({engagement:0.00}) + {EventRelevanceWeight:0.00}·event({eventRelevance:0.00}) = {composite:0.00}, driven by {driver}.";
-    }
-
-    private static AxisRow? FindAxis(JsonArray axes, string tag)
-    {
-        foreach (var a in axes)
-        {
-            if (a is null) continue;
-            var tags = a["relevanceTags"] as JsonArray;
-            if (tags is null) continue;
-            if (tags.Any(t => string.Equals(t?.GetValue<string>(), tag, StringComparison.OrdinalIgnoreCase)))
-            {
-                return new AxisRow(
-                    a["instrument"]?.GetValue<string>() ?? "axis",
-                    a["side"]?.GetValue<string>() ?? "",
-                    (a["size"]?.GetValue<long>() ?? 0) / 1_000_000.0);
-            }
-        }
-        return null;
-    }
 
     private MorningBrief BuildDegraded(string eventId, List<string> notes)
     {
@@ -407,9 +298,7 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
 
     private static string FormatBp(int bp) => $"{(bp >= 0 ? "+" : "")}{bp}bp";
     private static string DirFromBp(int bp) => bp > 0 ? "up" : bp < 0 ? "down" : "flat";
-    private static double Round(double v) => Math.Round(v, 4, MidpointRounding.AwayFromZero);
 
     private readonly record struct ClientRow(string Id, string Name, string Tier, double RevenueYtd, double ShareOfWallet);
     private readonly record struct ExposureRow(string ExposureType, string Sector, string Cusip);
-    private readonly record struct AxisRow(string Instrument, string Side, double SizeMm);
 }

@@ -1,36 +1,52 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Button,
-  CircularProgress,
   Alert,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
+  Box,
+  Button,
   Chip,
+  CircularProgress,
+  Container,
+  LinearProgress,
+  Paper,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import {
   runMorningBrief,
-  type MorningBrief,
   type AffectedClient,
+  type MorningBrief,
   type OutreachItem,
+  type RankingRationale,
 } from '../../api/client';
+import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
+
+const rationaleScores = (rationale: RankingRationale) => [
+  { label: 'Wallet', value: rationale.walletScore },
+  { label: 'Engagement', value: rationale.engagementScore },
+  { label: 'Event relevance', value: rationale.eventRelevanceScore },
+  { label: 'Composite', value: rationale.compositeScore },
+];
+
+function formatScore(score: number): string {
+  return `${Math.round(score * 100)}%`;
+}
 
 export default function MorningBriefScene() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [brief, setBrief] = useState<MorningBrief | null>(null);
+  const [expandedRationaleCid, setExpandedRationaleCid] = useState<string | null>(null);
 
   const handleRunBrief = async () => {
     setLoading(true);
     setError(null);
+    setExpandedRationaleCid(null);
     try {
       const result = await runMorningBrief({
         payload: { eventId: 'fed_surprise_hike', date: '2026-06-04' },
@@ -41,6 +57,10 @@ export default function MorningBriefScene() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleRationale = (cid: string) => {
+    setExpandedRationaleCid((current) => (current === cid ? null : cid));
   };
 
   return (
@@ -86,7 +106,6 @@ export default function MorningBriefScene() {
 
         {brief && (
           <Stack spacing={2}>
-            {/* Agent reasoning */}
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
                 ✦ Agent reasoning
@@ -121,7 +140,6 @@ export default function MorningBriefScene() {
               </Box>
             </Paper>
 
-            {/* Macro narrative */}
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
                 📰 Macro event analysis{' '}
@@ -152,7 +170,6 @@ export default function MorningBriefScene() {
               </Box>
             </Paper>
 
-            {/* Two-column layout: Most-affected clients + Outreach */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper sx={{ height: '100%' }}>
                 <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -219,33 +236,112 @@ export default function MorningBriefScene() {
                     <TableRow>
                       <TableCell sx={{ width: '40px' }}>#</TableCell>
                       <TableCell>Client</TableCell>
-                      <TableCell>Suggested topic</TableCell>
+                      <TableCell>Suggested topic + talking points</TableCell>
+                      <TableCell>Rationale</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {brief.outreach.map((item: OutreachItem) => (
-                      <TableRow key={item.cid}>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
-                          {item.rank}
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {item.name}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.suggestedTopic}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
+                      <Fragment key={item.cid}>
+                        <TableRow>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
+                            {item.rank}
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {item.name}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                              {item.suggestedTopic}
+                            </Typography>
+                            <Box component="ul" sx={{ pl: 2, my: 0 }}>
+                              {item.talkingPoints.map((point, idx) => (
+                                <Typography
+                                  component="li"
+                                  key={idx}
+                                  variant="caption"
+                                  color="text.secondary"
+                                  sx={{ display: 'list-item', mb: 0.5 }}
+                                >
+                                  {point}
+                                </Typography>
+                              ))}
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              type="button"
+                              size="small"
+                              variant="outlined"
+                              onClick={() => toggleRationale(item.cid)}
+                              aria-expanded={expandedRationaleCid === item.cid}
+                              aria-controls={`rationale-${item.cid}`}
+                              sx={{ textTransform: 'none' }}
+                            >
+                              {expandedRationaleCid === item.cid ? 'Hide rationale' : 'Inspect rationale'}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                        {expandedRationaleCid === item.cid && (
+                          <TableRow>
+                            <TableCell colSpan={4} sx={{ py: 0, borderBottomColor: 'rgba(255,255,255,0.08)' }}>
+                              <Box
+                                id={`rationale-${item.cid}`}
+                                sx={{
+                                  my: 1,
+                                  p: 2,
+                                  borderRadius: 2,
+                                  border: '1px solid rgba(255,255,255,0.1)',
+                                  bgcolor: 'rgba(79,140,255,0.08)',
+                                }}
+                              >
+                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                                  Ranking rationale for {item.name}
+                                </Typography>
+                                <Stack spacing={1} sx={{ mb: 1.5 }}>
+                                  {rationaleScores(item.rationale).map((score) => (
+                                    <Box key={score.label}>
+                                      <Box
+                                        sx={{
+                                          display: 'flex',
+                                          justifyContent: 'space-between',
+                                          mb: 0.5,
+                                        }}
+                                      >
+                                        <Typography variant="caption" color="text.secondary">
+                                          {score.label}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                                          {formatScore(score.value)}
+                                        </Typography>
+                                      </Box>
+                                      <LinearProgress
+                                        variant="determinate"
+                                        value={Math.max(0, Math.min(100, score.value * 100))}
+                                        color={score.label === 'Composite' ? 'success' : 'primary'}
+                                        sx={{ height: 6, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.1)' }}
+                                      />
+                                    </Box>
+                                  ))}
+                                </Stack>
+                                <Typography variant="caption" color="text.secondary">
+                                  {item.rationale.explanation}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </Fragment>
                     ))}
                   </TableBody>
                 </Table>
               </Paper>
             </Box>
 
-            {/* Notes (if present) */}
+            <CallPlan outreach={brief.outreach} asOf={brief.asOf} />
+
             {brief.notes && brief.notes.length > 0 && (
               <Alert severity="info" sx={{ fontSize: '13px' }}>
                 <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>

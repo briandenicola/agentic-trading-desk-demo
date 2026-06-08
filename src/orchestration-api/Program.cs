@@ -102,11 +102,22 @@ app.MapPost("/api/agent/morning-brief", async (
         : request!.Payload!.EventId!;
     var date = request?.Payload?.Date;
 
-    var brief = modeOpts.DemoMode
-        ? await composer.ComposeAsync(eventId, date, ct)
-        : await runner.RunAsync(eventId, date, ct);
+    try
+    {
+        var brief = modeOpts.DemoMode
+            ? await composer.ComposeAsync(eventId, date, ct)
+            : await runner.RunAsync(eventId, date, ct);
 
-    return Results.Json(brief, MorningBriefJson.Options);
+        return Results.Json(brief, MorningBriefJson.Options);
+    }
+    catch (UnknownMorningBriefEventException ex)
+    {
+        return Results.Problem(
+            title: "Unknown morning-brief event",
+            detail: $"Could not resolve eventId '{ex.EventId}'. Provide a known mock news event id.",
+            statusCode: StatusCodes.Status400BadRequest,
+            extensions: new Dictionary<string, object?> { ["eventId"] = ex.EventId });
+    }
 });
 
 app.Run();

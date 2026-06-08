@@ -3,6 +3,7 @@ using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using OrchestrationApi.Agents.Demo;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 
@@ -147,14 +148,38 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
             {
                 return Degraded(eventId, "LIVE agent returned no parseable brief.");
             }
-            // Force the mode marker regardless of what the model emitted.
-            return brief with { Mode = "LIVE" };
+            // Force the mode marker and normalize the LIVE ranking envelope regardless of model ordering.
+            return NormalizeLiveBrief(brief);
         }
         catch (JsonException ex)
         {
             logger.LogError(ex, "Could not parse the LIVE agent output as a MorningBrief.");
             return Degraded(eventId, "LIVE agent output did not match the morning-brief schema.");
         }
+    }
+
+    private static MorningBrief NormalizeLiveBrief(MorningBrief brief)
+    {
+        var outreach = brief.Outreach
+            .Select(o =>
+            {
+                var rationale = o.Rationale;
+                var composite = OutreachRanker.CompositeScore(
+                    rationale.WalletScore,
+                    rationale.EngagementScore,
+                    rationale.EventRelevanceScore);
+
+                return o with
+                {
+                    Rationale = rationale with { CompositeScore = composite }
+                };
+            })
+            .OrderByDescending(o => o.Rationale.CompositeScore)
+            .ThenBy(o => o.Cid, StringComparer.Ordinal)
+            .Select((o, i) => o with { Rank = i + 1 })
+            .ToList();
+
+        return brief with { Mode = "LIVE", Outreach = outreach };
     }
 
     private static MorningBrief Degraded(string eventId, string note) => new()

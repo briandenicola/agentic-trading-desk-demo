@@ -124,19 +124,19 @@ talking points tied to each client's axes/holdings.
 `rationale` whose `compositeScore` reflects the documented weighted blend; ordering matches scores.
 
 ### Tests for User Story 2 ⚠️ (write first)
-- [ ] T022 [P] [US2] Ranking test in `tests/orchestration-api.Tests`: composite = 0.4·wallet +
+- [x] T022 [P] [US2] Ranking test in `tests/orchestration-api.Tests`: composite = 0.4·wallet +
       0.3·engagement + 0.3·eventRelevance (±epsilon); `outreach` sorted by rank; ranks contiguous from 1.
-- [ ] T023 [P] [US2] Talking-points test: each `OutreachItem.talkingPoints` references the event and
+- [x] T023 [P] [US2] Talking-points test: each `OutreachItem.talkingPoints` references the event and
       at least one relevant axis/holding for that client.
 
 ### Implementation for User Story 2
-- [ ] T024 [US2] Implement `src/orchestration-api/Agents/Demo/OutreachRanker.cs`: compute
+- [x] T024 [US2] Implement `src/orchestration-api/Agents/Demo/OutreachRanker.cs`: compute
       wallet/engagement/event-relevance + weighted `compositeScore` + `explanation`; produce ordered
       `OutreachItem[]` with `suggestedTopic` and `talkingPoints` (axes/holdings-aware). Wire into the
       DEMO composer (T015).
-- [ ] T025 [US2] Extend `Prompts/morning-brief.md` + `AgentRunner` mapping so LIVE produces the same
+- [x] T025 [US2] Extend `Prompts/morning-brief.md` + `AgentRunner` mapping so LIVE produces the same
       ranked `outreach` shape with rationale and talking points.
-- [ ] T026 [US2] Extend `src/ui-app/src/scenes/MorningBrief/`: ranked outbound-priority table with
+- [x] T026 [US2] Extend `src/ui-app/src/scenes/MorningBrief/`: ranked outbound-priority table with
       suggested topic, talking points, and an inspectable ranking rationale.
 
 **Checkpoint**: US1 + US2 both functional; outreach is ranked, explained, and personalized.
@@ -151,15 +151,15 @@ is sent automatically.
 **Independent Test**: Edit + remove + approve in the UI; approved plan reflects edits; `sent` stays false.
 
 ### Tests for User Story 3 ⚠️ (write first)
-- [ ] T027 [P] [US3] UI test (Vitest/RTL) in `src/ui-app`: editing a talking point and removing a
+- [x] T027 [P] [US3] UI test (Vitest/RTL) in `src/ui-app`: editing a talking point and removing a
       client updates the plan and sets an "edited" state.
-- [ ] T028 [P] [US3] UI test: clicking Approve sets `approvalState=approved` and asserts no outbound
+- [x] T028 [P] [US3] UI test: clicking Approve sets `approvalState=approved` and asserts no outbound
       request is issued (`sent=false`).
 
 ### Implementation for User Story 3
-- [ ] T029 [US3] Implement `CallPlan` UI state in `src/ui-app/src/scenes/MorningBrief/` derived from
+- [x] T029 [US3] Implement `CallPlan` UI state in `src/ui-app/src/scenes/MorningBrief/` derived from
       `outreach` (reorder, remove-client, editable note, approve), demo-only — no outbound action.
-- [ ] T030 [US3] Add the "editable / approved" affordances + human-in-the-loop hint copy matching the
+- [x] T030 [US3] Add the "editable / approved" affordances + human-in-the-loop hint copy matching the
       mockup (`mockup/demos/01-morning-prep.html`).
 
 **Checkpoint**: US1–US3 work independently.
@@ -175,15 +175,15 @@ LIVE and DEMO return the same JSON shape.
 identical output on repeated runs; both modes validate against the same schema.
 
 ### Tests for User Story 4 ⚠️ (write first)
-- [ ] T031 [P] [US4] Determinism test in `tests/orchestration-api.Tests`: two DEMO runs with the same
+- [x] T031 [P] [US4] Determinism test in `tests/orchestration-api.Tests`: two DEMO runs with the same
       input produce byte-identical serialized `MorningBrief` (SC-002).
-- [ ] T032 [P] [US4] Parity test: a DEMO payload and a representative LIVE-shaped payload both pass
+- [x] T032 [P] [US4] Parity test: a DEMO payload and a representative LIVE-shaped payload both pass
       the schema validator (SC-003), and the React renderer is mode-agnostic.
 
 ### Implementation for User Story 4
-- [ ] T033 [US4] Ensure `DEMO_MODE=1` default + a no-credential code path (no `DefaultAzureCredential`
+- [x] T033 [US4] Ensure `DEMO_MODE=1` default + a no-credential code path (no `DefaultAzureCredential`
       acquisition in DEMO); deterministic ordering/text + stable JSON serialization options.
-- [ ] T034 [US4] Add empty-state handling (no materially-affected clients → empty lists + `notes`)
+- [x] T034 [US4] Add empty-state handling (no materially-affected clients → empty lists + `notes`)
       and unknown-`eventId` → structured 400, per spec Edge Cases.
 
 **Checkpoint**: Demo is stage-safe (deterministic, offline) with full mode parity.

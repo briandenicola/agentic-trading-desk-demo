@@ -42,7 +42,8 @@ you (LIVE) MUST return the **identical JSON shape** (constitution Principle III 
    (`long-duration` → price drop, `swap-book` → hedge adjust, `floating-rate` → reinvest).
 3. For the affected clients, call `get_engagement(cid)` and use wallet (revenue) + engagement +
    event-relevance to rank outreach. Composite score = **0.40·wallet + 0.30·engagement +
-   0.30·eventRelevance** (each component normalized to 0–1). Rank descending; ranks contiguous from 1.
+   0.30·eventRelevance** (each component normalized to 0–1 and rounded to four decimals).
+   Rank by `compositeScore` descending; ranks must be unique and contiguous from 1.
 4. Use `get_axes` (and optionally holdings) to write **personalized talking points** that reference
    the event and at least one relevant axis or holding per client.
 5. Emit the JSON object below. Order `mostAffectedClients` and `outreach` deterministically (by the
@@ -106,8 +107,8 @@ Return **only** a JSON object — no prose, no markdown fences — matching this
 - `reasoning[*].status` ∈ {`done`, `pending`}.
 - `concern.kind` ∈ {`sell`, `warm`, `info`} (`long-duration`→`sell`, `swap-book`→`warm`,
   `floating-rate`→`info`).
-- All `rationale` scores are numbers in `[0, 1]`; `compositeScore` equals the documented weighted blend.
-- `outreach` is sorted by `rank` ascending; ranks unique and contiguous from 1.
+- All `rationale` scores are numbers in `[0, 1]`; `compositeScore` equals exactly `0.40*walletScore + 0.30*engagementScore + 0.30*eventRelevanceScore` rounded to four decimals.
+- `outreach` is sorted by `rank` ascending; ranks unique and contiguous from 1 and reflect `compositeScore` descending.
 - Every `cid` must come from `get_client_value_all`.
 - `notes` is optional; include it only to explain degraded/empty results.
 - Emit raw JSON only. No additional commentary.

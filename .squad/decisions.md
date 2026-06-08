@@ -38,3 +38,13 @@
   Also note: POST /api/agent/morning-brief returns HTTP 400 (empty body) when a JSON body is supplied, but HTTP 200 with the full DEMO brief on an empty body (request defaults to the fed_surprise_hike scenario). Request-body binding for MorningBriefRequest appears broken (likely trimming/source-gen) — human follow-up.
   Build context note: repo lives under OneDrive Files-On-Demand; files were reparse-point placeholders that `az acr build`'s tar packer skipped. Resolved by staging a robocopy'd clean (non-reparse) copy as the build context.
 **Why:** Required to produce working container images and a reachable public endpoint for the DEMO validation.
+
+### 2026-06-08: US2/US4 morning-brief ranking parity — Livingston
+**Decision:** Extract DEMO ranking into a pure `OutreachRanker` fed by composer-fetched mock-api HTTP data; normalize LIVE composite scores/ranks with the same 0.40 wallet / 0.30 engagement / 0.30 event-relevance blend; map unresolved `/mock/news/{event_id}` 404s to structured HTTP 400 ProblemDetails instead of degraded 200.
+
+**Rationale:** Keeps Principle II data access intact, enforces Principle III shape/ranking parity, and makes unknown event ids actionable per spec Edge Cases/FR-011.
+
+### 2026-06-08: US2/US3 frontend call-plan interaction — Linus
+**Decision:** Keep the editable outreach plan entirely local to `src\ui-app`, derived from `MorningBrief.outreach`, with `approvalState`, `edited`, and `sent=false` UI state only. Approval does not call the API; tests assert the API client only posts for the initial morning-brief fetch. Vitest inlines MUI/react-transition-group dependencies for jsdom because MUI v9's ESM transition import is not directly resolvable by Node's externalized test runner.
+
+**Rationale:** Satisfies US3/FR-007/SC-004 and constitution Principle III by keeping the renderer mode-blind and the human-in-the-loop approval demo-only while preserving a testable no-outbound guarantee.
