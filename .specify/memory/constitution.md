@@ -4,7 +4,12 @@
 > Every AI agent session must read this file first. Every PR must comply.
 > Deviations require an explicit, documented waiver (ADR — see §22).
 
-**Version**: 0.1.0 | **Ratified**: 2026-06-04 | **Last Amended**: 2026-06-04
+**Version**: 0.2.1 | **Ratified**: 2026-06-04 | **Last Amended**: 2026-06-08
+
+> **v0.2.0 amendment (ADR-0002)**: The primary stack is **C#/.NET 10 + Microsoft Agent Framework +
+> Azure AI Foundry + Azure Container Apps**, modeled on `briandenicola/online-banking-demo`. Where
+> this document still reads "Python/FastAPI/`api/`/`frontend/`/`pytest`/`ruff`", apply the .NET
+> equivalents defined in Principle V and §17. See `docs/adr/0002-csharp-foundry-aca-stack.md`.
 
 ## §0. Hierarchy of Authority
 
@@ -33,12 +38,13 @@ higher artifact (§22). Highest authority first:
 **Rationale**: Traceability from intent to code keeps the project focused and auditable.
 
 ### II. Three-Layer Architecture
-- Layers: `Experience (frontend/) → Agents (api/agents/) → Mock Data (api/routers/ + api/mock_data/)`.
+- Layers: `Experience (src/ui-app/) → Agents (src/orchestration-api/) → Mock Data (src/mock-api/)`.
   Dependencies flow left-to-right only.
 - The **frontend is mode-blind**: it never knows whether it's talking to LIVE or DEMO mode.
-- **Tools call data over HTTP** — never read fixtures in-process. The seam is `api/data.py`;
-  replace its bodies with real connectors to go live, leave signatures intact.
-- FastAPI routers stay thin; logic lives in `api/agents/`.
+- **Tools call data over HTTP** — never read fixtures in-process. The seam is the mock API's HTTP
+  surface; orchestration tools reach it via a typed `HttpClient`. Replace the `src/mock-api/Data/`
+  loaders with real connectors to go live, leave the endpoint contracts intact.
+- Minimal-API endpoints stay thin; logic lives in `src/orchestration-api/Agents/`.
 
 **Rationale**: This layering means we can swap mock → real systems without touching agents or frontend.
 
@@ -58,35 +64,40 @@ higher artifact (§22). Highest authority first:
 
 **Rationale**: Secrets in code are the #1 security vulnerability in demos that go live.
 
-### V. Python & FastAPI Standards
-- **Python 3.11+**, type hints everywhere, Pydantic v2 for models.
-- `ruff` for linting and formatting (replaces black, isort, flake8).
-- Async where beneficial; sync is fine for tool functions calling httpx.
-- Prefer small, typed functions with docstrings.
-- Dependencies pinned in `requirements.txt` (or `pyproject.toml` when migrated).
-- `uvicorn` for dev server; target runtime is Azure App Service or Container Apps.
+### V. .NET & C# Standards *(amended v0.2.0, ADR-0002)*
+- **C# / .NET 10** (`net10.0`), `global.json` pinned; `Nullable` and `ImplicitUsings` enabled.
+- **Central package management**: `Directory.Packages.props` at the repo root; no `Version` on
+  individual `<PackageReference>`.
+- Agents use the **Microsoft Agent Framework** (`Microsoft.Agents.AI`, `Microsoft.Agents.AI.AzureAI`)
+  with **Azure AI Foundry** via `Azure.AI.Agents.Persistent` / `Azure.AI.Projects` and
+  `Azure.Identity.DefaultAzureCredential`.
+- `dotnet format` for style; structured logging + tracing via **Serilog + OpenTelemetry** through a
+  shared `src/shared/Observability` library; expose `/healthz` and `/readyz`.
+- Multi-stage **Alpine** Docker images (`sdk:10.0-alpine` → `aspnet:10.0-alpine`) running **non-root**.
+- The React UI uses React 19 + MUI v9 + TypeScript. Python is acceptable only for auxiliary scripts.
 
-**Rationale**: Consistent tooling reduces cognitive load and CI failures.
+**Rationale**: Consistent tooling reduces cognitive load and CI failures, and mirrors the reference
+architecture (`briandenicola/online-banking-demo`).
 
 ### VI. API-First & Schema-Driven Contracts
 - The agent tool spec lives in `openapi/tools.yaml` — it is the contract for all tools.
 - Tools are importable into Azure AI Foundry or wrappable as MCP servers.
-- Every new tool must be added to both `api/agents/tools.py` AND `openapi/tools.yaml`.
+- Every new tool must be added to both `src/orchestration-api/Agents/Tools/` AND `openapi/tools.yaml`.
 
 **Rationale**: A stable, explicit contract enables Foundry/MCP integration without code changes.
 
 ### VII. Testing Discipline
-- **Test pyramid**: unit (fast, no I/O) → integration (TestClient) → E2E (curl examples).
-- Tests run with `pytest`. Use `pytest-asyncio` for async tests.
-- Coverage target: 80%+ on `api/agents/` and `api/routers/`.
+- **Test pyramid**: unit (fast, no I/O) → integration (in-memory test host) → E2E (curl examples).
+- Tests run with `xunit` (.NET) and `vitest` + React Testing Library (UI).
+- Coverage target: 80%+ on `src/orchestration-api/` and `src/mock-api/`.
 - Every new scene or tool must have at least one demo-mode integration test.
 
 **Rationale**: A trustworthy test suite is the safety net for autonomous AI changes.
 
 ### VIII. Error Handling & Observability
 - API errors as structured JSON (not HTML error pages).
-- Structured logging via Python `logging`; never log secrets or PII.
-- `MAX_TOOL_HOPS` in runner.py caps runaway tool loops.
+- Structured logging via **Serilog**; never log secrets or PII.
+- `MAX_TOOL_HOPS` in `AgentRunner.cs` caps runaway tool loops.
 
 **Rationale**: Observable systems are debuggable systems.
 
@@ -98,11 +109,11 @@ higher artifact (§22). Highest authority first:
 **Rationale**: Even demos get cloned and deployed — secure-by-default prevents incidents.
 
 ### X. Extension Surface (Adding Scenes & Data Sources)
-- **New scene**: (1) prompt in `api/agents/prompts/<scene>.md`, (2) registry entry,
-  (3) demo composer in `demo.py`, (4) frontend fetch + render.
-- **New data source**: (1) fixture in `api/mock_data/`, (2) loader in `data.py` + route
-  in `routers/mock.py`, (3) tool wrapper + schema in `tools.py`, (4) operation in
-  `openapi/tools.yaml`.
+- **New scene**: (1) prompt in `src/orchestration-api/Prompts/<scene>.md`, (2) registry/DI entry,
+  (3) demo composer in `src/orchestration-api/Agents/Demo/`, (4) frontend fetch + render.
+- **New data source**: (1) fixture in `src/mock-api/Data/`, (2) loader + endpoint in
+  `src/mock-api/Endpoints/`, (3) tool wrapper + schema in `src/orchestration-api/Agents/Tools/`,
+  (4) operation in `openapi/tools.yaml`.
 - Keep changes small and traceable; one scene or data source per PR.
 
 **Rationale**: A documented extension surface lowers the bar for new contributors.
@@ -120,9 +131,10 @@ higher artifact (§22). Highest authority first:
 
 Every PR MUST pass before merge:
 
-- [ ] `ruff check .` clean (no lint errors)
-- [ ] `ruff format --check .` clean (formatting)
-- [ ] `pytest` passes
+- [ ] `dotnet format --verify-no-changes` clean (style) and ESLint/Prettier clean for the UI
+- [ ] `dotnet build` clean (no warnings-as-errors violations)
+- [ ] `dotnet test` (xunit) passes; UI Vitest/RTL passes
+- [ ] `terraform fmt -check` and `terraform validate` clean (for `infra/` changes)
 - [ ] `gitleaks` secret scan clean
 - [ ] LIVE and DEMO modes return same JSON shape for affected scenes
 - [ ] `openapi/tools.yaml` updated if tools changed
@@ -157,8 +169,8 @@ Every PR MUST pass before merge:
 
 ## §21. Definition of Done
 A task is **done** only when:
-1. Code passes `ruff check` and `ruff format --check`.
-2. `pytest` passes for touched modules.
+1. Code passes `dotnet format --verify-no-changes` (and `eslint` for the React UI).
+2. `dotnet test` / `vitest` passes for touched modules.
 3. LIVE/DEMO parity confirmed for affected scenes.
 4. `openapi/tools.yaml` updated if tools changed.
 5. Active `specs/NNN-*/tasks.md` items checked off.
@@ -176,3 +188,5 @@ A task is **done** only when:
 | Version | Date | Change |
 |---------|------|--------|
 | 0.1.0 | 2026-06-04 | Initial constitution from template starter, adapted for Python/FastAPI. |
+| 0.2.0 | 2026-06-08 | Amended to C#/.NET 10 + Microsoft Agent Framework + Azure AI Foundry + Azure Container Apps (Principle V, §17). See ADR-0002. |
+| 0.2.1 | 2026-06-08 | Doc-drift cleanup: replaced residual Python/FastAPI paths & tooling in Principles II, VI, VII, VIII, X and §21 with their C#/.NET `src/` equivalents (ADR-0002). |

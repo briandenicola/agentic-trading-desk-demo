@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Morning Brief — Orchestration API (agent scene endpoint)
+  version: 0.1.0
+  description: >
+    The single scene endpoint the React cockpit calls. The orchestration API runs the Morning Brief
+    agent on Azure AI Foundry (LIVE) or a deterministic composer (DEMO) and returns an identical
+    MorningBrief shape in both modes (constitution Principle III / FR-010). The agent reaches data
+    only through the mock system-of-record APIs defined in ../../../openapi/tools.yaml (FR-002).
+servers:
+  - url: /api
+paths:
+  /agent/morning-brief:
+    post:
+      operationId: run_morning_brief
+      summary: Produce the morning brief (macro narrative + most-affected clients + ranked outreach).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+                  properties:
+                    eventId:
+                      type: string
+                      description: Market event to brief on. Defaults to the demo Fed-hike scenario.
+                      example: fed_surprise_hike
+                    date:
+                      type: string
+                      format: date
+                      description: Trading day. Defaults to the demo date.
+      responses:
+        "200":
+          description: A complete morning brief.
+          content:
+            application/json:
+              schema:
+                $ref: "./morning-brief.schema.json"
+        "400":
+          description: Structured error (e.g., unresolved event id).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error: { type: string }
+                  correlationId: { type: string }
+        "502":
+          description: Upstream mock/tool failure (structured JSON, not HTML).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error: { type: string }
+                  correlationId: { type: string }
+  /healthz:
+    get:
+      operationId: healthz
+      summary: Liveness probe.
+      responses:
+        "200": { description: OK }
+  /readyz:
+    get:
+      operationId: readyz
+      summary: Readiness probe.
+      responses:
+        "200": { description: Ready }

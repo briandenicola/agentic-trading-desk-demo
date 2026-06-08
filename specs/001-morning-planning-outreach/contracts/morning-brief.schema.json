@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wf-garage/contracts/morning-brief.schema.json",
+  "title": "MorningBrief",
+  "description": "Response contract for POST /api/agent/morning-brief. Identical shape in DEMO and LIVE modes (constitution Principle III / FR-010).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mode", "asOf", "marketStrip", "reasoning", "macroNarrative", "mostAffectedClients", "outreach"],
+  "properties": {
+    "mode": { "type": "string", "enum": ["DEMO", "LIVE"] },
+    "asOf": { "type": "string", "format": "date-time" },
+    "marketStrip": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "value", "direction"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "change": { "type": "string" },
+          "direction": { "type": "string", "enum": ["up", "down", "flat"] }
+        }
+      }
+    },
+    "reasoning": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "status"],
+        "properties": {
+          "text": { "type": "string" },
+          "status": { "type": "string", "enum": ["done", "pending"] }
+        }
+      }
+    },
+    "macroNarrative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "whyItMatters", "sources"],
+      "properties": {
+        "summary": { "type": "string" },
+        "whyItMatters": { "type": "string" },
+        "sources": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "mostAffectedClients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cid", "name", "tier", "exposure", "concern"],
+        "properties": {
+          "cid": { "type": "string" },
+          "name": { "type": "string" },
+          "tier": { "type": "string" },
+          "exposure": { "type": "string" },
+          "concern": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "kind"],
+            "properties": {
+              "label": { "type": "string" },
+              "kind": { "type": "string", "enum": ["sell", "warm", "info"] }
+            }
+          }
+        }
+      }
+    },
+    "outreach": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "cid", "name", "suggestedTopic", "talkingPoints", "rationale"],
+        "properties": {
+          "rank": { "type": "integer", "minimum": 1 },
+          "cid": { "type": "string" },
+          "name": { "type": "string" },
+          "suggestedTopic": { "type": "string" },
+          "talkingPoints": { "type": "array", "items": { "type": "string" } },
+          "rationale": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["walletScore", "engagementScore", "eventRelevanceScore", "compositeScore", "explanation"],
+            "properties": {
+              "walletScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "engagementScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "eventRelevanceScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "compositeScore": { "type": "number", "minimum": 0, "maximum": 1 },
+              "explanation": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}
