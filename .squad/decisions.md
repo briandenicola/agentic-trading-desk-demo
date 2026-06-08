@@ -48,3 +48,8 @@
 **Decision:** Keep the editable outreach plan entirely local to `src\ui-app`, derived from `MorningBrief.outreach`, with `approvalState`, `edited`, and `sent=false` UI state only. Approval does not call the API; tests assert the API client only posts for the initial morning-brief fetch. Vitest inlines MUI/react-transition-group dependencies for jsdom because MUI v9's ESM transition import is not directly resolvable by Node's externalized test runner.
 
 **Rationale:** Satisfies US3/FR-007/SC-004 and constitution Principle III by keeping the renderer mode-blind and the human-in-the-loop approval demo-only while preserving a testable no-outbound guarantee.
+
+### 2026-06-08: Phase 8 polish realizes Foundry + ACA backlog — Scribe/QA
+**Decision:** Mark `specs\_backlog\007-foundry-migration.md` and `specs\_backlog\003-container-deployment.md` as delivered/realized by `specs\001-morning-planning-outreach\` (ADR-0002 stack: C#/.NET 10, Microsoft Agent Framework, Azure AI Foundry, Azure Container Apps).
+
+**Rationale:** Demo 1 now contains the Foundry LIVE path + agent provisioner, deterministic DEMO path, Terraform ACA deployment, Key Vault secret references, CI/CD wiring, and non-root runtime Dockerfiles required by the backlog cards and constitution FR-014 / §17.

@@ -1,6 +1,5 @@
-fastapi>=0.111
-uvicorn[standard]>=0.30
-httpx>=0.27
-pydantic>=2.7
-# Only needed for LIVE agent mode (Azure OpenAI). Demo mode runs without it.
-openai>=1.40
+# Retired by ADR-0002.
+#
+# WF-Garage is now a C#/.NET 10 + React + Azure AI Foundry + Azure Container Apps project.
+# Python dependencies are not required for the application runtime. This file remains as a
+# compatibility marker for older backlog/spec references; do not add app dependencies here.

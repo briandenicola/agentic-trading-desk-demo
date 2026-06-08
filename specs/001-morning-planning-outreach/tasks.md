@@ -225,14 +225,14 @@ Many tasks are [P] (different files); ACA deploy depends on Dockerfiles + built 
 
 ## Phase 8: Polish & Cross-Cutting
 
-- [ ] T043 [P] Update `README.md` for the C#/Foundry/ACA stack; align `.github/copilot-instructions.md`
+- [x] T043 [P] Update `README.md` for the C#/Foundry/ACA stack; align `.github/copilot-instructions.md`
       and `.env.example`; remove/retire Python-only `requirements.txt` references (ADR-0002).
-- [ ] T044 [P] Tighten CORS for deployment; confirm containers run non-root; `gitleaks detect` clean
+- [x] T044 [P] Tighten CORS for deployment; confirm containers run non-root; `gitleaks detect` clean
       (FR-013/014, SC-006).
 - [ ] T045 Run `quickstart.md` validation end-to-end (DEMO local, then cloud); record results.
-- [ ] T046 [P] Move `007-foundry-migration` / `003-container-deployment` backlog cards to reflect that
+- [x] T046 [P] Move `007-foundry-migration` / `003-container-deployment` backlog cards to reflect that
       this feature realizes them; note in `.squad/decisions.md`.
-- [ ] T047 [P] Add a DEMO-mode performance check asserting `POST /api/agent/morning-brief` returns and
+- [x] T047 [P] Add a DEMO-mode performance check asserting `POST /api/agent/morning-brief` returns and
       the brief renders in **< 10s** (SC-001): a timed xUnit assertion in `orchestration-api.Tests/`
       plus a note in the T045 quickstart validation.
 

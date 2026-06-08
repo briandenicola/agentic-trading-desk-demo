@@ -24,8 +24,12 @@ COPY nginx.conf /etc/nginx/templates/default.conf.template
 # Default orchestration API URL (will be substituted at runtime)
 ENV ORCHESTRATION_API_URL=http://orchestration-api:8080
 
-# nginx:alpine runs master process as root, workers as nginx user
-# Listening on 8080 (non-privileged port) is acceptable
+# Run nginx on an unprivileged port as the non-root nginx user.
+ARG APP_UID=101
+RUN mkdir -p /var/cache/nginx /var/run /var/log/nginx /etc/nginx/conf.d \
+    && chown -R $APP_UID:0 /usr/share/nginx/html /etc/nginx/templates /etc/nginx/conf.d /var/cache/nginx /var/run /var/log/nginx
+USER $APP_UID
+
 EXPOSE 8080
 
 # nginx image default entrypoint handles envsubst for templates

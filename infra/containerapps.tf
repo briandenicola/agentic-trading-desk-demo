@@ -103,6 +103,11 @@ resource "azurerm_container_app" "orchestration_api" {
       }
 
       env {
+        name  = "CORS_ALLOWED_ORIGINS"
+        value = local.ui_app_origin
+      }
+
+      env {
         name        = "FOUNDRY_PROJECT_ENDPOINT"
         secret_name = "foundry-project-endpoint"
       }

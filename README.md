@@ -1,88 +1,87 @@
-# Client CV — Muni Sales Agentic Demo
+# WF-Garage — Morning Planning & Prioritized Outreach
 
-A working demo that turns the clickable **Client CV** storyboard into a real
-multi-agent app: specialist agents serve a sales-desk cockpit with data pulled
-from mock "system of record" APIs. Built from the Municipal Head of Sales
-interview; **all data is fictional**.
+Interactive **Client CV** demo for a Municipal Sales desk. The React cockpit runs a morning brief that combines a market narrative, affected fictional clients, ranked outreach, and an editable human-in-the-loop call plan.
 
-> Runs **offline out of the box** (deterministic demo mode). Add Azure OpenAI
-> credentials to switch on real agent reasoning.
+> All demo data is fictional. DEMO mode is deterministic, offline, and the default.
+
+## Stack
+
+- **Agents/API**: C# / .NET 10, Microsoft Agent Framework, Azure AI Foundry in LIVE mode
+- **UI**: React 19 + TypeScript + MUI v9
+- **Mock systems of record**: C# Minimal API serving fictional fixtures through `openapi/tools.yaml` endpoints
+- **Runtime**: Azure Container Apps, ACR, Key Vault, managed identity, Terraform
+- **Observability**: Serilog + OpenTelemetry via `src\shared\Observability`
 
 ## Architecture
 
 ```
-Experience      frontend/  (cockpit)  ── fetch ──►  POST /api/agent/{scene}
-                                                          │
-Agents          api/agents/  orchestrator + 4 specialist agents
-                  prioritization · exposure · allocation · client360
-                  LIVE: Azure OpenAI tool-calling   DEMO: deterministic composer
-                                                          │  tool calls
-Mock data        api/routers/mock.py  +  api/mock_data/*.json
-                  /tableau /dynamics /trading /calendar /marketdata /coalition
+src\ui-app\  ── /api/agent/morning-brief ──►  src\orchestration-api\
+                                                     │
+                         DEMO: deterministic C# composer
+                         LIVE: Foundry agent + tool-calling loop
+                                                     │ HTTP only
+                                                     ▼
+                                      src\mock-api\ implements openapi\tools.yaml
 ```
 
-The agents reach data only through the mock REST APIs, so the "served via APIs"
-contract holds whether the backend is fixtures (today) or real Tableau /
-Dynamics / trading systems (later). See `openapi/tools.yaml` for the tool spec
-(importable into Azure AI Foundry or wrappable as MCP).
+The frontend is mode-blind: DEMO and LIVE return the same `MorningBrief` JSON shape. The orchestration API reaches data only through the mock API HTTP seam; it never reads fixtures in-process.
 
-## Scenes → agents
+## Quickstart — local DEMO mode
 
-| Scene | Agent | Tools |
-|-------|-------|-------|
-| 1 · Morning prioritization | Prioritization | client value, axes, calendar, market data |
-| 3 · Breaking news → exposure | Exposure | news, holdings search, relative value, client value |
-| 4 · New-issue allocation | Allocation | new issues, client value, Coalition |
-| 5 · Meeting prep / Client360 | Client360 | client value, engagement, Coalition |
+Prerequisites: .NET 10 SDK, Node.js 20+, Docker Desktop, and `go-task`.
 
-## Quickstart
+```powershell
+Copy-Item .env.example .env
 
-```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn api.main:app --reload --port 8000
-# open http://localhost:8000/
+task local:up
+# open http://localhost:8080
 ```
 
-That's it — demo mode needs no keys. Try the agents directly:
+Try the scene through the UI reverse proxy:
 
-```bash
-curl -X POST localhost:8000/api/agent/exposure  -H "content-type: application/json" -d '{"payload":{"event":"IL_GO_downgrade"}}'
-curl -X POST localhost:8000/api/agent/client360 -H "content-type: application/json" -d '{"payload":{"client":"KEYS"}}'
+```powershell
+curl.exe -X POST http://localhost:8080/api/agent/morning-brief
 ```
 
-## Turn on live agents
+DEMO mode needs no Azure credentials. It defaults to `DEMO_MODE=1` and produces repeatable output for on-stage use.
 
-```bash
-cp .env.example .env        # fill in AZURE_OPENAI_* values
-# unset DEMO_MODE, then restart uvicorn
+## LIVE mode
+
+Set `DEMO_MODE=0` and provide `FOUNDRY_PROJECT_ENDPOINT` plus `FOUNDRY_MODEL` (typically from `terraform -chdir=infra output`). LIVE uses `DefaultAzureCredential` with the Foundry project and the same mock API tools, capped by `MAX_TOOL_HOPS`.
+
+## Deploy to Azure Container Apps
+
+```powershell
+task cloud:up
+task build:all
+task cloud:deploy
+task cloud:output-env
+terraform -chdir=infra output -raw ui_app_url
 ```
 
-LIVE mode runs a real tool-calling loop: the model decides which mock APIs to
-call, reads the data, and synthesizes the ranking / exposure / allocation /
-talking points. Same JSON shape as demo mode, so the frontend is unchanged.
+Terraform provisions the Container Apps environment, ACR, Key Vault, managed identity, App Insights, and optional Azure AI Foundry resources. Only `ui-app` has public ingress; the APIs are internal.
 
-> **On stage:** set `DEMO_MODE=1` for deterministic, repeatable runs even with a
-> key configured. Live LLM calls are the #1 live-demo failure point.
+## Quality gates
 
-## Extending
-Adding a scene or a data source is a 3–4 file change — see
-`.github/copilot-instructions.md`, which also steers GitHub Copilot as you build.
+```powershell
+dotnet build WF-Garage.sln --nologo
+dotnet test WF-Garage.sln --nologo
+npm --prefix src\ui-app test
+terraform -chdir=infra fmt -check
+terraform -chdir=infra validate
+gitleaks detect --source . --no-banner
+```
 
 ## Layout
+
 ```
-api/
-  main.py              FastAPI app (mounts mock APIs, agents, frontend)
-  data.py              fixture loader  ← swap for real connectors to go live
-  mock_data/*.json     fictional clients, holdings, axes, deals, news, benchmarks
-  routers/mock.py      mock system-of-record REST APIs
-  routers/agents.py    POST /api/agent/{scene}
-  agents/
-    registry.py        scene → prompt + tools
-    tools.py           tool fns over the mock APIs + JSON schemas
-    runner.py          LIVE (Azure OpenAI) + DEMO mode
-    demo.py            deterministic composers
-    prompts/*.md       the editable agent instructions
-frontend/              the cockpit + fetch-wiring example
-openapi/tools.yaml     tool spec for Foundry / MCP import
+src\ui-app\              React cockpit and nginx reverse proxy
+src\orchestration-api\   POST /api/agent/morning-brief, DEMO/LIVE runner
+src\mock-api\            fictional system-of-record endpoints
+src\agent-provisioner\   idempotent Foundry agent registration job
+src\shared\Observability\ Serilog, OTEL, correlation id, JSON errors
+infra\                   Terraform for ACA, ACR, Key Vault, Foundry
+tasks\                   Taskfile includes for local, build, and cloud workflows
+contracts\               morning-brief and agent API schemas
+openapi\tools.yaml       tool contract for Foundry/MCP import
 ```

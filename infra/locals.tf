@@ -25,6 +25,10 @@ locals {
   # Model deployment name (used as FOUNDRY_MODEL env var)
   model_deployment_name = "${var.foundry_model}-deployment"
 
+  # Public HTTPS origin for the UI app. Derive from the Container Apps
+  # environment domain to avoid a ui-app <-> orchestration-api dependency cycle.
+  ui_app_origin = "https://${local.ui_app_name}.${azurerm_container_app_environment.main.default_domain}"
+
   # Common tags
   common_tags = merge(
     var.tags,
