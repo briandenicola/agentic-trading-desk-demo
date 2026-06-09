@@ -1,13 +1,25 @@
 # Architecture — Agents, Orchestration & Traceability
 
 > All demo data is fictional. DEMO mode is deterministic, offline, and the default;
-> LIVE mode engages Azure AI Foundry. Both return the same `MorningBrief` JSON shape
-> (Principle III / FR-010).
+> LIVE mode engages Azure AI Foundry. For each scene, DEMO and LIVE return the same
+> JSON shape (Principle III / FR-010): `RmBriefing` for the RM Daily Briefing and
+> `MorningBrief` for the municipal morning brief.
+
+## Scenes & datasets
+
+| Scene | Endpoint | Output | Data family (`mock-api`) |
+|---|---|---|---|
+| **RM Daily Briefing** (PRIMARY — "Morning Planning & Prioritized Outreach") | `POST /api/agent/rm-briefing` | `RmBriefing` | Commercial Banking RM — `/mock/cb/*` (customers, RMs, opportunities, complaints, interactions) |
+| **Morning Brief** (municipal cross-asset) | `POST /api/agent/morning-brief` | `MorningBrief` | `/mock/{tableau,dynamics,trading,calendar,marketdata,news,coalition}/*` |
+| **Trading cockpit** (Capital Markets) | (UI/tools) | — | Trading Desk — `/mock/td/*` (clients, securities, trades, rfqs, crm, holdings, inventory, inquiries, news, research, narrative-themes) |
+
+The course-correction datasets (`/mock/cb/*`, `/mock/td/*`) come from real client sample
+data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original tools.
 
 ## Three-layer flow
 
 ```
-src\ui-app\ ─ POST /api/agent/morning-brief ─► src\orchestration-api\
+src\ui-app\ ─ POST /api/agent/{rm-briefing,morning-brief} ─► src\orchestration-api\
                                                      │
                             DEMO: deterministic C# composer (offline)
                             LIVE: Foundry agent + client-side tool loop
@@ -42,25 +54,32 @@ UI → orchestration-api (Container App)
 
 ## Agent persistence (Foundry)
 
-The morning-brief agent is **persistent** in Foundry — registered once, reused on every request.
+Each scene's agent is **persistent** in Foundry — registered once, reused on every request.
 
 - **`src\agent-provisioner\`** is the single registrar. It idempotently creates/updates the
-  persistent agent named `morning-brief` (instructions from `Prompts\morning-brief.md`, model
-  `FOUNDRY_MODEL`). It runs as a Container Apps **Job** in FULL mode (`task cloud:provision`).
-- **`AgentRunner`** (runtime) looks the agent up **by name** via `PersistentAgentsAdministrationClient`
-  and reuses it through `AIProjectClient.GetAIAgentAsync(id, tools)`, attaching the mock-api tools
-  for client-side execution. If the agent is not found (provisioner has not run yet) it falls back to
-  creating one so LIVE still works.
+  persistent agent(s) on the **new Foundry surface** (versioned "prompt" agents), with
+  instructions from the matching `Prompts\*.md` and model `FOUNDRY_MODEL`. It runs as a
+  Container Apps **Job** in FULL mode (`task cloud:provision`).
+- **`AgentRunner`** (morning brief) and **`RmAgentRunner`** (RM daily briefing) look the agent up
+  **by name** via `AIProjectClient.GetAIAgentAsync(name, tools)` and reuse it, attaching the
+  mock-api tools for client-side execution. If the agent is not found (provisioner has not run yet)
+  they fall back to `CreateAIAgentAsync(name, model, instructions, …)` so LIVE still works.
 
-This replaces the earlier per-request `CreateAIAgentAsync` pattern, which created a brand-new agent
-on every call — those agents accumulated in the project and fragmented run history. With a single
-persistent agent, **all runs/threads appear under one agent** in the Foundry portal.
+Both runners use **only** the new-Foundry surface — the same one the reference
+`online-banking-demo` uses. The earlier classic Assistants (`/assistants`) path was removed in the
+Foundry surface fix, so the runtime and the provisioner now register/resolve agents on the same
+surface and all runs/threads appear under one agent per scene in the Foundry portal.
 
-### The 7 tools
+### The tools
 
-`get_market_data`, `get_news`, `get_relative_value`, `get_client_value_all`, `get_engagement`,
-`search_holdings`, `get_axes` — wrappers over `openapi\tools.yaml` endpoints. They never throw;
-failures return a structured `{"error": …}` object so the loop degrades gracefully (FR-011).
+- **Morning brief** (`MorningBriefTools`): `get_market_data`, `get_news`, `get_relative_value`,
+  `get_client_value_all`, `get_engagement`, `search_holdings`, `get_axes`.
+- **RM daily briefing** (`RmBriefingTools`): `get_rm_book`, `get_open_opportunities`,
+  `get_active_complaints`, `get_due_followups`, `get_customer`, `get_customer_opportunities`,
+  `get_customer_interactions`.
+
+All are wrappers over `openapi\tools.yaml` endpoints. They never throw; failures return a
+structured `{"error": …}` object so the loop degrades gracefully (FR-011).
 
 ## Traceability (current state)
 
@@ -71,10 +90,9 @@ failures return a structured `{"error": …}` object so the loop degrades gracef
 - OpenTelemetry tracing/metrics with ASP.NET Core + outbound-HTTP instrumentation, so tool calls
   surface as HTTP dependency spans.
 - The persistent agent's runs and tool-call steps are visible natively in the **Foundry portal**
-  (thread/run view). The runtime reuses the `morning-brief` agent by name when it is found;
-  otherwise it falls back to creating one per run. (A reuse gap — the runtime not finding the
-  provisioner-registered agent — is currently under investigation; it does not affect the
-  per-request trace correlation below.)
+  (thread/run view). The runtime reuses the scene's agent (`morning-brief` / `rm-daily-briefing`) by
+  name when it is found; otherwise it falls back to creating one. Runtime and provisioner now use the
+  same new-Foundry surface, so the earlier reuse gap is resolved.
 - **Azure Monitor OpenTelemetry exporter** (`Azure.Monitor.OpenTelemetry.Exporter`) attaches
   automatically when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set, so traces **and** metrics flow
   to Application Insights in the container apps. The OTLP exporter still attaches in parallel when
@@ -84,12 +102,12 @@ failures return a structured `{"error": …}` object so the loop degrades gracef
   `.AsBuilder().UseOpenTelemetry(sourceName: "WF.Garage.Orchestration", …)`, emitting `gen_ai.*`
   spans (model, tool selection, token usage). `EnableSensitiveData` captures prompts/responses
   (data is fictional) and is gated by `OTEL_CAPTURE_MESSAGE_CONTENT` (default on).
-- **Agent-run span**: each LIVE morning brief opens one `morning_brief.run` span tagged with the
-  event id, mode, model, and `gen_ai.usage.{input,output,total}_tokens`, correlating the full
-  UI → agent → tool → mock-api chain.
+- **Agent-run span**: each LIVE run opens one run span (`morning_brief.run` / `rm_briefing.run`)
+  tagged with the scene key (event id / rm id), mode, model, and
+  `gen_ai.usage.{input,output,total}_tokens`, correlating the full UI → agent → tool → mock-api chain.
 - **Per-tool-call spans**: every tool invocation runs inside an `execute_tool <name>` child span
   recording the tool name, string arguments, duration, and response size
-  (`src\orchestration-api\Agents\AgentRunner.cs`).
+  (`src\orchestration-api\Agents\AgentRunner.cs`, `RmAgentRunner.cs`).
 - **Metrics**: token usage (`wf.morning_brief.tokens`) and per-tool duration (`wf.tool.duration`)
   histograms are emitted under the `WF.Garage.Orchestration` meter
   (`src\orchestration-api\Agents\OrchestrationTelemetry.cs`).

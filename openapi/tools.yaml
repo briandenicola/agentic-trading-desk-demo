@@ -1,12 +1,21 @@
 openapi: 3.0.3
 info:
   title: Client CV — Mock System-of-Record APIs (agent tools)
-  version: 0.1.0
+  version: 0.2.0
   description: >
     The mock data layer exposed as tools for the agents. Import this spec into
     Azure AI Foundry (as an OpenAPI tool) or wrap it as an MCP server. Swap the
     server URL for real Tableau / Dynamics / trading / Coalition gateways when
     you go live — the operation contract stays the same.
+
+    Three tool families are described:
+      * /mock/{tableau,dynamics,trading,calendar,marketdata,news,coalition}/* —
+        the municipal cross-asset morning brief (original scene);
+      * /mock/cb/* — Commercial Banking RM data backing the RM Daily Briefing
+        (the PRIMARY "Morning Planning & Prioritized Outreach" scene);
+      * /mock/td/* — Trading Desk / Capital Markets data swapped into the
+        trading cockpit.
+    All data is fictional.
 servers:
   - url: http://localhost:8000
 paths:
@@ -81,3 +90,243 @@ paths:
       parameters:
         - { name: sector, in: path, required: true, schema: { type: string } }
       responses: { "200": { description: OK } }
+
+  # ----------------------------------------------------------------------------
+  # Commercial Banking RM (PRIMARY scene — RM Daily Briefing). All data fictional.
+  # ----------------------------------------------------------------------------
+  /mock/cb/relationship-managers:
+    get:
+      operationId: get_cb_relationship_managers
+      summary: All relationship managers (directory).
+      responses: { "200": { description: OK } }
+  /mock/cb/relationship-managers/{rmId}:
+    get:
+      operationId: get_cb_relationship_manager
+      summary: One relationship manager by id.
+      parameters:
+        - { name: rmId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/cb/relationship-managers/{rmId}/book:
+    get:
+      operationId: get_rm_book
+      summary: Book-level snapshot for an RM — manager, customers, headline KPIs.
+      parameters:
+        - { name: rmId, in: path, required: true, schema: { type: string } }
+        - { name: asOf, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/cb/customers:
+    get:
+      operationId: get_cb_customers
+      summary: Commercial banking customers, filterable by RM / state / sector / region.
+      parameters:
+        - { name: rm, in: query, schema: { type: string } }
+        - { name: state, in: query, schema: { type: string } }
+        - { name: sector, in: query, schema: { type: string } }
+        - { name: region, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/cb/customers/{customerId}:
+    get:
+      operationId: get_cb_customer
+      summary: One customer's full profile.
+      parameters:
+        - { name: customerId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/cb/customers/{customerId}/opportunities:
+    get:
+      operationId: get_cb_customer_opportunities
+      summary: One customer's opportunities (pipeline).
+      parameters:
+        - { name: customerId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/cb/customers/{customerId}/complaints:
+    get:
+      operationId: get_cb_customer_complaints
+      summary: One customer's complaints.
+      parameters:
+        - { name: customerId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/cb/customers/{customerId}/interactions:
+    get:
+      operationId: get_cb_customer_interactions
+      summary: One customer's interactions (call log + follow-ups).
+      parameters:
+        - { name: customerId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/cb/opportunities:
+    get:
+      operationId: get_cb_opportunities
+      summary: Pipeline opportunities with open / stage / closing-window / stuck filters.
+      parameters:
+        - { name: rm, in: query, schema: { type: string } }
+        - { name: customerId, in: query, schema: { type: string } }
+        - { name: stage, in: query, schema: { type: string } }
+        - { name: openOnly, in: query, schema: { type: boolean } }
+        - { name: closingWithinDays, in: query, schema: { type: integer } }
+        - { name: minProbability, in: query, schema: { type: number } }
+        - { name: stuckMinDays, in: query, schema: { type: integer } }
+        - { name: asOf, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/cb/complaints:
+    get:
+      operationId: get_cb_complaints
+      summary: Complaints filterable by RM / customer / status / severity / active-only.
+      parameters:
+        - { name: rm, in: query, schema: { type: string } }
+        - { name: customerId, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: severity, in: query, schema: { type: string } }
+        - { name: activeOnly, in: query, schema: { type: boolean } }
+      responses: { "200": { description: OK } }
+  /mock/cb/interactions:
+    get:
+      operationId: get_cb_interactions
+      summary: Interactions / call logs, with follow-up-due and since filters.
+      parameters:
+        - { name: rm, in: query, schema: { type: string } }
+        - { name: customerId, in: query, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string } }
+        - { name: followUpDueBy, in: query, schema: { type: string, format: date } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/cb/readyz:
+    get:
+      operationId: get_cb_ready
+      summary: Readiness probe for the Commercial Banking dataset.
+      responses: { "200": { description: Ready }, "503": { description: Not ready } }
+
+  # ----------------------------------------------------------------------------
+  # Trading Desk / Capital Markets (trading cockpit). All data fictional.
+  # ----------------------------------------------------------------------------
+  /mock/td/clients:
+    get:
+      operationId: get_td_clients
+      summary: Trading-desk clients, filterable by type / region / salesperson / asset class.
+      parameters:
+        - { name: type, in: query, schema: { type: string } }
+        - { name: region, in: query, schema: { type: string } }
+        - { name: salesperson, in: query, schema: { type: string } }
+        - { name: assetClass, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/td/clients/{clientId}:
+    get:
+      operationId: get_td_client
+      summary: One trading-desk client.
+      parameters:
+        - { name: clientId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/td/clients/{clientId}/activity:
+    get:
+      operationId: get_td_client_activity
+      summary: Cross-dataset recent activity for a client (holdings, trades, rfqs, inquiries, crm).
+      parameters:
+        - { name: clientId, in: path, required: true, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/td/clients/{clientId}/holdings:
+    get:
+      operationId: get_td_client_holdings
+      summary: One client's holdings.
+      parameters:
+        - { name: clientId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/td/securities:
+    get:
+      operationId: get_td_securities
+      summary: Securities universe, filterable by asset class / sector / issuer / region.
+      parameters:
+        - { name: assetClass, in: query, schema: { type: string } }
+        - { name: sector, in: query, schema: { type: string } }
+        - { name: issuer, in: query, schema: { type: string } }
+        - { name: region, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/td/securities/{securityId}:
+    get:
+      operationId: get_td_security
+      summary: One security.
+      parameters:
+        - { name: securityId, in: path, required: true, schema: { type: string } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/td/securities/{securityId}/interest:
+    get:
+      operationId: get_td_security_interest
+      summary: Cross-dataset client interest in a security (holders, rfqs, inquiries, news, research, inventory).
+      parameters:
+        - { name: securityId, in: path, required: true, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK }, "404": { description: Not found } }
+  /mock/td/trades:
+    get:
+      operationId: get_td_trades
+      summary: Executed trades, filterable by client / security / direction / since.
+      parameters:
+        - { name: clientId, in: query, schema: { type: string } }
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: direction, in: query, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/td/rfqs:
+    get:
+      operationId: get_td_rfqs
+      summary: Requests for quote, filterable by client / security / status / since.
+      parameters:
+        - { name: clientId, in: query, schema: { type: string } }
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/td/crm:
+    get:
+      operationId: get_td_crm
+      summary: Sales CRM touch notes, filterable by client / urgency / since.
+      parameters:
+        - { name: clientId, in: query, schema: { type: string } }
+        - { name: urgency, in: query, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/td/inventory:
+    get:
+      operationId: get_td_inventory
+      summary: Dealer inventory / axes, filterable by security / desk.
+      parameters:
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: desk, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/td/inquiries:
+    get:
+      operationId: get_td_inquiries
+      summary: Client inquiries, filterable by client / security / sentiment / since.
+      parameters:
+        - { name: clientId, in: query, schema: { type: string } }
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: sentiment, in: query, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/td/news:
+    get:
+      operationId: get_td_news
+      summary: Market news, filterable by security / sector / macro theme / since.
+      parameters:
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: sector, in: query, schema: { type: string } }
+        - { name: macroTheme, in: query, schema: { type: string } }
+        - { name: since, in: query, schema: { type: string, format: date } }
+      responses: { "200": { description: OK } }
+  /mock/td/research:
+    get:
+      operationId: get_td_research
+      summary: Research notes, filterable by security / sector / rating action.
+      parameters:
+        - { name: securityId, in: query, schema: { type: string } }
+        - { name: sector, in: query, schema: { type: string } }
+        - { name: ratingAction, in: query, schema: { type: string } }
+      responses: { "200": { description: OK } }
+  /mock/td/narrative-themes:
+    get:
+      operationId: get_td_narrative_themes
+      summary: Narrative storylines tying securities, sectors and clients together.
+      responses: { "200": { description: OK } }
+  /mock/td/readyz:
+    get:
+      operationId: get_td_ready
+      summary: Readiness probe for the Trading Desk dataset.
+      responses: { "200": { description: Ready }, "503": { description: Not ready } }

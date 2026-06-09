@@ -198,3 +198,38 @@ complete, repeatable response with the same JSON shape as LIVE mode.
   before implementation lands (per constitution §22).
 - "Human-in-the-loop" actions are demo-only; no integration with real CRM/dialer/email systems.
 - A single representative trading day / market event scenario is sufficient to demonstrate the flow.
+
+---
+
+## Course Correction (2026-06-09) — client sample data → RM Daily Briefing is the PRIMARY scene
+
+The client delivered real sample data (`assets/`), which reframed the demo into two domains. This
+addendum is additive (per constitution §22); the original municipal morning brief above is retained.
+
+### New primary scene — Commercial Banking RM Daily Briefing
+
+As a **Commercial Banking relationship manager**, when I open the cockpit in the morning I ask
+*"Who do I need to call today, and why?"* and the assistant returns one briefing: a portfolio
+snapshot, a **prioritized top-8 call list** (each customer with tags, reasons, and a suggested
+action), an open-issues snapshot (active complaints, pipeline closing in 14 days), an illustrative
+macro snapshot, and a single suggested first action.
+
+- **Endpoint**: `POST /api/agent/rm-briefing` → `RmBriefing` (same shape in DEMO and LIVE).
+- **Ground truth**: `assets/rm_daily_briefing_2026-05-14.html` (persona: Marcus Johnson, RM-104,
+  Great Lakes & Plains territory, 14 customers, $819M exposure).
+- **Scoring** (confirmed with stakeholder; reproduces the sample's ranking): escalated complaint
+  +60, in-progress complaint +30, follow-up overdue +50 / today +45 / ≤2 days +40, opportunity
+  closing ≤14 days +40, each stuck opportunity (open ≥40 days, not closing) +25. Rank by score
+  desc, tie-break by exposure desc then customer id; take the top 8; priority bands group ranks
+  1-2/3-4/5-6/7-8.
+- **Data**: Commercial Banking dataset under `/mock/cb/*` (50 customers, 6 RMs, 116 opportunities,
+  20 complaints, 1334 interactions).
+
+### Trading cockpit re-base — Trading Desk / Capital Markets
+
+The existing trading cockpit is re-based onto the client Trading Desk dataset (`/mock/td/*`:
+clients, securities, trades, RFQs, CRM, holdings, inventory/axes, inquiries, news, research,
+narrative-themes), with cross-dataset aggregates `client activity` and `security interest`.
+
+Both new families are described in `openapi/tools.yaml` (v0.2.0) and documented in
+`docs/architecture.md`. All data remains fictional.
