@@ -2,7 +2,7 @@
 
 ## Priority: P2 (High)
 
-## Status: Selected for NEXT iteration — order 1 of 6 (per 2026-06-09 direction). Partially delivered (baseline wired); full agent traceability outstanding. Unblocks 011.
+## Status: ✅ DELIVERED (2026-06-09). Full agent + tool-call traceability wired and validated (33/33 tests, LIVE smoke). Unblocks 011.
 
 ## Description
 Make every morning-brief request traceable end-to-end — from the UI call, through the Foundry

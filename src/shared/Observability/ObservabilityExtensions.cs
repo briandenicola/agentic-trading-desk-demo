@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,12 +45,22 @@ public static class ObservabilityExtensions
 
     /// <summary>
     /// Register OpenTelemetry tracing + metrics for ASP.NET Core and outbound HTTP.
-    /// The OTLP exporter is only attached when OTEL_EXPORTER_OTLP_ENDPOINT is set,
-    /// so DEMO mode runs fully offline.
+    /// Exporters are attached based on configuration so DEMO mode stays fully offline:
+    /// the OTLP exporter only attaches when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set,
+    /// and the Azure Monitor exporter only attaches when
+    /// <c>APPLICATIONINSIGHTS_CONNECTION_STRING</c> is set. Callers may register
+    /// additional <see cref="ActivitySource"/> / <see cref="System.Diagnostics.Metrics.Meter"/>
+    /// names (e.g. the Agent Framework GenAI source) via the optional parameters so
+    /// agent-run and tool-call spans plus token-usage metrics flow to the backend.
     /// </summary>
-    public static WebApplicationBuilder AddOpenTelemetry(this WebApplicationBuilder builder, string serviceName)
+    public static WebApplicationBuilder AddOpenTelemetry(
+        this WebApplicationBuilder builder,
+        string serviceName,
+        string[]? additionalSources = null,
+        string[]? additionalMeters = null)
     {
         var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        var appInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
         builder.Services.AddOpenTelemetry()
             .ConfigureResource(r => r.AddService(serviceName))
@@ -58,9 +69,20 @@ public static class ObservabilityExtensions
                 tracing
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation();
+                if (additionalSources is not null)
+                {
+                    foreach (var source in additionalSources)
+                    {
+                        tracing.AddSource(source);
+                    }
+                }
                 if (!string.IsNullOrWhiteSpace(otlpEndpoint))
                 {
                     tracing.AddOtlpExporter();
+                }
+                if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+                {
+                    tracing.AddAzureMonitorTraceExporter(o => o.ConnectionString = appInsightsConnectionString);
                 }
             })
             .WithMetrics(metrics =>
@@ -68,9 +90,20 @@ public static class ObservabilityExtensions
                 metrics
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation();
+                if (additionalMeters is not null)
+                {
+                    foreach (var meter in additionalMeters)
+                    {
+                        metrics.AddMeter(meter);
+                    }
+                }
                 if (!string.IsNullOrWhiteSpace(otlpEndpoint))
                 {
                     metrics.AddOtlpExporter();
+                }
+                if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+                {
+                    metrics.AddAzureMonitorMetricExporter(o => o.ConnectionString = appInsightsConnectionString);
                 }
             });
 

@@ -62,7 +62,7 @@ persistent agent, **all runs/threads appear under one agent** in the Foundry por
 `search_holdings`, `get_axes` — wrappers over `openapi\tools.yaml` endpoints. They never throw;
 failures return a structured `{"error": …}` object so the loop degrades gracefully (FR-011).
 
-## Traceability (current state + roadmap)
+## Traceability (current state)
 
 **Today**
 
@@ -72,22 +72,28 @@ failures return a structured `{"error": …}` object so the loop degrades gracef
   surface as HTTP dependency spans.
 - The persistent agent's runs and tool-call steps are visible natively in the **Foundry portal**
   (thread/run view), because runs are no longer scattered across throwaway agents.
+- **Azure Monitor OpenTelemetry exporter** (`Azure.Monitor.OpenTelemetry.Exporter`) attaches
+  automatically when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set, so traces **and** metrics flow
+  to Application Insights in the container apps. The OTLP exporter still attaches in parallel when
+  `OTEL_EXPORTER_OTLP_ENDPOINT` is set. DEMO mode stays fully offline — neither exporter attaches
+  unless its key is present (`src\shared\Observability\ObservabilityExtensions.cs`).
+- **Agent Framework GenAI spans**: the resolved Foundry agent is wrapped with
+  `.AsBuilder().UseOpenTelemetry(sourceName: "WF.Garage.Orchestration", …)`, emitting `gen_ai.*`
+  spans (model, tool selection, token usage). `EnableSensitiveData` captures prompts/responses
+  (data is fictional) and is gated by `OTEL_CAPTURE_MESSAGE_CONTENT` (default on).
+- **Agent-run span**: each LIVE morning brief opens one `morning_brief.run` span tagged with the
+  event id, mode, model, and `gen_ai.usage.{input,output,total}_tokens`, correlating the full
+  UI → agent → tool → mock-api chain.
+- **Per-tool-call spans**: every tool invocation runs inside an `execute_tool <name>` child span
+  recording the tool name, string arguments, duration, and response size
+  (`src\orchestration-api\Agents\AgentRunner.cs`).
+- **Metrics**: token usage (`wf.morning_brief.tokens`) and per-tool duration (`wf.tool.duration`)
+  histograms are emitted under the `WF.Garage.Orchestration` meter
+  (`src\orchestration-api\Agents\OrchestrationTelemetry.cs`).
 
-**Known gaps (tracked in `specs\_backlog\005-observability.md`)**
-
-- The OTLP exporter only attaches when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, so traces currently
-  export nowhere in the container apps (only `APPLICATIONINSIGHTS_CONNECTION_STRING` is injected).
-- No Azure Monitor OpenTelemetry exporter is wired yet (`Azure.Monitor.OpenTelemetry.AspNetCore`
-  is pinned but unused).
-- The Agent Framework GenAI `ActivitySource` is not registered, so LLM-level "which tool and why"
-  (`gen_ai.*`) spans and token usage are not captured.
-- No explicit per-tool-call span (tool name, args, duration) or single agent-run span correlating
-  the full UI → agent → tool → mock-api chain.
-
-**Roadmap → full traceability** (backlog): add the Azure Monitor OTel exporter keyed off the App
-Insights connection string, register the GenAI activity source, emit an agent-run span plus a span
-per tool call (with token usage), and enable message-content capture (data is fictional). See
-`specs\_backlog\005-observability.md`.
+All custom source/meter names are registered with OpenTelemetry in
+`src\orchestration-api\Program.cs` via `AddOpenTelemetry(ServiceName, additionalSources, additionalMeters)`.
+Delivered under `specs\_backlog\005-observability.md`.
 
 ## Future: multi-agent fan-out / synthesis
 

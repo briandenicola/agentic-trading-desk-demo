@@ -14,7 +14,10 @@ const string ServiceName = "orchestration-api";
 const string CorsPolicy = "cockpit";
 
 builder.UseSerilog(ServiceName);
-builder.AddOpenTelemetry(ServiceName);
+builder.AddOpenTelemetry(
+    ServiceName,
+    additionalSources: [OrchestrationTelemetry.SourceName],
+    additionalMeters: [OrchestrationTelemetry.SourceName]);
 
 // --- Run mode (DEMO default, offline; LIVE engages Foundry in Phase 3) ---
 var mode = ModeOptions.FromConfiguration(builder.Configuration);

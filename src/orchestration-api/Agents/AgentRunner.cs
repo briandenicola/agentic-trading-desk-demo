@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using Azure.AI.Agents.Persistent;
 using Azure.AI.Projects;
@@ -60,14 +61,40 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
             $"Call the tools to gather market data, news, clients, holdings and engagement, then emit ONLY the JSON object. " +
             $"Use at most {maxHops} tool calls.";
 
+        using var runSpan = OrchestrationTelemetry.ActivitySource.StartActivity("morning_brief.run", ActivityKind.Internal);
+        runSpan?.SetTag("wf.event_id", eventId);
+        runSpan?.SetTag("wf.mode", "LIVE");
+        runSpan?.SetTag("wf.trading_day", date ?? "current");
+        runSpan?.SetTag("gen_ai.request.model", model);
+        runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
+
         try
         {
             var response = await agent.RunAsync(userMessage, cancellationToken: ct);
+
+            var usage = response.Usage;
+            if (usage is not null)
+            {
+                runSpan?.SetTag("gen_ai.usage.input_tokens", usage.InputTokenCount);
+                runSpan?.SetTag("gen_ai.usage.output_tokens", usage.OutputTokenCount);
+                runSpan?.SetTag("gen_ai.usage.total_tokens", usage.TotalTokenCount);
+                if (usage.TotalTokenCount is long total)
+                {
+                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.event_id", eventId));
+                }
+                logger.LogInformation(
+                    "LIVE morning-brief token usage (event={EventId}): input={Input} output={Output} total={Total}",
+                    eventId, usage.InputTokenCount, usage.OutputTokenCount, usage.TotalTokenCount);
+            }
+
             var json = ExtractJsonObject(response.Text);
-            return MapToBrief(json, eventId);
+            var brief = MapToBrief(json, eventId);
+            runSpan?.SetStatus(ActivityStatusCode.Ok);
+            return brief;
         }
         catch (Exception ex)
         {
+            runSpan?.SetStatus(ActivityStatusCode.Error, ex.Message);
             logger.LogError(ex, "Foundry agent run failed; returning a degraded brief.");
             return Degraded(eventId, $"LIVE agent run failed: {ex.Message}");
         }
@@ -97,20 +124,33 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         var existingId = await TryFindPersistentAgentIdAsync(endpoint, credential, ct);
 
 #pragma warning disable CS0618 // rc5 transitional API; native AIProjectClient.Agents APIs are not yet stable. Tracked for LIVE follow-up.
+        AIAgent baseAgent;
         if (existingId is not null)
         {
             logger.LogInformation("Reusing persistent Foundry agent '{Agent}' (id={Id}).", AgentName, existingId);
-            return await projectClient.GetAIAgentAsync(existingId, aiTools, cancellationToken: ct);
+            baseAgent = await projectClient.GetAIAgentAsync(existingId, aiTools, cancellationToken: ct);
         }
-
-        logger.LogWarning("Persistent agent '{Agent}' not found; creating it (run the provisioner to persist it).", AgentName);
-        return await projectClient.CreateAIAgentAsync(
-            model: model,
-            name: AgentName,
-            instructions: instructions,
-            tools: aiTools,
-            cancellationToken: ct);
+        else
+        {
+            logger.LogWarning("Persistent agent '{Agent}' not found; creating it (run the provisioner to persist it).", AgentName);
+            baseAgent = await projectClient.CreateAIAgentAsync(
+                model: model,
+                name: AgentName,
+                instructions: instructions,
+                tools: aiTools,
+                cancellationToken: ct);
+        }
 #pragma warning restore CS0618
+
+        // Wrap the agent with Agent Framework OpenTelemetry so each run emits GenAI spans
+        // (model, tool calls, token usage) under OrchestrationTelemetry.SourceName (backlog 005).
+        // EnableSensitiveData captures prompts/responses — safe here because all data is fictional;
+        // gated by OTEL_CAPTURE_MESSAGE_CONTENT (default on) so it can be disabled if needed.
+        var captureContent = !string.Equals(config["OTEL_CAPTURE_MESSAGE_CONTENT"], "false", StringComparison.OrdinalIgnoreCase);
+        return baseAgent
+            .AsBuilder()
+            .UseOpenTelemetry(sourceName: OrchestrationTelemetry.SourceName, configure: c => c.EnableSensitiveData = captureContent)
+            .Build();
     }
 
     /// <summary>
@@ -139,24 +179,77 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         return null;
     }
 
-    /// <summary>Expose the mock-api tool functions to the agent (typed HttpClient under the hood).</summary>
+    /// <summary>Expose the mock-api tool functions to the agent (typed HttpClient under the hood).
+    /// Each call is wrapped in <see cref="InvokeToolAsync"/> so it emits a child span (tool name,
+    /// args, duration, result bytes) under the run span for full tool-call traceability (backlog 005).</summary>
     private IList<AITool> BuildTools() =>
     [
-        AIFunctionFactory.Create((Func<CancellationToken, Task<string>>)tools.GetMarketDataAsync,
+        AIFunctionFactory.Create(
+            (CancellationToken ct) => InvokeToolAsync("get_market_data", tools.GetMarketDataAsync, ct),
             "get_market_data", "MMD/UST levels, equity futures, credit spreads, tone."),
-        AIFunctionFactory.Create((Func<string, CancellationToken, Task<string>>)tools.GetNewsAsync,
+        AIFunctionFactory.Create(
+            (string eventId, CancellationToken ct) => InvokeToolAsync("get_news", c => tools.GetNewsAsync(eventId, c), ct, ("event_id", eventId)),
             "get_news", "Resolve a news event id into headline, summary, entities, sectors, states, sources."),
-        AIFunctionFactory.Create((Func<string, CancellationToken, Task<string>>)tools.GetRelativeValueAsync,
+        AIFunctionFactory.Create(
+            (string eventId, CancellationToken ct) => InvokeToolAsync("get_relative_value", c => tools.GetRelativeValueAsync(eventId, c), ct, ("event_id", eventId)),
             "get_relative_value", "Relative-value / curve context for a market event id."),
-        AIFunctionFactory.Create((Func<CancellationToken, Task<string>>)tools.GetClientValueAllAsync,
+        AIFunctionFactory.Create(
+            (CancellationToken ct) => InvokeToolAsync("get_client_value_all", tools.GetClientValueAllAsync, ct),
             "get_client_value_all", "All clients with revenue, rankings, share of wallet."),
-        AIFunctionFactory.Create((Func<string, CancellationToken, Task<string>>)tools.GetEngagementAsync,
+        AIFunctionFactory.Create(
+            (string cid, CancellationToken ct) => InvokeToolAsync("get_engagement", c => tools.GetEngagementAsync(cid, c), ct, ("cid", cid)),
             "get_engagement", "Recent engagement footprint for a client id."),
-        AIFunctionFactory.Create((Func<string, string, string, CancellationToken, Task<string>>)SearchHoldingsAdapter,
+        AIFunctionFactory.Create(
+            (string cusip, string state, string sector, CancellationToken ct) =>
+                InvokeToolAsync("search_holdings", c => SearchHoldingsAdapter(cusip, state, sector, c), ct,
+                    ("cusip", cusip), ("state", state), ("sector", sector)),
             "search_holdings", "Find clients holding a cusip / state / sector (pass empty strings to skip a filter)."),
-        AIFunctionFactory.Create((Func<CancellationToken, Task<string>>)tools.GetAxesAsync,
+        AIFunctionFactory.Create(
+            (CancellationToken ct) => InvokeToolAsync("get_axes", tools.GetAxesAsync, ct),
             "get_axes", "Live axes / IOIs from the trading book."),
     ];
+
+    /// <summary>
+    /// Run a single tool call inside a child span so every tool invocation is traceable: it
+    /// records the tool name, any string arguments, the wall-clock duration (also on the
+    /// <c>wf.tool.duration</c> histogram), and the response size. Tools never throw — the catch
+    /// is defensive so an unexpected failure still marks the span and propagates.
+    /// </summary>
+    private async Task<string> InvokeToolAsync(
+        string toolName,
+        Func<CancellationToken, Task<string>> call,
+        CancellationToken ct,
+        params (string Key, string? Value)[] args)
+    {
+        using var span = OrchestrationTelemetry.ActivitySource.StartActivity($"execute_tool {toolName}", ActivityKind.Client);
+        span?.SetTag("gen_ai.operation.name", "execute_tool");
+        span?.SetTag("gen_ai.tool.name", toolName);
+        foreach (var (key, value) in args)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                span?.SetTag($"gen_ai.tool.arg.{key}", value);
+            }
+        }
+
+        var sw = Stopwatch.StartNew();
+        try
+        {
+            var result = await call(ct);
+            sw.Stop();
+            span?.SetTag("wf.tool.result_bytes", result?.Length ?? 0);
+            span?.SetTag("wf.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
+            OrchestrationTelemetry.ToolDuration.Record(
+                sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("gen_ai.tool.name", toolName));
+            return result ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            span?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
+        }
+    }
 
     private Task<string> SearchHoldingsAdapter(string cusip, string state, string sector, CancellationToken ct) =>
         tools.SearchHoldingsAsync(
