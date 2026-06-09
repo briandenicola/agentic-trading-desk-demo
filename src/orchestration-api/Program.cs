@@ -38,6 +38,9 @@ builder.Services.AddScoped<MorningBriefComposer>();
 builder.Services.AddScoped<MorningBriefTools>();
 builder.Services.AddScoped<AgentRunner>();
 
+// --- Reactive event tools (002): HTTP wrappers over the mock-api event store ---
+builder.Services.AddScoped<EventTools>();
+
 // --- RM Daily Briefing (PRIMARY scene): DEMO composer (offline) + LIVE tools/runner (Foundry) ---
 builder.Services.AddScoped<RmBriefingComposer>();
 builder.Services.AddScoped<RmBriefingTools>();

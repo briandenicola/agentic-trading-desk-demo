@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
+using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 using static OrchestrationApi.Agents.Demo.RmCallScorer;
 
@@ -23,7 +24,7 @@ namespace OrchestrationApi.Agents.Demo;
 /// composer throws <see cref="UnknownRelationshipManagerException"/> (→ 400), and if other
 /// data is missing it degrades to a structured brief carrying a <c>notes</c> entry.
 /// </summary>
-public sealed class RmBriefingComposer(MockApiClient mockApi)
+public sealed class RmBriefingComposer(MockApiClient mockApi, EventTools eventTools)
 {
     public const string DefaultRmId = "RM-104";
     public const string DefaultDate = "2026-05-14";
@@ -51,6 +52,9 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
         var customers = (book["customers"] as JsonArray) ?? [];
         var customerById = IndexCustomers(customers);
 
+        // Reactive overlay (002): pull the current event set over HTTP and let it nudge ranking.
+        var events = await GetEventsAsync(notes, ct);
+
         // Group the signals by customer once.
         var complaintsByCustomer = GroupBy(complaints, "customerId");
         var oppsByCustomer = GroupBy(opps, "customerId");
@@ -60,9 +64,14 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
         foreach (var (cid, cust) in customerById)
         {
             var sig = BuildSignals(cid, asOf, complaintsByCustomer, oppsByCustomer, followUpsByCustomer);
-            var score = Score(sig.Escalated.Count, sig.InProgress.Count, sig.FollowUp, sig.StuckOpps.Count, sig.ClosingOpps.Count);
+            var baseScore = Score(sig.Escalated.Count, sig.InProgress.Count, sig.FollowUp, sig.StuckOpps.Count, sig.ClosingOpps.Count);
+
+            var drivingEvents = EventImpactResolver.ResolveForCustomer(cid, Str(cust, "industrySector"), events);
+            var eventDelta = EventImpactResolver.NetContribution(drivingEvents);
+
+            var score = baseScore + eventDelta;
             if (score <= 0) continue;
-            scored.Add(new ScoredCustomer(cid, cust, sig, score));
+            scored.Add(new ScoredCustomer(cid, cust, sig, score, drivingEvents));
         }
 
         var ranked = scored
@@ -117,6 +126,7 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
             MacroSnapshot = BuildMacroSnapshot(),
             SuggestedFirstAction = BuildSuggestedFirstAction(priorityCallList),
             Notes = notes.Count > 0 ? notes : null,
+            EventsConsidered = events,
         };
     }
 
@@ -130,7 +140,7 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
         List<JsonNode> StuckOpps,
         List<JsonNode> ClosingOpps);
 
-    private sealed record ScoredCustomer(string Cid, JsonNode Customer, CustomerSignals Signals, int Score);
+    private sealed record ScoredCustomer(string Cid, JsonNode Customer, CustomerSignals Signals, int Score, IReadOnlyList<EventLinkage> DrivingEvents);
 
     private static CustomerSignals BuildSignals(
         string cid,
@@ -192,6 +202,11 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
                 : $"{sig.StuckOpps.Count} STUCK OPPS";
             tags.Add(new CallTag { Label = label, Kind = "stuck" });
         }
+        if (s.DrivingEvents.Count > 0)
+        {
+            var label = s.DrivingEvents.Count == 1 ? "EVENT" : $"{s.DrivingEvents.Count} EVENTS";
+            tags.Add(new CallTag { Label = label, Kind = "event" });
+        }
 
         return new PriorityCall
         {
@@ -206,12 +221,13 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
             RiskRating = Str(c, "riskRating"),
             Score = s.Score,
             Tags = tags,
-            Reasons = BuildReasons(sig, asOf),
+            Reasons = BuildReasons(sig, asOf, s.DrivingEvents),
             SuggestedAction = BuildSuggestedAction(c, sig, asOf),
+            DrivingEvents = s.DrivingEvents,
         };
     }
 
-    private static List<string> BuildReasons(CustomerSignals sig, DateOnly asOf)
+    private static List<string> BuildReasons(CustomerSignals sig, DateOnly asOf, IReadOnlyList<EventLinkage> drivingEvents)
     {
         var reasons = new List<string>();
 
@@ -238,6 +254,11 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
         {
             reasons.Add(
                 $"{Str(o, "opportunityId")} — {Str(o, "opportunityName")} {Money(Dbl(o, "amount"))}, stuck in {Str(o, "stage")} {DaysOpen(o, asOf)} days.");
+        }
+
+        foreach (var ev in drivingEvents)
+        {
+            reasons.Add(ev.Rationale);
         }
 
         return reasons;
@@ -355,6 +376,24 @@ public sealed class RmBriefingComposer(MockApiClient mockApi)
         {
             notes.Add($"Upstream data unavailable: GET {path} failed; returning a degraded briefing.");
             return null;
+        }
+    }
+
+    private async Task<IReadOnlyList<MarketEvent>> GetEventsAsync(List<string> notes, CancellationToken ct)
+    {
+        try
+        {
+            var events = await eventTools.ListEventsAsync(ct: ct);
+            if (events.Count > 0)
+            {
+                notes.Add($"Reactive overlay: {events.Count} current event(s) weighed into the call ranking.");
+            }
+            return events;
+        }
+        catch (Exception)
+        {
+            notes.Add("Event store unavailable: the briefing was composed from portfolio signals only.");
+            return [];
         }
     }
 

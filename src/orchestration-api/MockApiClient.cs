@@ -21,4 +21,8 @@ public sealed class MockApiClient(HttpClient http)
     /// <summary>Raw GET — lets callers inspect non-success status (e.g. tool-error degradation).</summary>
     public Task<HttpResponseMessage> GetAsync(string path, CancellationToken ct = default)
         => http.GetAsync(path, ct);
+
+    /// <summary>POST a JSON body to the mock API, returning the raw response for status inspection.</summary>
+    public Task<HttpResponseMessage> PostJsonAsync<T>(string path, T body, CancellationToken ct = default)
+        => http.PostAsJsonAsync(path, body, ct);
 }
