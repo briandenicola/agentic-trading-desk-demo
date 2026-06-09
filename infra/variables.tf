@@ -41,9 +41,9 @@ variable "foundry_model_sku" {
 }
 
 variable "foundry_model_capacity" {
-  description = "Model capacity (TPM in thousands). Start small (10-20) to avoid quota issues."
+  description = "Model capacity (TPM in thousands). 100 comfortably covers the RM-briefing agent's multi-tool-call token bursts; raise if you hit 429s."
   type        = number
-  default     = 10
+  default     = 100
 }
 
 # Foundry provisioning toggle

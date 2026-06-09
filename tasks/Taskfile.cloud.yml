@@ -76,10 +76,14 @@ tasks:
         sh: terraform -chdir={{.INFRA_DIR}} output -raw resource_group_name
       ACR_LOGIN_SERVER:
         sh: terraform -chdir={{.INFRA_DIR}} output -raw acr_login_server
+      # Unique per-run suffix forces a NEW revision so the mutable ":latest" tag is
+      # actually re-pulled. Without this, `az containerapp update --image :latest` is a
+      # no-op when the image reference string is unchanged (the app keeps the old digest).
+      REV_SUFFIX: 'r{{now | date "0601021504"}}'
     cmds:
-      - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.TAG}}
-      - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}}
-      - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}}
+      - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
+      - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
+      - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
 
   destroy:
     desc: 'Tear down a region. Usage: task cloud:destroy -- <region>'
