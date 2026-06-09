@@ -38,6 +38,11 @@ builder.Services.AddScoped<MorningBriefComposer>();
 builder.Services.AddScoped<MorningBriefTools>();
 builder.Services.AddScoped<AgentRunner>();
 
+// --- RM Daily Briefing (PRIMARY scene): DEMO composer (offline) + LIVE tools/runner (Foundry) ---
+builder.Services.AddScoped<RmBriefingComposer>();
+builder.Services.AddScoped<RmBriefingTools>();
+builder.Services.AddScoped<RmAgentRunner>();
+
 // --- CORS for the React cockpit (tightened for deployment in Phase 8) ---
 var corsOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"];
 builder.Services.AddCors(options =>
@@ -120,6 +125,40 @@ app.MapPost("/api/agent/morning-brief", async (
             detail: $"Could not resolve eventId '{ex.EventId}'. Provide a known mock news event id.",
             statusCode: StatusCodes.Status400BadRequest,
             extensions: new Dictionary<string, object?> { ["eventId"] = ex.EventId });
+    }
+});
+
+// --- PRIMARY scene endpoint: POST /api/agent/rm-briefing (Commercial Banking RM Daily Briefing) ---
+// Same RmBriefing shape in both modes (Principle III). DEMO → deterministic composer;
+// LIVE → Foundry agent. The composer degrades to a structured briefing with notes on
+// upstream failure rather than throwing (FR-011), so the response is always JSON.
+app.MapPost("/api/agent/rm-briefing", async (
+    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RmBriefingRequest? request,
+    ModeOptions modeOpts,
+    RmBriefingComposer composer,
+    RmAgentRunner runner,
+    CancellationToken ct) =>
+{
+    var rmId = string.IsNullOrWhiteSpace(request?.Payload?.RmId)
+        ? RmBriefingComposer.DefaultRmId
+        : request!.Payload!.RmId!;
+    var date = request?.Payload?.Date;
+
+    try
+    {
+        var brief = modeOpts.DemoMode
+            ? await composer.ComposeAsync(rmId, date, ct)
+            : await runner.RunAsync(rmId, date, ct);
+
+        return Results.Json(brief, RmBriefingJson.Options);
+    }
+    catch (UnknownRelationshipManagerException ex)
+    {
+        return Results.Problem(
+            title: "Unknown relationship manager",
+            detail: $"Could not resolve rmId '{ex.RmId}'. Provide a known relationship-manager id (e.g. RM-104).",
+            statusCode: StatusCodes.Status400BadRequest,
+            extensions: new Dictionary<string, object?> { ["rmId"] = ex.RmId });
     }
 });
 
