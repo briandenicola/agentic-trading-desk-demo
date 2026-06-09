@@ -4,6 +4,7 @@ using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using OrchestrationApi.Agents.Resilience;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 
@@ -80,7 +81,10 @@ public sealed class FoundryEventSpecialist(IConfiguration config, EventTools eve
 
         try
         {
-            var response = await agent.RunAsync(userMessage, cancellationToken: ct);
+            var (maxAttempts, baseDelay) = FoundryRetry.SettingsFrom(config);
+            var response = await FoundryRetry.ExecuteAsync(
+                c => agent.RunAsync(userMessage, cancellationToken: c),
+                maxAttempts, baseDelay, logger, $"event-specialist ({e.Id})", ct);
             var json = ExtractJsonObject(response.Text);
             var assessment = JsonSerializer.Deserialize<EventImpactAssessment>(json, RmBriefingJson.Options);
             if (assessment is null || string.IsNullOrWhiteSpace(assessment.EventId))

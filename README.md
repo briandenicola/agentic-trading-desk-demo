@@ -91,7 +91,9 @@ event store (not the model output) so the LIVE DTO matches DEMO.
 
 > Each LIVE briefing makes roughly one synthesizer call plus one `event-specialist` call per current
 > event, so firing several scenes back-to-back can briefly hit the model deployment's rate limit
-> (HTTP 429). Runs degrade gracefully; raise the deployment quota for heavy live use.
+> (HTTP 429). The runners retry transient throttling with backoff + jitter (honoring `Retry-After`,
+> tunable via `FOUNDRY_RETRY_MAX_ATTEMPTS` / `FOUNDRY_RETRY_BASE_DELAY_MS`) and otherwise degrade
+> gracefully; raise the deployment quota for sustained heavy use.
 
 ## Deploy to Azure Container Apps
 

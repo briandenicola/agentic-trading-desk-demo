@@ -6,6 +6,7 @@ using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OrchestrationApi.Agents.Demo;
 using OrchestrationApi.Agents.EventSynthesis;
+using OrchestrationApi.Agents.Resilience;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 
@@ -86,7 +87,10 @@ public sealed class AgentRunner(
         try
         {
             var (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
-            var response = await agent.RunAsync(synthMessage, cancellationToken: ct);
+            var (maxAttempts, baseDelay) = FoundryRetry.SettingsFrom(config);
+            var response = await FoundryRetry.ExecuteAsync(
+                c => agent.RunAsync(synthMessage, cancellationToken: c),
+                maxAttempts, baseDelay, logger, $"morning-brief synthesizer ({eventId})", ct);
 
             var usage = response.Usage;
             if (usage is not null)
