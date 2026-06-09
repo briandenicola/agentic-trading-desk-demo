@@ -4,16 +4,10 @@ variable "location" {
   default     = "eastus"
 }
 
-variable "project_prefix" {
-  description = "Prefix for resource naming (will be combined with random suffix)"
-  type        = string
-  default     = "wfgarage"
-}
-
 variable "environment" {
-  description = "Environment name (dev, staging, prod)"
+  description = "Environment label applied as a tag (demo, live) — not used in resource names"
   type        = string
-  default     = "dev"
+  default     = "demo"
 }
 
 variable "tags" {
@@ -68,6 +62,19 @@ variable "enable_foundry" {
 # Runtime configuration
 variable "demo_mode" {
   description = "Enable demo mode (1) or live mode (0) for API"
+  type        = bool
+  default     = true
+}
+
+# Container Apps 3-step deploy gate.
+# Step 1: apply with deploy_apps=false -> environment only (ACR, CAE, Key Vault,
+#         identity, Foundry) so there is a registry to push images to.
+# Step 2: `az acr build` pushes the application images.
+# Step 3: apply with deploy_apps=true -> the Container Apps + job, which now have
+#         real images to pull. This avoids the "manifest unknown" failure that
+#         occurs when an app is created before its image exists.
+variable "deploy_apps" {
+  description = "Create the Container Apps + job (true) or only the supporting environment (false)"
   type        = bool
   default     = true
 }

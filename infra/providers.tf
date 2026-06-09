@@ -22,7 +22,14 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    # Application Insights auto-spawns Smart Detector alert rules / action groups
+    # outside Terraform state. Without this, `terraform destroy` fails because the
+    # resource group still "contains resources" the provider does not track.
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 provider "azapi" {

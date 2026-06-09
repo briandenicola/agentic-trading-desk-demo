@@ -8,6 +8,7 @@ resource "azurerm_container_app_environment" "main" {
 
 # UI App (external ingress)
 resource "azurerm_container_app" "ui_app" {
+  count                        = var.deploy_apps ? 1 : 0
   name                         = local.ui_app_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
@@ -34,7 +35,7 @@ resource "azurerm_container_app" "ui_app" {
 
       env {
         name  = "ORCHESTRATION_API_URL"
-        value = "https://${azurerm_container_app.orchestration_api.ingress[0].fqdn}"
+        value = "https://${azurerm_container_app.orchestration_api[0].ingress[0].fqdn}"
       }
     }
 
@@ -64,6 +65,7 @@ resource "azurerm_container_app" "ui_app" {
 
 # Orchestration API (internal ingress)
 resource "azurerm_container_app" "orchestration_api" {
+  count                        = var.deploy_apps ? 1 : 0
   name                         = local.orchestration_api_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
@@ -99,7 +101,7 @@ resource "azurerm_container_app" "orchestration_api" {
 
       env {
         name  = "MOCK_API_BASEURL"
-        value = "https://${azurerm_container_app.mock_api.ingress[0].fqdn}"
+        value = "https://${azurerm_container_app.mock_api[0].ingress[0].fqdn}"
       }
 
       env {
@@ -167,6 +169,7 @@ resource "azurerm_container_app" "orchestration_api" {
 
 # Mock API (internal ingress)
 resource "azurerm_container_app" "mock_api" {
+  count                        = var.deploy_apps ? 1 : 0
   name                         = local.mock_api_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
@@ -234,6 +237,7 @@ resource "azurerm_container_app" "mock_api" {
 
 # Agent Provisioner Job (manual trigger)
 resource "azurerm_container_app_job" "agent_provisioner" {
+  count                        = var.deploy_apps ? 1 : 0
   name                         = local.agent_provisioner_job
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name

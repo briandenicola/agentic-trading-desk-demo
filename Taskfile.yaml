@@ -56,3 +56,17 @@ tasks:
       - task: build
       - task: test
       - task: secrets
+
+  up:
+    desc: 'Provision a region end-to-end via the 3-step Container Apps flow. Usage: task up -- <region>   (set DEMO_MODE=false for FULL/Foundry mode)'
+    cmds:
+      - task: cloud:apply-infra   # 1. environment (ACR, CAE, Key Vault, identity, Foundry)
+      - task: build:all           # 2. build + push images to ACR
+      - task: cloud:apply-apps    # 3. Container Apps against the pushed images
+      - task: cloud:provision     #    start the Foundry agent job (FULL mode only)
+      - task: cloud:url
+
+  down:
+    desc: 'Tear down a region. Usage: task down -- <region>'
+    cmds:
+      - task: cloud:destroy

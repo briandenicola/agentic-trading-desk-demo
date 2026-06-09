@@ -19,6 +19,14 @@ vars:
   RG_NAME:
     sh: terraform -chdir=infra output -raw resource_group_name 2>/dev/null || true
 
+# Force UTF-8 for the Azure CLI's Python stdout. Without this, `az acr build`
+# crashes on Windows (cp1252 console) while streaming build logs that contain
+# non-ASCII characters such as vite's "✓" (U+2713), failing the task even
+# though the server-side image build succeeded.
+env:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: '1'
+
 tasks:
   stage:
     desc: Stage a clean, hydrated (non-OneDrive) build context for az acr build

@@ -1,20 +1,18 @@
 locals {
-  # Dynamic, collision-free naming: a single unique token (random_id) is applied
-  # to every resource so repeated or parallel deployments never clash. Names that
-  # disallow dashes (ACR, Key Vault) are stripped and length-capped to their limits.
-  name_prefix = "${var.project_prefix}-${var.environment}"
-  unique      = random_id.main.hex
+  # Reference-repo naming: random pet + random id, no static prefix. Names that
+  # disallow dashes (ACR, Key Vault) are stripped and length-capped to limits.
+  resource_name = "${random_pet.this.id}-${random_id.this.dec}"
 
-  # Resource naming (all carry the unique token)
-  resource_group_name = "${local.name_prefix}-rg-${local.unique}"
-  acr_name            = substr(replace("${local.name_prefix}acr${local.unique}", "-", ""), 0, 50)
-  key_vault_name      = substr(replace("${local.name_prefix}kv${local.unique}", "-", ""), 0, 24)
-  uai_name            = "${local.name_prefix}-id-${local.unique}"
-  log_workspace_name  = "${local.name_prefix}-logs-${local.unique}"
-  app_insights_name   = "${local.name_prefix}-appi-${local.unique}"
-  cae_name            = "${local.name_prefix}-cae-${local.unique}"
-  ai_account_name     = "${local.name_prefix}-ai-${local.unique}"
-  ai_project_name     = "${local.name_prefix}-project-${local.unique}"
+  # Resource naming (all derive from the random resource_name token)
+  resource_group_name = "${local.resource_name}-rg"
+  acr_name            = substr(replace("${local.resource_name}acr", "-", ""), 0, 50)
+  key_vault_name      = substr("${replace(local.resource_name, "-", "")}kv", 0, 24)
+  uai_name            = "${local.resource_name}-id"
+  log_workspace_name  = "${local.resource_name}-logs"
+  app_insights_name   = "${local.resource_name}-appi"
+  cae_name            = "${local.resource_name}-cae"
+  ai_account_name     = "${local.resource_name}-ai"
+  ai_project_name     = "${local.resource_name}-project"
 
   # Container app names
   ui_app_name            = "ui-app"
@@ -35,6 +33,7 @@ locals {
     {
       environment = var.environment
       location    = var.location
+      app_name    = local.resource_name
     }
   )
 }

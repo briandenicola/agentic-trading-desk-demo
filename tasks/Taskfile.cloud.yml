@@ -1,48 +1,76 @@
 version: '3'
 
+# Cloud infrastructure lifecycle for WF-Garage (Azure Container Apps + optional
+# Azure AI Foundry). Region-per-workspace model, mirroring
+# briandenicola/online-banking-demo:
+#
+#   task up   -- canadacentral                          # DEMO mode (no Foundry)
+#   $env:DEMO_MODE='false'; task up -- swedencentral    # FULL mode (Foundry)
+#
+# The positional arg after `--` is the Azure region AND the Terraform workspace
+# name, so each region keeps fully isolated state. DEMO_MODE is an environment
+# variable the task forwards to the `demo_mode` Terraform variable; it also
+# derives `enable_foundry` (the inverse) and the `environment` naming token
+# (demo|live). DEMO_MODE defaults to true so a bare `task up -- <region>` is a
+# safe, Foundry-free demo deploy.
+
 vars:
   INFRA_DIR: infra
+  DEFAULT_REGION: swedencentral
   TAG: '{{default "latest" .TAG}}'
-  # Deployment region + naming inputs — override on the CLI, e.g.
-  #   task cloud:up LOCATION=eastus2 ENVIRONMENT=dev
-  LOCATION: '{{default "swedencentral" .LOCATION}}'
-  PROJECT_PREFIX: '{{default "wfgarage" .PROJECT_PREFIX}}'
-  ENVIRONMENT: '{{default "demo" .ENVIRONMENT}}'
-  TF_VARS: -var=location={{.LOCATION}} -var=project_prefix={{.PROJECT_PREFIX}} -var=environment={{.ENVIRONMENT}}
+  # Region == Terraform workspace name (from `task ... -- <region>`).
+  REGION: '{{default .DEFAULT_REGION .CLI_ARGS}}'
+  # DEMO_MODE env var (default true) drives every mode-dependent toggle.
+  DEMO_MODE:
+    sh: printf '%s' "${DEMO_MODE:-true}"
+  ENABLE_FOUNDRY:
+    sh: '[ "${DEMO_MODE:-true}" = "true" ] && printf false || printf true'
+  ENVIRONMENT:
+    sh: '[ "${DEMO_MODE:-true}" = "true" ] && printf demo || printf live'
+  TF_VARS: -var "location={{.REGION}}" -var "environment={{.ENVIRONMENT}}" -var "demo_mode={{.DEMO_MODE}}" -var "enable_foundry={{.ENABLE_FOUNDRY}}"
 
 tasks:
-  init:
-    desc: Initialize Terraform
-    dir: '{{.INFRA_DIR}}'
+  _init:
+    internal: true
+    desc: Init Terraform and select the region-named workspace
     cmds:
-      - terraform init
+      - terraform -chdir={{.INFRA_DIR}} init -upgrade
+      - terraform -chdir={{.INFRA_DIR}} workspace new {{.REGION}} 2>/dev/null || true
+      - terraform -chdir={{.INFRA_DIR}} workspace select {{.REGION}}
 
   plan:
-    desc: Plan Terraform changes (LOCATION/PROJECT_PREFIX/ENVIRONMENT overridable)
-    dir: '{{.INFRA_DIR}}'
+    desc: 'Plan a region. Usage: task cloud:plan -- <region>'
     cmds:
-      - terraform plan {{.TF_VARS}}
+      - task: _init
+      - terraform -chdir={{.INFRA_DIR}} plan -compact-warnings {{.TF_VARS}} -var "deploy_apps=true"
 
-  up:
-    desc: Apply Terraform configuration (creates/updates infrastructure)
-    dir: '{{.INFRA_DIR}}'
+  # 3-step Container Apps deploy (see infra/variables.tf deploy_apps).
+  # Step 1 of 3: environment only (ACR, CAE, Key Vault, identity, Foundry).
+  apply-infra:
+    desc: 'Step 1/3 - provision the environment (no Container Apps). Usage: task cloud:apply-infra -- <region>'
     cmds:
-      - terraform apply {{.TF_VARS}}
+      - task: _init
+      - terraform -chdir={{.INFRA_DIR}} apply -auto-approve -compact-warnings {{.TF_VARS}} -var "deploy_apps=false"
 
-  destroy:
-    desc: Destroy all Terraform-managed infrastructure
-    dir: '{{.INFRA_DIR}}'
+  # Step 3 of 3: the Container Apps + job, now that images exist in ACR.
+  apply-apps:
+    desc: 'Step 3/3 - provision the Container Apps against pushed images. Usage: task cloud:apply-apps -- <region>'
     cmds:
-      - terraform destroy {{.TF_VARS}}
+      - task: _init
+      - terraform -chdir={{.INFRA_DIR}} apply -auto-approve -compact-warnings {{.TF_VARS}} -var "deploy_apps=true"
 
-  output-env:
-    desc: Export Terraform outputs to .env file
+  provision:
+    desc: Start the Foundry agent-provisioner job (FULL mode only)
+    vars:
+      RG_NAME:
+        sh: terraform -chdir={{.INFRA_DIR}} output -raw resource_group_name
+      ACR_LOGIN_SERVER:
+        sh: terraform -chdir={{.INFRA_DIR}} output -raw acr_login_server
     cmds:
-      - |
-        terraform -chdir={{.INFRA_DIR}} output -json | powershell -Command "$json = $input | ConvertFrom-Json; @('VITE_API_BASE_URL=' + $json.ui_app_url.value, 'ACR_NAME=' + $json.acr_name.value, 'RESOURCE_GROUP=' + $json.resource_group_name.value, 'FOUNDRY_PROJECT_ENDPOINT=' + $json.foundry_project_endpoint.value, 'FOUNDRY_MODEL=' + $json.foundry_model_deployment.value) | Out-File -Encoding utf8 .env"
+      - '[ "{{.DEMO_MODE}}" = "true" ] && echo "DEMO mode: no Foundry agent to provision" || az containerapp job start --name agent-provisioner-job --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/agent-provisioner:{{.TAG}}'
 
   deploy:
-    desc: Update container apps with new images and trigger provisioner job
+    desc: Roll freshly rebuilt images onto the running Container Apps (manual image refresh)
     vars:
       RG_NAME:
         sh: terraform -chdir={{.INFRA_DIR}} output -raw resource_group_name
@@ -52,16 +80,30 @@ tasks:
       - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.TAG}}
       - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}}
       - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}}
-      - az containerapp job start --name agent-provisioner-job --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/agent-provisioner:{{.TAG}}
+
+  destroy:
+    desc: 'Tear down a region. Usage: task cloud:destroy -- <region>'
+    cmds:
+      - task: _init
+      - terraform -chdir={{.INFRA_DIR}} destroy -auto-approve -compact-warnings {{.TF_VARS}} -var "deploy_apps=true"
+
+  output-env:
+    desc: Export Terraform outputs for the active workspace to .env
+    cmds:
+      - |
+        terraform -chdir={{.INFRA_DIR}} output -json | powershell -Command "$json = $input | ConvertFrom-Json; @('VITE_API_BASE_URL=' + $json.ui_app_url.value, 'ACR_NAME=' + $json.acr_name.value, 'RESOURCE_GROUP=' + $json.resource_group_name.value, 'FOUNDRY_PROJECT_ENDPOINT=' + $json.foundry_project_endpoint.value, 'FOUNDRY_MODEL=' + $json.foundry_model_deployment.value) | Out-File -Encoding utf8 .env"
+
+  url:
+    desc: Print the public UI app URL for the active workspace
+    cmds:
+      - terraform -chdir={{.INFRA_DIR}} output -raw ui_app_url
 
   fmt:
     desc: Format Terraform files
-    dir: '{{.INFRA_DIR}}'
     cmds:
-      - terraform fmt
+      - terraform -chdir={{.INFRA_DIR}} fmt
 
   validate:
     desc: Validate Terraform configuration
-    dir: '{{.INFRA_DIR}}'
     cmds:
-      - terraform validate
+      - terraform -chdir={{.INFRA_DIR}} validate

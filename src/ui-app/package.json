@@ -6,7 +6,7 @@
   "description": "WF-Garage cockpit — React 19 + MUI v9 port of mockup/demos/01-morning-prep.html (T003).",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --logLevel warn",
     "preview": "vite preview",
     "type-check": "tsc -b --noEmit",
     "test": "vitest run"

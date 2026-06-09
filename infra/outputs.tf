@@ -15,22 +15,22 @@ output "acr_name" {
 
 output "ui_app_fqdn" {
   description = "UI App public FQDN"
-  value       = azurerm_container_app.ui_app.ingress[0].fqdn
+  value       = try(azurerm_container_app.ui_app[0].ingress[0].fqdn, "")
 }
 
 output "ui_app_url" {
   description = "UI App public URL"
-  value       = "https://${azurerm_container_app.ui_app.ingress[0].fqdn}"
+  value       = try("https://${azurerm_container_app.ui_app[0].ingress[0].fqdn}", "")
 }
 
 output "orchestration_api_fqdn" {
   description = "Orchestration API internal FQDN"
-  value       = azurerm_container_app.orchestration_api.ingress[0].fqdn
+  value       = try(azurerm_container_app.orchestration_api[0].ingress[0].fqdn, "")
 }
 
 output "mock_api_fqdn" {
   description = "Mock API internal FQDN"
-  value       = azurerm_container_app.mock_api.ingress[0].fqdn
+  value       = try(azurerm_container_app.mock_api[0].ingress[0].fqdn, "")
 }
 
 output "foundry_project_endpoint" {
