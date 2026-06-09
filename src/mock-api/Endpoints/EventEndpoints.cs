@@ -19,7 +19,7 @@ public static class EventEndpoints
             Results.Json(store.List(scope), EventJson.Options));
 
         // Events affecting one portfolio entity (kind: customer | ticker | sector | issuer; default any).
-        app.MapGet("/mock/events/by-entity", (string value, string? kind, EventStore store) =>
+        app.MapGet("/mock/events/by-entity", (string? value, string? kind, EventStore store) =>
             string.IsNullOrWhiteSpace(value)
                 ? Results.Json(new { error = "Query parameter 'value' is required." }, statusCode: StatusCodes.Status400BadRequest)
                 : Results.Json(store.ByEntity(value, kind), EventJson.Options));
