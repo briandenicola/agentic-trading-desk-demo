@@ -11,6 +11,7 @@ builder.AddOpenTelemetry(ServiceName);
 // Fictional source-of-record data store (loaded once at startup).
 var dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "Data");
 builder.Services.AddSingleton(new MockDataStore(dataDirectory));
+builder.Services.AddSingleton(new CbDataStore(dataDirectory));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,6 +25,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapMockEndpoints();
+app.MapCbEndpoints();
 
 app.Run();
 
