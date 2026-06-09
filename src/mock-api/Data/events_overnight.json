@@ -1,0 +1,86 @@
+[
+  {
+    "id": "evt-20260514-001",
+    "type": "macro_rate",
+    "headline": "Fed delivers surprise 25bp hike overnight; long-end yields jump",
+    "summary": "An unscheduled policy statement lifted the target range by 25bp, citing sticky services inflation. Two- and ten-year yields gapped higher and rate-sensitive sectors sold off in pre-market.",
+    "source": "Garage Wire",
+    "severity": "high",
+    "publishedAt": "2026-05-14T04:35:00Z",
+    "scope": "overnight",
+    "origin": "seed",
+    "direction": "negative",
+    "affectedEntities": {
+      "sectors": ["Construction", "Real Estate", "Manufacturing", "Financials", "Utilities"],
+      "tickers": ["SEC-3011", "SEC-3012"],
+      "issuers": ["Eldoria Bank Holdings"]
+    }
+  },
+  {
+    "id": "evt-20260514-002",
+    "type": "sector",
+    "headline": "Bumper-harvest forecast sinks grain prices to a 3-year low",
+    "summary": "Updated crop-condition data points to record yields, pressuring grain and feed margins. Ag lenders flagged near-term working-capital strain for cooperative borrowers.",
+    "source": "Prairie AgDaily",
+    "severity": "medium",
+    "publishedAt": "2026-05-14T03:10:00Z",
+    "scope": "overnight",
+    "origin": "seed",
+    "direction": "negative",
+    "affectedEntities": {
+      "sectors": ["Agriculture", "Consumer Staples"],
+      "customerIds": ["CB-10035", "CB-10036"],
+      "tickers": ["SEC-3010"]
+    }
+  },
+  {
+    "id": "evt-20260514-003",
+    "type": "issuer_credit",
+    "headline": "Quartzite Semiconductors cuts guidance; rating agency opens watch",
+    "summary": "The chipmaker slashed full-year revenue guidance on soft data-center demand and was placed on negative credit watch. Holders of the name face mark-to-market and spread risk.",
+    "source": "Garage Wire",
+    "severity": "high",
+    "publishedAt": "2026-05-14T02:50:00Z",
+    "scope": "overnight",
+    "origin": "seed",
+    "direction": "negative",
+    "affectedEntities": {
+      "sectors": ["Technology"],
+      "tickers": ["SEC-3003"],
+      "issuers": ["Quartzite Semiconductors"]
+    }
+  },
+  {
+    "id": "evt-20260514-004",
+    "type": "client_headline",
+    "headline": "Northstar Aerospace wins multi-year defense components contract",
+    "summary": "A fictional prime awarded Northstar Aerospace a multi-year supply agreement, materially expanding its order book and likely lifting financing and treasury needs.",
+    "source": "Defense Brief",
+    "severity": "medium",
+    "publishedAt": "2026-05-14T01:20:00Z",
+    "scope": "overnight",
+    "origin": "seed",
+    "direction": "positive",
+    "affectedEntities": {
+      "customerIds": ["CB-10005"],
+      "sectors": ["Manufacturing"]
+    }
+  },
+  {
+    "id": "evt-20260514-005",
+    "type": "sector",
+    "headline": "Healthcare M&A wave lifts diagnostics and devices",
+    "summary": "Two large fictional acquisitions re-rated the diagnostics and medical-device space higher, improving sentiment and valuations for sector borrowers and holdings.",
+    "source": "MedMarkets",
+    "severity": "low",
+    "publishedAt": "2026-05-14T05:05:00Z",
+    "scope": "overnight",
+    "origin": "seed",
+    "direction": "positive",
+    "affectedEntities": {
+      "sectors": ["Healthcare"],
+      "customerIds": ["CB-10016", "CB-10019"],
+      "tickers": ["SEC-3001", "SEC-3007"]
+    }
+  }
+]

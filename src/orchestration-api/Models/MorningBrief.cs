@@ -17,6 +17,9 @@ public sealed record MorningBrief
     public required IReadOnlyList<AffectedClient> MostAffectedClients { get; init; }
     public required IReadOnlyList<OutreachItem> Outreach { get; init; }
     public IReadOnlyList<string>? Notes { get; init; }
+
+    /// <summary>All current events the synthesis weighed (overnight + intraday). (002)</summary>
+    public IReadOnlyList<MarketEvent> EventsConsidered { get; init; } = [];
 }
 
 public sealed record MarketStripItem
@@ -47,6 +50,9 @@ public sealed record AffectedClient
     public required string Tier { get; init; }
     public required string Exposure { get; init; }
     public required Concern Concern { get; init; }
+
+    /// <summary>Per-affected-client linkage; names the driving event(s) (FR-007). (002)</summary>
+    public IReadOnlyList<EventLinkage> DrivingEvents { get; init; } = [];
 }
 
 public sealed record Concern

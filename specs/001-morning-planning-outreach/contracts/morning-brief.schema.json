@@ -64,7 +64,8 @@
               "label": { "type": "string" },
               "kind": { "type": "string", "enum": ["sell", "warm", "info"] }
             }
-          }
+          },
+          "drivingEvents": { "type": "array", "items": { "$ref": "#/$defs/eventLinkage" } }
         }
       }
     },
@@ -95,6 +96,50 @@
         }
       }
     },
-    "notes": { "type": "array", "items": { "type": "string" } }
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "eventsConsidered": { "type": "array", "items": { "$ref": "#/$defs/marketEvent" } }
+  },
+  "$defs": {
+    "affectedEntities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "customerIds": { "type": "array", "items": { "type": "string" } },
+        "tickers": { "type": "array", "items": { "type": "string" } },
+        "sectors": { "type": "array", "items": { "type": "string" } },
+        "issuers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "marketEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "headline", "summary", "severity"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["macro_rate", "sector", "issuer_credit", "client_headline"] },
+        "headline": { "type": "string" },
+        "summary": { "type": "string" },
+        "source": { "type": "string" },
+        "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+        "publishedAt": { "type": "string" },
+        "ingestedAt": { "type": "string" },
+        "scope": { "type": "string", "enum": ["overnight", "intraday"] },
+        "origin": { "type": "string", "enum": ["seed", "admin", "feed"] },
+        "direction": { "type": "string", "enum": ["positive", "negative", "neutral"] },
+        "affectedEntities": { "$ref": "#/$defs/affectedEntities" }
+      }
+    },
+    "eventLinkage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "headline", "entityRef", "contribution", "rationale"],
+      "properties": {
+        "eventId": { "type": "string" },
+        "headline": { "type": "string" },
+        "entityRef": { "type": "string" },
+        "contribution": { "type": "number" },
+        "rationale": { "type": "string" }
+      }
+    }
   }
 }

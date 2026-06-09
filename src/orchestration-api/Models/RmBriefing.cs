@@ -23,6 +23,9 @@ public sealed record RmBriefing
     public required IReadOnlyList<MacroBullet> MacroSnapshot { get; init; }
     public required string SuggestedFirstAction { get; init; }
     public IReadOnlyList<string>? Notes { get; init; }
+
+    /// <summary>All current events the synthesis weighed (overnight + intraday). Empty ⇒ no events processed. (002)</summary>
+    public IReadOnlyList<MarketEvent> EventsConsidered { get; init; } = [];
 }
 
 public sealed record RmIdentity
@@ -65,6 +68,9 @@ public sealed record PriorityCall
     public required IReadOnlyList<CallTag> Tags { get; init; }
     public required IReadOnlyList<string> Reasons { get; init; }
     public required string SuggestedAction { get; init; }
+
+    /// <summary>Per-call linkage; names the event(s) that changed this call's rank/priority (FR-007, SC-005). Empty for un-affected calls. (002)</summary>
+    public IReadOnlyList<EventLinkage> DrivingEvents { get; init; } = [];
 }
 
 public sealed record CallTag

@@ -13,6 +13,7 @@ var dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "Data");
 builder.Services.AddSingleton(new MockDataStore(dataDirectory));
 builder.Services.AddSingleton(new CbDataStore(dataDirectory));
 builder.Services.AddSingleton(new TdDataStore(dataDirectory));
+builder.Services.AddSingleton(new EventStore(dataDirectory));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,6 +29,7 @@ app.UseSwaggerUI();
 app.MapMockEndpoints();
 app.MapCbEndpoints();
 app.MapTdEndpoints();
+app.MapEventEndpoints();
 
 app.Run();
 
