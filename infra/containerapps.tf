@@ -115,6 +115,11 @@ resource "azurerm_container_app" "orchestration_api" {
       }
 
       env {
+        name  = "AZURE_CLIENT_ID"
+        value = azurerm_user_assigned_identity.main.client_id
+      }
+
+      env {
         name  = "FOUNDRY_MODEL"
         value = local.model_deployment_name
       }
@@ -264,6 +269,11 @@ resource "azurerm_container_app_job" "agent_provisioner" {
       env {
         name        = "FOUNDRY_PROJECT_ENDPOINT"
         secret_name = "foundry-project-endpoint"
+      }
+
+      env {
+        name  = "AZURE_CLIENT_ID"
+        value = azurerm_user_assigned_identity.main.client_id
       }
 
       env {

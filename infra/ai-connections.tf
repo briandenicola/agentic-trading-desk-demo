@@ -20,11 +20,33 @@ resource "azapi_resource" "project_connection" {
   body = {
     properties = {
       category                    = "AzureOpenAI"
-      target                      = azapi_resource.ai_account[0].id
+      target                      = try(azapi_resource.ai_account[0].output.properties.endpoint, "https://${local.ai_account_name}.openai.azure.com/")
       authType                    = "AAD"
       isSharedToAll               = true
       sharedUserList              = []
       useWorkspaceManagedIdentity = false
+      metadata = {
+        ApiType    = "Azure"
+        ResourceId = azapi_resource.ai_account[0].id
+      }
+    }
+  }
+
+  depends_on = [time_sleep.rbac_propagation]
+}
+
+# Account-level capability host (Agents runtime) — MUST exist before the project capability host.
+# Per Foundry "standard agent setup": account host first, then project host.
+resource "azapi_resource" "account_capability_host" {
+  count                     = var.enable_foundry ? 1 : 0
+  type                      = "Microsoft.CognitiveServices/accounts/capabilityHosts@2025-04-01-preview"
+  name                      = "default"
+  parent_id                 = azapi_resource.ai_account[0].id
+  schema_validation_enabled = false
+
+  body = {
+    properties = {
+      capabilityHostKind = "Agents"
     }
   }
 
@@ -35,7 +57,7 @@ resource "azapi_resource" "project_connection" {
 # Schema validation disabled temporarily due to API versioning differences
 resource "azapi_resource" "capability_host" {
   count                     = var.enable_foundry ? 1 : 0
-  type                      = "Microsoft.CognitiveServices/accounts/projects/capabilityHosts@2025-06-01"
+  type                      = "Microsoft.CognitiveServices/accounts/projects/capabilityHosts@2025-04-01-preview"
   name                      = "default"
   parent_id                 = azapi_resource.ai_project[0].id
   schema_validation_enabled = false
@@ -48,6 +70,7 @@ resource "azapi_resource" "capability_host" {
 
   depends_on = [
     time_sleep.rbac_propagation,
-    azapi_resource.project_connection
+    azapi_resource.project_connection,
+    azapi_resource.account_capability_host
   ]
 }

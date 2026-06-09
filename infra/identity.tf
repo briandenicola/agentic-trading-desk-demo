@@ -29,10 +29,12 @@ resource "azurerm_role_assignment" "openai_user" {
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
 
-# Azure AI Project Manager for Foundry project operations
+# Cognitive Services User grants the container-app identity data-plane access to
+# the Foundry account, including the Agents API (Microsoft.CognitiveServices/*).
+# This is the registered built-in equivalent of "Azure AI Project Manager".
 resource "azurerm_role_assignment" "ai_project_manager" {
   count                = var.enable_foundry ? 1 : 0
-  scope                = azapi_resource.ai_project[0].id
-  role_definition_name = "Azure AI Developer"
+  scope                = azapi_resource.ai_account[0].id
+  role_definition_name = "Cognitive Services User"
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }

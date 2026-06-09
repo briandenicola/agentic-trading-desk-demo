@@ -12,7 +12,7 @@ using Azure.Identity;
 const string AgentName = "morning-brief";
 
 var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
-var model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-4o";
+var model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini";
 
 if (string.IsNullOrWhiteSpace(endpoint))
 {

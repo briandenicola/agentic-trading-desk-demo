@@ -23,15 +23,15 @@ variable "tags" {
 # Defaults to gpt-4o-mini (2024-07-18) with GlobalStandard SKU
 # This model+version is broadly available across Azure regions with favorable quota limits
 variable "foundry_model" {
-  description = "Azure OpenAI model name for Foundry project (e.g., gpt-4o-mini, gpt-4o)"
+  description = "Azure OpenAI model name for Foundry project (e.g., gpt-5.4-mini, gpt-5.1)"
   type        = string
-  default     = "gpt-4o-mini"
+  default     = "gpt-5.4-mini"
 }
 
 variable "foundry_model_version" {
-  description = "Azure OpenAI model version (e.g., 2024-07-18)"
+  description = "Azure OpenAI model version (e.g., 2026-03-17)"
   type        = string
-  default     = "2024-07-18"
+  default     = "2026-03-17"
 }
 
 variable "foundry_model_sku" {

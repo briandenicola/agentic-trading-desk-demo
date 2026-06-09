@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Azure.AI.Agents.Persistent;
 using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
@@ -27,11 +28,18 @@ namespace OrchestrationApi.Agents;
 /// </summary>
 public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, ILogger<AgentRunner> logger)
 {
+    /// <summary>
+    /// Name of the single persistent Foundry agent. The agent-provisioner registers it once
+    /// (idempotently); the runtime reuses it by name on every request instead of creating a new
+    /// agent per call, so agents do not accumulate and all runs are traceable under one agent.
+    /// </summary>
+    private const string AgentName = "morning-brief";
+
     public async Task<MorningBrief> RunAsync(string eventId, string? date, CancellationToken ct = default)
     {
         var endpoint = config["FOUNDRY_PROJECT_ENDPOINT"]
             ?? throw new InvalidOperationException("LIVE mode requires FOUNDRY_PROJECT_ENDPOINT.");
-        var model = config["FOUNDRY_MODEL"] ?? "gpt-4o";
+        var model = config["FOUNDRY_MODEL"] ?? "gpt-5.4-mini";
         var maxHops = int.TryParse(config["MAX_TOOL_HOPS"], out var h) && h > 0 ? h : 8;
 
         var instructions = await LoadInstructionsAsync(ct);
@@ -68,9 +76,14 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
     // ---------------------------------------------------------------- Foundry wiring (isolated)
 
     /// <summary>
-    /// Build a Foundry-backed <see cref="AIAgent"/> with the local mock-api tools attached.
-    /// This is the only method that touches the prerelease Azure AI Foundry surface; it is
-    /// isolated so a signature change in the rc5 package cannot affect the DEMO path.
+    /// Resolve a Foundry-backed <see cref="AIAgent"/> for the morning brief. The agent itself is
+    /// <b>persistent</b> in Foundry (registered by <c>agent-provisioner</c>); this method looks it up
+    /// by name and returns a local <see cref="AIAgent"/> proxy with the mock-api tools attached for
+    /// client-side execution. If the persistent agent is not found (e.g. provisioner has not run yet),
+    /// it falls back to creating one so LIVE mode still works.
+    ///
+    /// This is the only method that touches the prerelease Azure AI Foundry surface; it is isolated so
+    /// a signature change in the rc5 package cannot affect the offline DEMO path.
     /// </summary>
     private async Task<AIAgent> CreateFoundryAgentAsync(string endpoint, string model, string instructions, CancellationToken ct)
     {
@@ -80,16 +93,50 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
 
         var aiTools = BuildTools();
 
+        // Prefer reusing the persistent agent the provisioner registered.
+        var existingId = await TryFindPersistentAgentIdAsync(endpoint, credential, ct);
+
 #pragma warning disable CS0618 // rc5 transitional API; native AIProjectClient.Agents APIs are not yet stable. Tracked for LIVE follow-up.
-        var agent = await projectClient.CreateAIAgentAsync(
+        if (existingId is not null)
+        {
+            logger.LogInformation("Reusing persistent Foundry agent '{Agent}' (id={Id}).", AgentName, existingId);
+            return await projectClient.GetAIAgentAsync(existingId, aiTools, cancellationToken: ct);
+        }
+
+        logger.LogWarning("Persistent agent '{Agent}' not found; creating it (run the provisioner to persist it).", AgentName);
+        return await projectClient.CreateAIAgentAsync(
             model: model,
-            name: "morning-brief",
+            name: AgentName,
             instructions: instructions,
             tools: aiTools,
             cancellationToken: ct);
 #pragma warning restore CS0618
+    }
 
-        return agent;
+    /// <summary>
+    /// Look up the id of the persistent <see cref="AgentName"/> agent in Foundry. Returns
+    /// <see langword="null"/> (never throws) if enumeration fails or no match exists, so the
+    /// caller can fall back to creating an agent.
+    /// </summary>
+    private async Task<string?> TryFindPersistentAgentIdAsync(string endpoint, DefaultAzureCredential credential, CancellationToken ct)
+    {
+        try
+        {
+            var admin = new PersistentAgentsAdministrationClient(new Uri(endpoint), credential);
+            await foreach (var agent in admin.GetAgentsAsync(cancellationToken: ct))
+            {
+                if (string.Equals(agent.Name, AgentName, StringComparison.Ordinal))
+                {
+                    return agent.Id;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not enumerate persistent agents; falling back to create.");
+        }
+
+        return null;
     }
 
     /// <summary>Expose the mock-api tool functions to the agent (typed HttpClient under the hood).</summary>
