@@ -76,3 +76,103 @@ export async function runMorningBrief(req: MorningBriefRequest = {}): Promise<Mo
   const { data } = await apiClient.post<MorningBrief>('/agent/morning-brief', req);
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// RM Daily Briefing — PRIMARY scene (Commercial Banking RM). Mirrors the
+// orchestration-api RmBriefing DTO; DEMO and LIVE return the same shape.
+// ---------------------------------------------------------------------------
+
+export interface RmBriefingRequest {
+  payload?: {
+    rmId?: string;
+    date?: string;
+  };
+}
+
+export interface RmIdentity {
+  rmId: string;
+  name: string;
+  title?: string;
+  territory?: string;
+}
+
+export interface RmPortfolio {
+  customerCount: number;
+  totalExposureMm: number;
+  totalDepositsMm: number;
+}
+
+export interface RmKpis {
+  yesterdayTouchpoints: number;
+  openPipelineCount: number;
+  openPipelineAmountMm: number;
+  closingWithin14Days: number;
+  activeComplaints: number;
+}
+
+export type CallTagKind = 'escalated' | 'in-progress' | 'followup' | 'closing' | 'stuck';
+
+export interface CallTag {
+  label: string;
+  kind: CallTagKind;
+}
+
+export interface PriorityCall {
+  rank: number;
+  priority: number; // 1..4 colour band (red→green)
+  customerId: string;
+  customerName: string;
+  industrySector?: string;
+  hqCity?: string;
+  state?: string;
+  annualRevenueMm?: number;
+  riskRating?: string;
+  score: number;
+  tags: CallTag[];
+  reasons: string[];
+  suggestedAction: string;
+}
+
+export interface ComplaintSnapshot {
+  complaintId: string;
+  customerName: string;
+  category?: string;
+  severity?: string;
+  status: string;
+  dateFiled?: string;
+}
+
+export interface PipelineClose {
+  opportunityId: string;
+  customerName: string;
+  productType?: string;
+  stage?: string;
+  amountMm: number;
+  expectedCloseDate?: string;
+}
+
+export interface MacroBullet {
+  headline: string;
+  detail: string;
+}
+
+export interface RmBriefing {
+  mode: 'DEMO' | 'LIVE';
+  asOf: string;
+  greeting: string;
+  rm: RmIdentity;
+  portfolio: RmPortfolio;
+  kpis: RmKpis;
+  reasoning: ReasoningStep[];
+  priorityCallList: PriorityCall[];
+  complaintsSnapshot: ComplaintSnapshot[];
+  pipelineClosing: PipelineClose[];
+  macroSnapshot: MacroBullet[];
+  suggestedFirstAction: string;
+  notes?: string[];
+}
+
+export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBriefing> {
+  const { data } = await apiClient.post<RmBriefing>('/agent/rm-briefing', req);
+  return data;
+}

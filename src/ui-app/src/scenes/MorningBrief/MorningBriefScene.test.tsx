@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosResponse } from 'axios';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
+import { MemoryRouter } from 'react-router-dom';
 import { apiClient, type MorningBrief } from '../../api/client';
 import { theme } from '../../theme/theme';
 import MorningBriefScene from './MorningBriefScene';
@@ -78,7 +79,9 @@ function renderScene() {
   render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <MorningBriefScene />
+      <MemoryRouter>
+        <MorningBriefScene />
+      </MemoryRouter>
     </ThemeProvider>,
   );
 }

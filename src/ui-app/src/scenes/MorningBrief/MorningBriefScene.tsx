@@ -25,6 +25,7 @@ import {
 } from '../../api/client';
 import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
+import CockpitNav from '../../components/CockpitNav';
 
 const rationaleScores = (rationale: RankingRationale) => [
   { label: 'Wallet', value: rationale.walletScore },
@@ -65,6 +66,7 @@ export default function MorningBriefScene() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <CockpitNav />
       {brief && <MarketStrip items={brief.marketStrip} />}
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
