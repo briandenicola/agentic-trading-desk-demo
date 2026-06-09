@@ -17,11 +17,14 @@
     <PackageReference Include="Azure.Identity" />
   </ItemGroup>
 
-  <!-- Ship the agent prompt (authored in orchestration-api/Prompts) with this job so it
-       can read the same instructions the LIVE runner uses (T017/T019 parity). -->
+  <!-- Ship the agent prompts (authored in orchestration-api/Prompts) with this job so it
+       can read the same instructions the LIVE runners use (T017/T019 parity). -->
   <ItemGroup>
     <Content Include="..\orchestration-api\Prompts\morning-brief.md"
              Link="Prompts\morning-brief.md"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\rm-daily-briefing.md"
+             Link="Prompts\rm-daily-briefing.md"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
