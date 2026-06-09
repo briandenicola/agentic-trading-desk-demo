@@ -313,3 +313,15 @@ export async function listEvents(scope?: 'overnight' | 'intraday'): Promise<Mark
   });
   return data;
 }
+
+/** A customer the admin can target in the News Desk affected-entities type-ahead. */
+export interface CustomerOption {
+  customerId: string;
+  name: string;
+}
+
+/** Customer directory for the admin News Desk type-ahead (id + display name). */
+export async function listCustomers(): Promise<CustomerOption[]> {
+  const { data } = await apiClient.get<CustomerOption[]>('/customers');
+  return data;
+}

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { mint } from '../../theme/theme';
-import type { AdminNewsSubmission } from '../../api/client';
+import { listCustomers, type AdminNewsSubmission, type CustomerOption } from '../../api/client';
 
 interface NewsFormProps {
   onSubmit: (submission: AdminNewsSubmission) => Promise<void> | void;
@@ -38,6 +39,11 @@ function parseList(value: string): string[] {
     .filter((v) => v.length > 0);
 }
 
+/** Resolve a selected type-ahead value (a picked customer or a free-typed string) to its ID. */
+function toCustomerId(value: CustomerOption | string): string {
+  return typeof value === 'string' ? value.trim() : value.customerId;
+}
+
 /**
  * Admin news composer (002 US3, FR-014/FR-015). Client-side validation mirrors the server
  * re-validation: headline + summary required, and at least one affected-entity selector. An
@@ -50,18 +56,33 @@ export default function NewsForm({ onSubmit, submitting = false }: NewsFormProps
   const [severity, setSeverity] = useState<AdminNewsSubmission['severity']>('high');
   const [type, setType] = useState<AdminNewsSubmission['type']>('sector');
   const [direction, setDirection] = useState<NonNullable<AdminNewsSubmission['direction']>>('negative');
-  const [customerIds, setCustomerIds] = useState('');
+  const [customerIds, setCustomerIds] = useState<(CustomerOption | string)[]>([]);
+  const [customerOptions, setCustomerOptions] = useState<CustomerOption[]>([]);
   const [tickers, setTickers] = useState('');
   const [sectors, setSectors] = useState('');
   const [issuers, setIssuers] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    listCustomers()
+      .then((options) => {
+        if (active) setCustomerOptions(options);
+      })
+      .catch(() => {
+        // Type-ahead is a convenience; the field still accepts free-typed IDs if the lookup fails.
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     const affectedEntities = {
-      customerIds: parseList(customerIds),
+      customerIds: customerIds.map(toCustomerId).filter((v) => v.length > 0),
       tickers: parseList(tickers),
       sectors: parseList(sectors),
       issuers: parseList(issuers),
@@ -178,13 +199,27 @@ export default function NewsForm({ onSubmit, submitting = false }: NewsFormProps
             Affected entities — at least one (comma-separated)
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField
-              label="Customer IDs"
-              placeholder="CB-10036, CB-10035"
-              value={customerIds}
-              onChange={(e) => setCustomerIds(e.target.value)}
-              fullWidth
+            <Autocomplete
+              multiple
+              freeSolo
               size="small"
+              fullWidth
+              options={customerOptions}
+              value={customerIds}
+              onChange={(_, value) => setCustomerIds(value)}
+              getOptionLabel={(option) =>
+                typeof option === 'string' ? option : `${option.customerId} — ${option.name}`
+              }
+              isOptionEqualToValue={(option, value) =>
+                toCustomerId(option) === toCustomerId(value)
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Customer IDs"
+                  placeholder={customerIds.length === 0 ? 'Search by ID or name…' : ''}
+                />
+              )}
             />
             <TextField
               label="Tickers"

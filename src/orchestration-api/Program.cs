@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Text.Json.Nodes;
 using OrchestrationApi;
 using OrchestrationApi.Agents;
 using OrchestrationApi.Agents.Demo;
@@ -182,6 +183,35 @@ app.MapGet("/api/events", async (EventTools eventTools, [FromQuery] string? scop
 {
     var events = await eventTools.ListEventsAsync(scope, ct);
     return Results.Json(events, RmBriefingJson.Options);
+});
+
+// Customer directory for the admin News Desk type-ahead (id + display name). Proxies the
+// internal mock-api over HTTP (Principle II / FR-002) — the browser never reaches mock-api
+// directly. Degrades to an empty list so the form still works if the lookup is unavailable.
+app.MapGet("/api/customers", async (MockApiClient mockApi, CancellationToken ct) =>
+{
+    JsonNode? node;
+    try
+    {
+        node = await mockApi.GetJsonAsync("/mock/cb/customers", ct);
+    }
+    catch
+    {
+        return Results.Json(Array.Empty<object>());
+    }
+
+    var options = (node as JsonArray ?? [])
+        .OfType<JsonObject>()
+        .Select(c => new
+        {
+            customerId = (string?)c["customerId"] ?? string.Empty,
+            name = (string?)c["dba"] ?? (string?)c["legalName"] ?? (string?)c["customerId"] ?? string.Empty
+        })
+        .Where(o => o.customerId.Length > 0)
+        .OrderBy(o => o.customerId, StringComparer.Ordinal)
+        .ToList();
+
+    return Results.Json(options);
 });
 
 app.MapPost("/api/events", async (

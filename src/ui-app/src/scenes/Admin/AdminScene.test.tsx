@@ -10,6 +10,7 @@ import type { AdminNewsSubmission, MarketEvent } from '../../api/client';
 const hoisted = vi.hoisted(() => ({
   ingestNews: vi.fn<(s: AdminNewsSubmission) => Promise<MarketEvent>>(),
   listEvents: vi.fn<() => Promise<MarketEvent[]>>(),
+  listCustomers: vi.fn<() => Promise<{ customerId: string; name: string }[]>>(),
 }));
 
 vi.mock('../../api/client', async (importOriginal) => {
@@ -18,6 +19,7 @@ vi.mock('../../api/client', async (importOriginal) => {
     ...actual,
     ingestNews: hoisted.ingestNews,
     listEvents: hoisted.listEvents,
+    listCustomers: hoisted.listCustomers,
   };
 });
 
@@ -38,11 +40,13 @@ afterEach(() => {
   cleanup();
   hoisted.ingestNews.mockReset();
   hoisted.listEvents.mockReset();
+  hoisted.listCustomers.mockReset();
 });
 
 describe('AdminScene', () => {
   it('rejects an incomplete submission and ingests nothing', async () => {
     hoisted.listEvents.mockResolvedValue([]);
+    hoisted.listCustomers.mockResolvedValue([]);
     renderScene();
     await waitFor(() => expect(hoisted.listEvents).toHaveBeenCalled());
 
@@ -55,6 +59,9 @@ describe('AdminScene', () => {
 
   it('ingests a valid submission exactly once and refreshes the feed', async () => {
     hoisted.listEvents.mockResolvedValue([]);
+    hoisted.listCustomers.mockResolvedValue([
+      { customerId: 'CB-10036', name: 'Prairie Grain Cooperative' },
+    ]);
     hoisted.ingestNews.mockResolvedValue({
       id: 'evt-20260514-a001',
       type: 'sector',
@@ -73,9 +80,9 @@ describe('AdminScene', () => {
     fireEvent.change(screen.getByLabelText(/summary/i), {
       target: { value: 'Drought lifts agricultural commodity prices.' },
     });
-    fireEvent.change(screen.getByLabelText(/customer ids/i), {
-      target: { value: 'CB-10036' },
-    });
+    const customerInput = screen.getByLabelText(/customer ids/i);
+    fireEvent.change(customerInput, { target: { value: 'CB-10036' } });
+    fireEvent.keyDown(customerInput, { key: 'Enter', code: 'Enter' });
 
     fireEvent.click(screen.getByRole('button', { name: /inject news item/i }));
 
