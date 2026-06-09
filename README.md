@@ -1,8 +1,21 @@
 # WF-Garage — Morning Planning & Prioritized Outreach
 
-Interactive **Client CV** demo for a Municipal Sales desk. The React cockpit runs a morning brief that combines a market narrative, affected fictional clients, ranked outreach, and an editable human-in-the-loop call plan.
+Interactive **Client CV** demo for Commercial Banking RMs and a Municipal Sales desk. The React
+cockpit runs event-reactive morning briefings that combine a market narrative, the overnight **and**
+intraday events considered, the most-affected fictional clients, ranked outreach, and an editable
+human-in-the-loop plan. New events injected through the News Desk fan out to per-event specialist
+agents and push a re-synthesized briefing to the open cockpit live over SSE.
 
 > All demo data is fictional. DEMO mode is deterministic, offline, and the default.
+
+## Scenes
+
+| Route | Scene | Purpose |
+|---|---|---|
+| `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
+| `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
+| `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
+| `/admin` | **News Desk** | Operator UI to inject intraday news the agents react to |
 
 ## Stack
 
@@ -15,24 +28,37 @@ Interactive **Client CV** demo for a Municipal Sales desk. The React cockpit run
 ## Architecture
 
 ```
-src\ui-app\  ── /api/agent/morning-brief ──►  src\orchestration-api\
-                                                     │
-                         DEMO: deterministic C# composer
-                         LIVE: Foundry agent + tool-calling loop
-                                                     │ HTTP only
-                                                     ▼
-                                      src\mock-api\ implements openapi\tools.yaml
+src\ui-app\  ── /api/agent/{scene} ─────────►  src\orchestration-api\
+        ▲   ── /api/agent/{scene}/stream (SSE)        │
+        │   ── /api/events (admin inject) ────────────┤
+   live briefing-update                               │  DEMO: deterministic C# composer
+   (re-synthesized DTO)                               │  LIVE: Foundry synthesizer + per-event fan-out
+                                                      │ HTTP only
+                                                      ▼
+                                       src\mock-api\ implements openapi\tools.yaml
+                                       + reactive event store (/mock/events)
 ```
 
-The frontend is mode-blind: DEMO and LIVE return the same `MorningBrief` JSON shape. The orchestration API reaches data only through the mock API HTTP seam; it never reads fixtures in-process.
+The frontend is mode-blind: DEMO and LIVE return the same `MorningBrief` / `RmBriefing` JSON shape
+(including the `eventsConsidered` it weighed). The orchestration API reaches data only through the
+mock API HTTP seam; it never reads fixtures in-process. A background poller diffs the event store and
+broadcasts one consolidated re-synthesized briefing per scene over SSE when events arrive.
 
 ### Orchestrator vs. agent
 
-- **Orchestrator** (the `AgentRunner`, the 7 tool functions, `MAX_TOOL_HOPS`, JSON→`MorningBrief` mapping) runs **inside the `orchestration-api` Container App**.
-- **Agent** (instructions + model `gpt-5.4-mini`) is **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`.
+- **Orchestrator** (the per-scene runners, the tool functions, `MAX_TOOL_HOPS`, the event fan-out, JSON→DTO mapping) runs **inside the `orchestration-api` Container App**.
+- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Four are registered: `rm-daily-briefing`, `morning-brief` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), and `briefing-synthesizer` (the shared synthesis contract).
 - **Tool execution** happens back in the Container App: the agent only *decides* which tool to call; the C# function runs locally and fetches data from `mock-api` over HTTP.
 
-The morning-brief agent is **registered once** by `src\agent-provisioner\` and **reused by name** on every request (no per-request agent churn), so all runs are consolidated under one agent in the Foundry portal. See [`docs/architecture.md`](docs/architecture.md) for the full flow, persistence model, and traceability roadmap.
+In LIVE mode each briefing is a **per-event multi-agent fan-out into a synthesizer** (002 US4): the
+runner lists the current events, fans out one `event-specialist` assessment per event (concurrently,
+bounded by `EVENT_FANOUT_MAX_CONCURRENCY`, each in its own trace span), and feeds the assessments to
+the scene agent, which folds them into the ranking and emits the unchanged DTO.
+
+The agents are **registered once** by `src\agent-provisioner\` and **reused by name** on every
+request (no per-request agent churn), so all runs consolidate under those agents in the Foundry
+portal. See [`docs/architecture.md`](docs/architecture.md) for the full flow, the reactive event
+store, the SSE channel, and the fan-out topology.
 
 ## Quickstart — local DEMO mode
 
@@ -57,7 +83,15 @@ DEMO mode needs no Azure credentials. It defaults to `DEMO_MODE=1` and produces 
 
 Set `DEMO_MODE=0` and provide `FOUNDRY_PROJECT_ENDPOINT` plus `FOUNDRY_MODEL` (typically from `terraform -chdir=infra output`). LIVE uses `DefaultAzureCredential` with the Foundry project and the same mock API tools, capped by `MAX_TOOL_HOPS`.
 
-The persistent `morning-brief` agent (model `gpt-5.4-mini`) is registered by `src\agent-provisioner\` (the `task cloud:provision` job in FULL mode) and reused by the runtime. If the provisioner has not run, `AgentRunner` self-creates the agent so LIVE still works.
+The persistent scene agents (model `gpt-5.4-mini`) plus the `event-specialist` and
+`briefing-synthesizer` are registered by `src\agent-provisioner\` (the `task cloud:provision` job in
+FULL mode) and reused by the runtime. If the provisioner has not run, the runners self-create the
+scene agent so LIVE still works. Both LIVE runners attach `eventsConsidered` from the authoritative
+event store (not the model output) so the LIVE DTO matches DEMO.
+
+> Each LIVE briefing makes roughly one synthesizer call plus one `event-specialist` call per current
+> event, so firing several scenes back-to-back can briefly hit the model deployment's rate limit
+> (HTTP 429). Runs degrade gracefully; raise the deployment quota for heavy live use.
 
 ## Deploy to Azure Container Apps
 
@@ -83,8 +117,9 @@ Terraform provisions the Container Apps environment, ACR, Key Vault, managed ide
 
 Serilog structured JSON logs, a correlation id (`X-Correlation-ID`) propagated per request, and
 OpenTelemetry tracing/metrics (ASP.NET Core + outbound HTTP) are wired in `src\shared\Observability`.
-Tool calls surface as HTTP dependency spans, and the persistent agent's runs/tool-steps are visible
-in the Foundry portal. Full agent traceability to Application Insights (Azure Monitor exporter,
+Tool calls surface as HTTP dependency spans, the event fan-out emits a `briefing_synthesis.fanout`
+parent span with one `event_specialist.assess` child per event, and the agents' runs/tool-steps are
+visible in the Foundry portal. Full agent traceability to Application Insights (Azure Monitor exporter,
 GenAI spans, per-tool-call spans, token usage) is tracked in
 [`specs/_backlog/005-observability.md`](specs/_backlog/005-observability.md).
 
@@ -102,10 +137,10 @@ gitleaks detect --source . --no-banner
 ## Layout
 
 ```
-src\ui-app\              React cockpit and nginx reverse proxy
-src\orchestration-api\   POST /api/agent/morning-brief, DEMO/LIVE runner
-src\mock-api\            fictional system-of-record endpoints
-src\agent-provisioner\   idempotent Foundry agent registration job
+src\ui-app\              React cockpit (RM, Trading, Cockpit, News Desk) + nginx reverse proxy
+src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, DEMO/LIVE runners + event fan-out
+src\mock-api\            fictional system-of-record endpoints + reactive event store (/mock/events)
+src\agent-provisioner\   idempotent Foundry agent registration job (4 agents)
 src\shared\Observability\ Serilog, OTEL, correlation id, JSON errors
 infra\                   Terraform for ACA, ACR, Key Vault, Foundry
 tasks\                   Taskfile includes for local, build, and cloud workflows
