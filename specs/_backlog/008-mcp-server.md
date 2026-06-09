@@ -2,7 +2,7 @@
 
 ## Priority: P3 (Medium)
 
-## Status: Selected for NEXT iteration — order 3 of 4 (per 2026-06-09 direction). Rescoped from the original Python/FastAPI framing to the current C#/.NET 10 stack.
+## Status: Selected for NEXT iteration — order 5 of 6 (per 2026-06-09 direction). Rescoped from the original Python/FastAPI framing to the current C#/.NET 10 stack.
 
 ## Description
 Expose the mock data tools as an MCP (Model Context Protocol) server so

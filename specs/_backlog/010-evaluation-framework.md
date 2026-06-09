@@ -2,7 +2,7 @@
 
 ## Priority: P3 (Medium)
 
-## Status: Selected for NEXT iteration — order 4 of 4 (per 2026-06-09 direction). Rescoped from pytest to the C#/.NET stack. NOTE: depends on 004-test-suite, which is NOT in the current iteration set — evaluate building the harness standalone or pulling 004 forward.
+## Status: Selected for NEXT iteration — order 6 of 6 (per 2026-06-09 direction). Rescoped from pytest to the C#/.NET stack. NOTE: depends on 004-test-suite, which is NOT in the current iteration set — evaluate building the harness standalone or pulling 004 forward.
 
 ## Description
 Build an evaluation harness that tests agent outputs against golden
