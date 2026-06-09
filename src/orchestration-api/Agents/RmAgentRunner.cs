@@ -79,7 +79,7 @@ public sealed class RmAgentRunner(
 
         try
         {
-            var synthMessage = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            var (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
             var response = await agent.RunAsync(synthMessage, cancellationToken: ct);
 
             var usage = response.Usage;
@@ -98,7 +98,10 @@ public sealed class RmAgentRunner(
             }
 
             var json = ExtractJsonObject(response.Text);
-            var brief = MapToBriefing(json, rmId, date);
+            // EventsConsidered is sourced from the authoritative event store (the same list the
+            // fan-out fetched), not the model output, so the LIVE DTO carries the events it weighed
+            // even when the synthesizer omits them — matching the DEMO composer (FR-018, Principle III).
+            var brief = MapToBriefing(json, rmId, date) with { EventsConsidered = events };
             runSpan?.SetStatus(ActivityStatusCode.Ok);
             return brief;
         }
@@ -118,12 +121,13 @@ public sealed class RmAgentRunner(
     /// synthesizer's user message so the call ranking reflects every event. Failures degrade to
     /// the un-augmented message (FR-011) — the briefing is still produced.
     /// </summary>
-    private async Task<string> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
+    private async Task<(string Message, IReadOnlyList<MarketEvent> Events)> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
     {
+        IReadOnlyList<MarketEvent> events = [];
         IReadOnlyList<EventImpactAssessment> assessments = [];
         try
         {
-            var events = await eventTools.ListEventsAsync(null, ct);
+            events = await eventTools.ListEventsAsync(null, ct);
             if (events.Count > 0)
             {
                 var specialistAgent = await specialist.CreateAgentAsync(ct);
@@ -139,13 +143,13 @@ public sealed class RmAgentRunner(
         runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
         if (assessments.Count == 0)
         {
-            return userMessage;
+            return (userMessage, events);
         }
 
-        return userMessage +
+        return (userMessage +
             "\n\nPER-EVENT IMPACT ASSESSMENTS (from specialist agents — fold each contribution into " +
             "the affected customers' scores, re-rank, and list every contributing event as a driver):\n" +
-            JsonSerializer.Serialize(assessments, RmBriefingJson.Options);
+            JsonSerializer.Serialize(assessments, RmBriefingJson.Options), events);
     }
 
     // ---------------------------------------------------------------- Foundry wiring (isolated)

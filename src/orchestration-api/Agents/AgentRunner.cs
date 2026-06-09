@@ -85,7 +85,7 @@ public sealed class AgentRunner(
 
         try
         {
-            var synthMessage = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            var (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
             var response = await agent.RunAsync(synthMessage, cancellationToken: ct);
 
             var usage = response.Usage;
@@ -104,7 +104,10 @@ public sealed class AgentRunner(
             }
 
             var json = ExtractJsonObject(response.Text);
-            var brief = MapToBrief(json, eventId);
+            // EventsConsidered comes from the authoritative event store (the list the fan-out
+            // fetched), not the model output, so the LIVE brief carries the events it weighed even
+            // when the synthesizer omits them — matching the DEMO composer (FR-018, Principle III).
+            var brief = MapToBrief(json, eventId) with { EventsConsidered = events };
             runSpan?.SetStatus(ActivityStatusCode.Ok);
             return brief;
         }
@@ -124,12 +127,13 @@ public sealed class AgentRunner(
     /// synthesizer's user message so the client linkage reflects every event. Failures degrade to
     /// the un-augmented message (FR-011) — the brief is still produced.
     /// </summary>
-    private async Task<string> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
+    private async Task<(string Message, IReadOnlyList<MarketEvent> Events)> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
     {
+        IReadOnlyList<MarketEvent> events = [];
         IReadOnlyList<EventImpactAssessment> assessments = [];
         try
         {
-            var events = await eventTools.ListEventsAsync(null, ct);
+            events = await eventTools.ListEventsAsync(null, ct);
             if (events.Count > 0)
             {
                 var specialistAgent = await specialist.CreateAgentAsync(ct);
@@ -145,13 +149,13 @@ public sealed class AgentRunner(
         runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
         if (assessments.Count == 0)
         {
-            return userMessage;
+            return (userMessage, events);
         }
 
-        return userMessage +
+        return (userMessage +
             "\n\nPER-EVENT IMPACT ASSESSMENTS (from specialist agents — fold each contribution into " +
             "the affected clients' relevance, re-rank, and list every contributing event as a driver):\n" +
-            JsonSerializer.Serialize(assessments, MorningBriefJson.Options);
+            JsonSerializer.Serialize(assessments, MorningBriefJson.Options), events);
     }
 
     // ---------------------------------------------------------------- Foundry wiring (isolated)
