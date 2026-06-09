@@ -2,7 +2,7 @@
 
 ## Priority: P2 (High)
 
-## Status: Partially delivered (baseline wired); full agent traceability outstanding
+## Status: Selected for NEXT iteration — order 1 of 4 (per 2026-06-09 direction). Partially delivered (baseline wired); full agent traceability outstanding. Unblocks 011.
 
 ## Description
 Make every morning-brief request traceable end-to-end — from the UI call, through the Foundry

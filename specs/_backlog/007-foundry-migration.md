@@ -1,6 +1,6 @@
 # Azure AI Foundry Agent Migration
 
-## Status: Delivered / realized by `001-morning-planning-outreach`
+## Status: Delivered / realized by `001-morning-planning-outreach` (confirmed 2026-06-09 — persistent morning-brief agent on gpt-5.4-mini, LIVE Foundry brief validated in Sweden).
 
 ## Priority: P3 (Medium)
 

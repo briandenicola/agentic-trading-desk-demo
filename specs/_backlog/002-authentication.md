@@ -2,6 +2,8 @@
 
 ## Priority: P1 (Critical Path)
 
+## Status: Deferred — kept in backlog, not planned for the current iteration (per 2026-06-09 direction).
+
 ## Description
 Add Azure Entra ID (OIDC) authentication to protect the agent API endpoints.
 The cockpit frontend becomes a single-page app with MSAL.js login.

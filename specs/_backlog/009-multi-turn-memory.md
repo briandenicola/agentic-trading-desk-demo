@@ -2,6 +2,8 @@
 
 ## Priority: P3 (Medium)
 
+## Status: BLOCKED for the current iteration — depends on 002-authentication (need user identity for sessions) and 006-production-frontend (chat UI), both kept in backlog. Revisit once those land.
+
 ## Description
 Extend agents from single-shot request/response to multi-turn conversations
 with context memory, enabling follow-up questions and drill-downs.

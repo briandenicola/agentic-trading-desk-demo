@@ -2,6 +2,8 @@
 
 ## Priority: P1 (Critical Path)
 
+## Status: Deferred — kept in backlog, not planned for the current iteration (per 2026-06-09 direction). Demo stays on fictional mock data.
+
 ## Description
 Replace the fixture-based mock APIs in `api/data.py` with real connectors to
 Tableau, Dynamics 365, the trading book, new-issue calendar, MMD/relative-value

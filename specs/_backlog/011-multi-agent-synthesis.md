@@ -2,7 +2,7 @@
 
 ## Priority: P3 (Medium)
 
-## Status: Planned (vision)
+## Status: Selected for NEXT iteration — order 2 of 4 (per 2026-06-09 direction). Planned (vision). Depends on 005 for graph traceability.
 
 ## Description
 Evolve the morning brief from a single agent with client-side tools into a **multi-agent

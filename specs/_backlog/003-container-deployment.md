@@ -1,6 +1,6 @@
 # Azure Container Apps Deployment
 
-## Status: Delivered / realized by `001-morning-planning-outreach`
+## Status: Delivered / realized by `001-morning-planning-outreach` (confirmed 2026-06-09 — Canada DEMO + Sweden FULL both deployed and validated).
 
 ## Priority: P1 (Critical Path)
 
