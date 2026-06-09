@@ -66,6 +66,14 @@ public sealed class MorningBriefTools(MockApiClient mockApi)
     public Task<string> GetCoalitionSectorAsync(string sector, CancellationToken ct = default)
         => GetAsync($"/mock/coalition/sector/{Encode(sector)}", ct);
 
+    /// <summary>Current market/news events (overnight + intraday) for reactive linkage (002).</summary>
+    public Task<string> GetCurrentEventsAsync(string? scope = null, CancellationToken ct = default)
+        => GetAsync(string.IsNullOrWhiteSpace(scope) ? "/mock/events" : $"/mock/events?scope={Encode(scope)}", ct);
+
+    /// <summary>Events affecting one entity (kind: ticker | sector | issuer) for per-client linkage (002).</summary>
+    public Task<string> GetEventsByEntityAsync(string value, string? kind = null, CancellationToken ct = default)
+        => GetAsync($"/mock/events/by-entity?value={Encode(value)}{(string.IsNullOrWhiteSpace(kind) ? "" : $"&kind={Encode(kind)}")}", ct);
+
     // ---------------------------------------------------------------- internals
 
     private async Task<string> GetAsync(string path, CancellationToken ct)

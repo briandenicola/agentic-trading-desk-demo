@@ -189,6 +189,12 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         AIFunctionFactory.Create(
             (CancellationToken ct) => InvokeToolAsync("get_axes", tools.GetAxesAsync, ct),
             "get_axes", "Live axes / IOIs from the trading book."),
+        AIFunctionFactory.Create(
+            (string scope, CancellationToken ct) => InvokeToolAsync("list_events", c => tools.GetCurrentEventsAsync(scope, c), ct, ("scope", scope)),
+            "list_events", "Current market/news events to weigh into client linkage. Pass an empty string for scope to get all (overnight + intraday)."),
+        AIFunctionFactory.Create(
+            (string value, string kind, CancellationToken ct) => InvokeToolAsync("get_events_by_entity", c => tools.GetEventsByEntityAsync(value, kind, c), ct, ("value", value), ("kind", kind)),
+            "get_events_by_entity", "Events affecting one entity (value = ticker/sector/issuer; kind = 'ticker'|'sector'|'issuer', empty for any)."),
     ];
 
     /// <summary>

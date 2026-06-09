@@ -156,6 +156,12 @@ public sealed class RmAgentRunner(IConfiguration config, RmBriefingTools tools, 
         AIFunctionFactory.Create(
             (string customerId, CancellationToken ct) => InvokeToolAsync("get_customer_interactions", c => tools.GetCustomerInteractionsAsync(customerId, c), ct, ("customer_id", customerId)),
             "get_customer_interactions", "One customer's interactions (call log + follow-ups) by id."),
+        AIFunctionFactory.Create(
+            (string scope, CancellationToken ct) => InvokeToolAsync("list_events", c => tools.GetCurrentEventsAsync(Blank(scope), c), ct, ("scope", scope)),
+            "list_events", "Current market/news events to weigh into the call ranking. Pass an empty string for scope to get all (overnight + intraday)."),
+        AIFunctionFactory.Create(
+            (string value, string kind, CancellationToken ct) => InvokeToolAsync("get_events_by_entity", c => tools.GetEventsByEntityAsync(value, Blank(kind), c), ct, ("value", value), ("kind", kind)),
+            "get_events_by_entity", "Events affecting one entity (value = customerId or sector; kind = 'customer' or 'sector', empty for any)."),
     ];
 
     private async Task<string> InvokeToolAsync(
