@@ -212,3 +212,73 @@ export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBrie
   const { data } = await apiClient.post<RmBriefing>('/agent/rm-briefing', req);
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// Reactive live event stream (002 US2). The browser's native EventSource holds a
+// long-lived SSE connection to /api/agent/{scene}/stream and receives a full
+// re-synthesized DTO per update (reaction granularity, R7), so the page reconciles
+// from the latest snapshot on reconnect. Mirrors contracts/live-update.schema.json.
+// ---------------------------------------------------------------------------
+
+export type LiveScene = 'rm-briefing' | 'morning-brief';
+
+export interface LiveAlert {
+  priority: 'info' | 'notice' | 'urgent';
+  headline: string;
+  eventIds: string[];
+  noImpact: boolean;
+}
+
+export interface LiveUpdate<TBriefing = RmBriefing | MorningBrief> {
+  sequence: number;
+  scene: LiveScene;
+  alert: LiveAlert;
+  briefing: TBriefing;
+}
+
+export interface LiveSubscriptionHandlers<TBriefing> {
+  onUpdate: (update: LiveUpdate<TBriefing>) => void;
+  onReady?: (info: { sequence: number; scene: LiveScene }) => void;
+  onError?: (err: Event) => void;
+}
+
+/**
+ * Subscribe to the reactive SSE stream for a scene. Returns an unsubscribe function.
+ * EventSource auto-reconnects and replays `Last-Event-ID`; the server answers a
+ * reconnect with `ready` + a fresh snapshot, so no client-side delta tracking is needed.
+ */
+export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief>(
+  scene: LiveScene,
+  handlers: LiveSubscriptionHandlers<TBriefing>,
+  options?: { persona?: string },
+): () => void {
+  const base = apiClient.defaults.baseURL ?? '/api';
+  const query =
+    scene === 'rm-briefing' && options?.persona
+      ? `?rmId=${encodeURIComponent(options.persona)}`
+      : '';
+  const source = new EventSource(`${base}/agent/${scene}/stream${query}`);
+
+  source.addEventListener('briefing-update', (event) => {
+    try {
+      const update = JSON.parse((event as MessageEvent).data) as LiveUpdate<TBriefing>;
+      handlers.onUpdate(update);
+    } catch {
+      // Ignore malformed frames; the next full snapshot will reconcile state.
+    }
+  });
+
+  if (handlers.onReady) {
+    source.addEventListener('ready', (event) => {
+      try {
+        handlers.onReady!(JSON.parse((event as MessageEvent).data));
+      } catch {
+        /* non-fatal */
+      }
+    });
+  }
+
+  source.onerror = (err) => handlers.onError?.(err);
+
+  return () => source.close();
+}

@@ -46,3 +46,28 @@ public sealed record EventLinkage
     public required double Contribution { get; init; }      // signed score delta (net-able)
     public required string Rationale { get; init; }
 }
+
+/// <summary>
+/// The SSE <c>briefing-update</c> envelope pushed to open cockpit briefings (FR-010/FR-011,
+/// 002-reactive-event-cockpit §4). Carries a consolidated <see cref="LiveAlert"/> plus the FULL
+/// re-synthesized scene DTO (reaction granularity, R7) — an <see cref="RmBriefing"/> for
+/// <c>rm-briefing</c> or a <see cref="MorningBrief"/> for <c>morning-brief</c>. Identical shape in
+/// DEMO and LIVE (Principle III). Validated against
+/// <c>specs/002-.../contracts/live-update.schema.json</c>. All data is fictional.
+/// </summary>
+public sealed record LiveUpdate
+{
+    public required long Sequence { get; init; }            // monotonic; mirrored to SSE id: (R4)
+    public required string Scene { get; init; }             // rm-briefing | morning-brief
+    public required LiveAlert Alert { get; init; }
+    public required object Briefing { get; init; }          // RmBriefing | MorningBrief (full DTO)
+}
+
+/// <summary>Consolidated banner content for a <see cref="LiveUpdate"/> (data-model §4a).</summary>
+public sealed record LiveAlert
+{
+    public required string Priority { get; init; }          // info | notice | urgent (from severity)
+    public required string Headline { get; init; }          // consolidated; names the new event(s)
+    public required IReadOnlyList<string> EventIds { get; init; } // triggering event id(s); ≥1
+    public required bool NoImpact { get; init; }            // true => new event, ranking unchanged
+}

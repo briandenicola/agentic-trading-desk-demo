@@ -5,6 +5,7 @@ using OrchestrationApi;
 using OrchestrationApi.Agents;
 using OrchestrationApi.Agents.Demo;
 using OrchestrationApi.Agents.Tools;
+using OrchestrationApi.Live;
 using OrchestrationApi.Models;
 using WF.Garage.Observability;
 
@@ -40,6 +41,10 @@ builder.Services.AddScoped<AgentRunner>();
 
 // --- Reactive event tools (002): HTTP wrappers over the mock-api event store ---
 builder.Services.AddScoped<EventTools>();
+
+// --- Reactive SSE hub (002 US2): live event push to open briefings (FR-010..FR-013) ---
+builder.Services.AddSingleton<BriefingEventStream>();
+builder.Services.AddHostedService<EventStreamPollingService>();
 
 // --- RM Daily Briefing (PRIMARY scene): DEMO composer (offline) + LIVE tools/runner (Foundry) ---
 builder.Services.AddScoped<RmBriefingComposer>();
@@ -165,7 +170,84 @@ app.MapPost("/api/agent/rm-briefing", async (
     }
 });
 
+app.MapGet("/api/agent/rm-briefing/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    [FromQuery] string? rmId,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "rm-briefing", string.IsNullOrWhiteSpace(rmId) ? null : rmId, ct));
+
+app.MapGet("/api/agent/morning-brief/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "morning-brief", null, ct));
+
 app.Run();
+
+// --- SSE stream endpoints (002 US2): GET /api/agent/{scene}/stream (contracts/event-stream.sse.md) ---
+// A long-lived text/event-stream: emits `ready`, an initial snapshot, then `briefing-update`
+// frames as intraday events arrive, with `heartbeat` pings to hold the connection open. Every
+// update is a full re-synthesized DTO (R7) so reconnects reconcile from the latest snapshot (R4).
+static async Task StreamSceneAsync(
+    HttpContext ctx,
+    BriefingEventStream stream,
+    string scene,
+    string? persona,
+    CancellationToken ct)
+{
+    ctx.Response.Headers.CacheControl = "no-cache";
+    ctx.Response.Headers["Connection"] = "keep-alive";
+    ctx.Response.Headers["X-Accel-Buffering"] = "no"; // belt-and-braces against proxy buffering
+    ctx.Response.ContentType = "text/event-stream";
+    await ctx.Response.Body.FlushAsync(ct);
+
+    var sub = stream.Subscribe(scene, persona);
+    var reader = sub.Frames.Reader;
+    try
+    {
+        await ctx.Response.WriteAsync(stream.FormatReadyFrame(scene), ct);
+        var snapshot = await stream.BuildSnapshotFrameAsync(scene, persona, ct);
+        if (snapshot is not null)
+        {
+            await ctx.Response.WriteAsync(snapshot, ct);
+        }
+        await ctx.Response.Body.FlushAsync(ct);
+
+        while (!ct.IsCancellationRequested)
+        {
+            bool hasItem;
+            try
+            {
+                using var idle = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                idle.CancelAfter(TimeSpan.FromSeconds(15));
+                hasItem = await reader.WaitToReadAsync(idle.Token);
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                await ctx.Response.WriteAsync(BriefingEventStream.FormatHeartbeatFrame(), ct);
+                await ctx.Response.Body.FlushAsync(ct);
+                continue;
+            }
+
+            if (!hasItem) break;
+
+            while (reader.TryRead(out var frame))
+            {
+                await ctx.Response.WriteAsync(frame, ct);
+            }
+            await ctx.Response.Body.FlushAsync(ct);
+        }
+    }
+    catch (OperationCanceledException)
+    {
+        // Client disconnected — normal stream teardown.
+    }
+    finally
+    {
+        stream.Unsubscribe(sub.Id);
+    }
+}
 
 // Exposed for WebApplicationFactory-based tests (T012-T014).
 public partial class Program;

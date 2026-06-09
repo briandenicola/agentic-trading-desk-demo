@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -21,10 +21,11 @@ import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-import { runRmBriefing, type RmBriefing } from '../../api/client';
+import { runRmBriefing, subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import { mint } from '../../theme/theme';
 import PriorityCallCard from './PriorityCallCard';
 
@@ -44,6 +45,7 @@ export default function RmBriefingScene() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [brief, setBrief] = useState<RmBriefing | null>(null);
+  const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 
   const handleRun = async () => {
     setLoading(true);
@@ -57,6 +59,24 @@ export default function RmBriefingScene() {
       setLoading(false);
     }
   };
+
+  // Reactive live push (002 US2): once a briefing is on screen, hold an SSE subscription that
+  // applies each re-synthesized DTO in place and surfaces a live alert banner (FR-010/FR-011).
+  const hasBrief = brief !== null;
+  useEffect(() => {
+    if (!hasBrief) return;
+    const unsubscribe = subscribeToEvents<RmBriefing>(
+      'rm-briefing',
+      {
+        onUpdate: (update) => {
+          setBrief(update.briefing);
+          setLiveAlert(update.alert);
+        },
+      },
+      { persona: 'RM-104' },
+    );
+    return unsubscribe;
+  }, [hasBrief]);
 
   const kpis = brief?.kpis;
   const kpiChips = brief
@@ -130,6 +150,7 @@ export default function RmBriefingScene() {
 
         {brief && (
           <Stack spacing={2} data-testid="rm-briefing">
+            <LiveAlertBanner alert={liveAlert} onDismiss={() => setLiveAlert(null)} />
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {kpiChips.map((k) => (
                 <Chip

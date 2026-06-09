@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -18,7 +18,9 @@ import {
 } from '@mui/material';
 import {
   runMorningBrief,
+  subscribeToEvents,
   type AffectedClient,
+  type LiveAlert,
   type MorningBrief,
   type OutreachItem,
   type RankingRationale,
@@ -28,6 +30,7 @@ import MarketStrip from './MarketStrip';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import { mint } from '../../theme/theme';
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import GpsFixedOutlinedIcon from '@mui/icons-material/GpsFixedOutlined';
@@ -50,6 +53,7 @@ export default function MorningBriefScene() {
   const [error, setError] = useState<string | null>(null);
   const [brief, setBrief] = useState<MorningBrief | null>(null);
   const [expandedRationaleCid, setExpandedRationaleCid] = useState<string | null>(null);
+  const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 
   const handleRunBrief = async () => {
     setLoading(true);
@@ -66,6 +70,20 @@ export default function MorningBriefScene() {
       setLoading(false);
     }
   };
+
+  // Reactive live push (002 US2): hold an SSE subscription while a brief is on screen so intraday
+  // events re-rank the plan in place and raise a live alert banner (FR-010/FR-011).
+  const hasBrief = brief !== null;
+  useEffect(() => {
+    if (!hasBrief) return;
+    const unsubscribe = subscribeToEvents<MorningBrief>('morning-brief', {
+      onUpdate: (update) => {
+        setBrief(update.briefing);
+        setLiveAlert(update.alert);
+      },
+    });
+    return unsubscribe;
+  }, [hasBrief]);
 
   const toggleRationale = (cid: string) => {
     setExpandedRationaleCid((current) => (current === cid ? null : cid));
@@ -115,6 +133,7 @@ export default function MorningBriefScene() {
 
         {brief && (
           <Stack spacing={2}>
+            <LiveAlertBanner alert={liveAlert} onDismiss={() => setLiveAlert(null)} />
             <AiInsightPanel title="Agent reasoning">
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
                 {brief.reasoning.map((step, idx) => (
