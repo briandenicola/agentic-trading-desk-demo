@@ -15,8 +15,16 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
+import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
+import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { runRmBriefing, type RmBriefing } from '../../api/client';
 import CockpitNav from '../../components/CockpitNav';
+import SectionTitle from '../../components/SectionTitle';
+import AiInsightPanel from '../../components/AiInsightPanel';
+import { mint } from '../../theme/theme';
 import PriorityCallCard from './PriorityCallCard';
 
 function fmtMm(mm: number): string {
@@ -98,8 +106,8 @@ export default function RmBriefingScene() {
             variant="contained"
             onClick={handleRun}
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : <span>▶</span>}
-            sx={{ textTransform: 'none', fontWeight: 500 }}
+            startIcon={loading ? <CircularProgress size={16} /> : <PlayArrowRoundedIcon />}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
           >
             {loading ? 'Running...' : 'Run daily briefing'}
           </Button>
@@ -134,15 +142,17 @@ export default function RmBriefingScene() {
                     </>
                   }
                   variant="outlined"
-                  sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.12)' }}
+                  sx={{
+                    height: 30,
+                    bgcolor: `${mint.violet}14`,
+                    borderColor: mint.border,
+                    '& .MuiChip-label': { px: 1.5 },
+                  }}
                 />
               ))}
             </Box>
 
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-                ✦ Agent reasoning
-              </Typography>
+            <AiInsightPanel title="Agent reasoning">
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
                 {brief.reasoning.map((step, idx) => (
                   <Box component="li" key={idx} sx={{ display: 'flex', gap: 1.5, mb: 1.5, '&:last-child': { mb: 0 } }}>
@@ -158,17 +168,16 @@ export default function RmBriefingScene() {
                   </Box>
                 ))}
               </Box>
-            </Paper>
+            </AiInsightPanel>
 
             <Box>
-              <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 500 }}>
-                📞 Prioritized call list
-                <Typography component="span" variant="body2" color="text.secondary">
-                  {' '}
-                  — ranked by complaints, follow-ups, closing &amp; stuck deals
-                </Typography>
-              </Typography>
-              <Stack spacing={1.5}>
+              <SectionTitle
+                icon={<PhoneInTalkOutlinedIcon fontSize="inherit" />}
+                caption="— ranked by complaints, follow-ups, closing & stuck deals"
+              >
+                Prioritized call list
+              </SectionTitle>
+              <Stack spacing={1.5} sx={{ mt: 1.5 }}>
                 {brief.priorityCallList.map((call) => (
                   <PriorityCallCard key={call.customerId} call={call} />
                 ))}
@@ -177,10 +186,10 @@ export default function RmBriefingScene() {
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                    ⚠️ Active complaints
-                  </Typography>
+                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
+                  <SectionTitle icon={<ReportProblemOutlinedIcon fontSize="inherit" />}>
+                    Active complaints
+                  </SectionTitle>
                   <Typography variant="caption" color="text.secondary">
                     Open service issues across the book
                   </Typography>
@@ -233,10 +242,10 @@ export default function RmBriefingScene() {
               </Paper>
 
               <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                    💰 Pipeline closing ≤14 days
-                  </Typography>
+                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
+                  <SectionTitle icon={<PaidOutlinedIcon fontSize="inherit" />}>
+                    Pipeline closing ≤14 days
+                  </SectionTitle>
                   <Typography variant="caption" color="text.secondary">
                     Opportunities with near-term expected close
                   </Typography>
@@ -293,10 +302,8 @@ export default function RmBriefingScene() {
             </Box>
 
             <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-                🌐 Macro snapshot
-              </Typography>
-              <Stack spacing={1.5}>
+              <SectionTitle icon={<PublicOutlinedIcon fontSize="inherit" />}>Macro snapshot</SectionTitle>
+              <Stack spacing={1.5} sx={{ mt: 2 }}>
                 {brief.macroSnapshot.map((m, idx) => (
                   <Box key={idx}>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -310,16 +317,27 @@ export default function RmBriefingScene() {
               </Stack>
             </Paper>
 
-            <Alert
-              icon={<span>👉</span>}
-              severity="info"
-              sx={{ bgcolor: 'rgba(79,140,255,0.12)', border: '1px solid rgba(79,140,255,0.3)' }}
+            <Paper
+              sx={{
+                p: 2.5,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1.5,
+                backgroundImage: `linear-gradient(135deg, ${mint.violet}24, ${mint.cyan}12)`,
+                borderColor: `${mint.violet}59`,
+              }}
             >
-              <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
-                Suggested first action
-              </Typography>
-              <Typography variant="body2">{brief.suggestedFirstAction}</Typography>
-            </Alert>
+              <PhoneInTalkOutlinedIcon sx={{ color: mint.violetBright, mt: 0.25 }} />
+              <Box>
+                <Typography
+                  variant="overline"
+                  sx={{ color: mint.violetBright, display: 'block', lineHeight: 1.6 }}
+                >
+                  Suggested first action
+                </Typography>
+                <Typography variant="body2">{brief.suggestedFirstAction}</Typography>
+              </Box>
+            </Paper>
 
             {brief.notes && brief.notes.length > 0 && (
               <Alert severity="warning" sx={{ fontSize: '13px' }}>

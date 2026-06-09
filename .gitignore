@@ -1,6 +1,10 @@
 # Secrets
 .env
 
+# Client-provided design / sample data references (never commit)
+assets/Designer Layout.png
+assets/Design Layout.png
+
 # Python
 __pycache__/
 *.pyc
