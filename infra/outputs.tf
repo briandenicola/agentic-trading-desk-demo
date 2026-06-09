@@ -43,6 +43,16 @@ output "foundry_model_deployment" {
   value       = local.model_deployment_name
 }
 
+output "foundry_morning_model_deployment" {
+  description = "Foundry morning-brief synthesizer model deployment name"
+  value       = local.morning_model_deployment_name
+}
+
+output "foundry_specialist_model_deployment" {
+  description = "Foundry event-specialist model deployment name"
+  value       = local.specialist_model_deployment_name
+}
+
 output "app_insights_connection_string" {
   description = "Application Insights connection string"
   value       = azurerm_application_insights.main.connection_string

@@ -83,17 +83,29 @@ DEMO mode needs no Azure credentials. It defaults to `DEMO_MODE=1` and produces 
 
 Set `DEMO_MODE=0` and provide `FOUNDRY_PROJECT_ENDPOINT` plus `FOUNDRY_MODEL` (typically from `terraform -chdir=infra output`). LIVE uses `DefaultAzureCredential` with the Foundry project and the same mock API tools, capped by `MAX_TOOL_HOPS`.
 
-The persistent scene agents (model `gpt-5.4-mini`) plus the `event-specialist` and
-`briefing-synthesizer` are registered by `src\agent-provisioner\` (the `task cloud:provision` job in
-FULL mode) and reused by the runtime. If the provisioner has not run, the runners self-create the
-scene agent so LIVE still works. Both LIVE runners attach `eventsConsidered` from the authoritative
-event store (not the model output) so the LIVE DTO matches DEMO.
+The persistent agents are registered by `src\agent-provisioner\` (the `task cloud:provision` job in
+FULL mode) and reused by the runtime. To avoid HTTP 429 throttling, each role runs on its **own model
+deployment (separate quota pool)** so the high-concurrency fan-out never competes with the synthesizers:
 
-> Each LIVE briefing makes roughly one synthesizer call plus one `event-specialist` call per current
-> event, so firing several scenes back-to-back can briefly hit the model deployment's rate limit
-> (HTTP 429). The runners retry transient throttling with backoff + jitter (honoring `Retry-After`,
+| Agent | Model deployment | Env var |
+|---|---|---|
+| `rm-daily-briefing` (primary synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
+| `morning-brief` (synthesizer) | `gpt-4o-mini` | `FOUNDRY_MODEL_MORNING` |
+| `event-specialist` (per-event fan-out) | `gpt-5.4-nano` | `FOUNDRY_MODEL_SPECIALIST` |
+| `briefing-synthesizer` (shared contract) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
+
+`FOUNDRY_MODEL_MORNING` / `FOUNDRY_MODEL_SPECIALIST` fall back to `FOUNDRY_MODEL` if unset. The
+provisioner is authoritative about the model: it recreates each agent on its target deployment, so a
+model change actually takes effect (a stored agent binds its deployment at run time). If the
+provisioner has not run, the runners self-create the scene agent so LIVE still works. Both LIVE runners
+attach `eventsConsidered` from the authoritative event store (not the model output) so the LIVE DTO
+matches DEMO.
+
+> Splitting the agents across **different model families** gives each a separate Azure OpenAI quota
+> pool, which is what actually adds aggregate throughput (two deployments of the *same* model share one
+> pool). The runners also retry transient throttling with backoff + jitter (honoring `Retry-After`,
 > tunable via `FOUNDRY_RETRY_MAX_ATTEMPTS` / `FOUNDRY_RETRY_BASE_DELAY_MS`) and otherwise degrade
-> gracefully; raise the deployment quota for sustained heavy use.
+> gracefully; raise the per-deployment capacity for sustained heavy use.
 
 ## Deploy to Azure Container Apps
 

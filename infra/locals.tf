@@ -21,7 +21,9 @@ locals {
   agent_provisioner_job  = "agent-provisioner-job"
 
   # Model deployment name (used as FOUNDRY_MODEL env var)
-  model_deployment_name = "${var.foundry_model}-deployment"
+  model_deployment_name            = "${var.foundry_model}-deployment"
+  morning_model_deployment_name    = "${var.foundry_morning_model}-deployment"
+  specialist_model_deployment_name = "${var.foundry_specialist_model}-deployment"
 
   # Public HTTPS origin for the UI app. Derive from the Container Apps
   # environment domain to avoid a ui-app <-> orchestration-api dependency cycle.

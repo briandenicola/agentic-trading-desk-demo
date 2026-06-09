@@ -36,7 +36,7 @@ public sealed class FoundryEventSpecialist(IConfiguration config, EventTools eve
     {
         var endpoint = config["FOUNDRY_PROJECT_ENDPOINT"]
             ?? throw new InvalidOperationException("LIVE mode requires FOUNDRY_PROJECT_ENDPOINT.");
-        var model = config["FOUNDRY_MODEL"] ?? "gpt-5.4-mini";
+        var model = config["FOUNDRY_MODEL_SPECIALIST"] ?? config["FOUNDRY_MODEL"] ?? "gpt-5.4-nano";
         var instructions = await LoadInstructionsAsync(ct);
 
         var credential = new DefaultAzureCredential();

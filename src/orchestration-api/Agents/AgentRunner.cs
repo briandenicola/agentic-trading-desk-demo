@@ -56,7 +56,7 @@ public sealed class AgentRunner(
     {
         var endpoint = config["FOUNDRY_PROJECT_ENDPOINT"]
             ?? throw new InvalidOperationException("LIVE mode requires FOUNDRY_PROJECT_ENDPOINT.");
-        var model = config["FOUNDRY_MODEL"] ?? "gpt-5.4-mini";
+        var model = config["FOUNDRY_MODEL_MORNING"] ?? config["FOUNDRY_MODEL"] ?? "gpt-4o-mini";
         var maxHops = int.TryParse(config["MAX_TOOL_HOPS"], out var h) && h > 0 ? h : 8;
 
         var instructions = await LoadInstructionsAsync(ct);
