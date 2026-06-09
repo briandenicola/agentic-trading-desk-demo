@@ -1,0 +1,222 @@
+[
+  {
+    "researchId": "RES-2001",
+    "publishDate": "2026-03-15",
+    "title": "AI Compute Pull-Through — Refreshing the Basket",
+    "analystName": "Marek Pasternak",
+    "sector": "Technology",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "12-month TP $260 (NMBS); $200 (QRTX); $130 (ZNTH)",
+    "shortSummary": "Reiterating constructive view across the AI compute basket post strong Q1 earnings season. Capex digestion risk remains but order books extend visibility.",
+    "relatedSecurityId": "SEC-3002"
+  },
+  {
+    "researchId": "RES-2002",
+    "publishDate": "2026-03-21",
+    "title": "Quartzite Semiconductors — Initiating at Buy",
+    "analystName": "Marek Pasternak",
+    "sector": "Technology",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "$200 TP",
+    "shortSummary": "Initiating coverage of QRTX with a Buy. QX-9 cycle adds incremental TAM; gross margin trajectory under-appreciated.",
+    "relatedSecurityId": "SEC-3003"
+  },
+  {
+    "researchId": "RES-2003",
+    "publishDate": "2026-04-04",
+    "title": "Telara Networks — Upgrade to Buy",
+    "analystName": "Marek Pasternak",
+    "sector": "Technology",
+    "ratingAction": "Upgrade",
+    "targetOrSpreadView": "Spread view: tighten 25-35bps over 6 months",
+    "shortSummary": "Upgrading TLRA on improving competitive position in cloud interconnect and a more favorable mix shift. Bonds (TLRA32) look attractive.",
+    "relatedSecurityId": "SEC-3008"
+  },
+  {
+    "researchId": "RES-2004",
+    "publishDate": "2026-04-18",
+    "title": "Regional Banks — Downgrade Meridian Pacific to Sell",
+    "analystName": "Saoirse Quinlan",
+    "sector": "Financials",
+    "ratingAction": "Downgrade",
+    "targetOrSpreadView": "MPBN27 spread view: +75-100bps wider",
+    "shortSummary": "Downgrading MPBN27 on deposit outflow trajectory and CRE concentration. Watch-negative rating action adds technical pressure.",
+    "relatedSecurityId": "SEC-3103"
+  },
+  {
+    "researchId": "RES-2005",
+    "publishDate": "2026-05-02",
+    "title": "Eldoria Bank — Reiterate Neutral",
+    "analystName": "Saoirse Quinlan",
+    "sector": "Financials",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "Neutral; fair value 50bps tight to current",
+    "shortSummary": "Reiterating Neutral on ELRA. Q1 update reassuring but valuation captures it.",
+    "relatedSecurityId": "SEC-3109"
+  },
+  {
+    "researchId": "RES-2006",
+    "publishDate": "2026-03-25",
+    "title": "Duration Strategy — Trim Long-End Exposure",
+    "analystName": "Idris Vance",
+    "sector": "Sovereign",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "10y target 4.60% (3M); 30y target 4.85%",
+    "shortSummary": "Sticky core inflation and heavy refunding argue for trimming long-end duration; favor 5s30s steepeners.",
+    "relatedSecurityId": "SEC-3203"
+  },
+  {
+    "researchId": "RES-2007",
+    "publishDate": "2026-04-22",
+    "title": "US Treasury Refunding Preview",
+    "analystName": "Idris Vance",
+    "sector": "Sovereign",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "30y issuance projected +$3B vs cons",
+    "shortSummary": "Expect 30y refunding to surprise to the upside. Maintain underweight long end.",
+    "relatedSecurityId": "SEC-3204"
+  },
+  {
+    "researchId": "RES-2008",
+    "publishDate": "2026-05-02",
+    "title": "Energy Credit — North Atlas: Re-Rate on M&A Optionality",
+    "analystName": "Tomas Vehring",
+    "sector": "Energy",
+    "ratingAction": "Upgrade",
+    "targetOrSpreadView": "NAES28 spread view: tighten 20-40bps",
+    "shortSummary": "Strategic review and M&A press add optionality to NAES28 credit. Upgrade to Buy.",
+    "relatedSecurityId": "SEC-3101"
+  },
+  {
+    "researchId": "RES-2009",
+    "publishDate": "2026-04-12",
+    "title": "Brightgate Energy — Initiating Equity at Buy",
+    "analystName": "Tomas Vehring",
+    "sector": "Energy",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "12m TP $68 (+26%)",
+    "shortSummary": "Initiating BRGT at Buy. Bolt-on M&A optionality and operating leverage to Permian volumes.",
+    "relatedSecurityId": "SEC-3006"
+  },
+  {
+    "researchId": "RES-2010",
+    "publishDate": "2026-03-31",
+    "title": "EM Sovereigns — Karmania: Upgrade on IMF Progress",
+    "analystName": "Lina Chowdhry",
+    "sector": "Sovereign",
+    "ratingAction": "Upgrade",
+    "targetOrSpreadView": "KARMA32 spread view: tighten 80-120bps",
+    "shortSummary": "Upgrading KARMA32 on IMF staff-level agreement and improving fiscal optics.",
+    "relatedSecurityId": "SEC-3501"
+  },
+  {
+    "researchId": "RES-2011",
+    "publishDate": "2026-04-12",
+    "title": "Borborema Sovereign — Initiate Neutral",
+    "analystName": "Lina Chowdhry",
+    "sector": "Sovereign",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "BORBOR30 spread view: range-bound",
+    "shortSummary": "Initiating BORBOR30 at Neutral. Political calendar argues for caution.",
+    "relatedSecurityId": "SEC-3502"
+  },
+  {
+    "researchId": "RES-2012",
+    "publishDate": "2026-03-19",
+    "title": "Green Credit — Solterra Tap Looks Attractive",
+    "analystName": "Tomas Vehring",
+    "sector": "Utilities",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "SOLT35 spread view: tighten 15-25bps",
+    "shortSummary": "Solterra green bond looks attractively priced post-tap. ESG mandate demand should provide spread support.",
+    "relatedSecurityId": "SEC-3110"
+  },
+  {
+    "researchId": "RES-2013",
+    "publishDate": "2026-04-06",
+    "title": "Healthcare — Helix Therapeutics: Upgrade on Phase 3",
+    "analystName": "Idris Vance",
+    "sector": "Healthcare",
+    "ratingAction": "Upgrade",
+    "targetOrSpreadView": "12m TP $96",
+    "shortSummary": "Positive Phase 3 readout de-risks the lead asset. Upgrading HXLT to Buy.",
+    "relatedSecurityId": "SEC-3001"
+  },
+  {
+    "researchId": "RES-2014",
+    "publishDate": "2026-04-16",
+    "title": "Ravenglass Pharma — Initiating Coverage",
+    "analystName": "Idris Vance",
+    "sector": "Healthcare",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "12m TP €130",
+    "shortSummary": "Initiating Ravenglass at Buy. Lead Phase 2b data raises pipeline option value.",
+    "relatedSecurityId": "SEC-3007"
+  },
+  {
+    "researchId": "RES-2015",
+    "publishDate": "2026-03-23",
+    "title": "Defense — Keppra Wins Big Contract",
+    "analystName": "Tomas Vehring",
+    "sector": "Industrials",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "12m TP $215",
+    "shortSummary": "Keppra's $7.8B win extends backlog visibility through 2030; reiterate Buy.",
+    "relatedSecurityId": "SEC-3013"
+  },
+  {
+    "researchId": "RES-2016",
+    "publishDate": "2026-05-07",
+    "title": "Cyclicals — Velder Industries: Downgrade to Sell",
+    "analystName": "Saoirse Quinlan",
+    "sector": "Industrials",
+    "ratingAction": "Downgrade",
+    "targetOrSpreadView": "12m TP £33",
+    "shortSummary": "Downgrading VLDR on volume risk and operating deleverage. EU auto exposure is the principal concern.",
+    "relatedSecurityId": "SEC-3004"
+  },
+  {
+    "researchId": "RES-2017",
+    "publishDate": "2026-05-12",
+    "title": "Auto OEMs — Veridate Auto Caution Flag",
+    "analystName": "Saoirse Quinlan",
+    "sector": "Consumer Discretionary",
+    "ratingAction": "Downgrade",
+    "targetOrSpreadView": "Underweight",
+    "shortSummary": "Veridate's profit warning is unlikely to be isolated; cautious on the EU OEM complex broadly.",
+    "relatedSecurityId": "SEC-3015"
+  },
+  {
+    "researchId": "RES-2018",
+    "publishDate": "2026-03-27",
+    "title": "Munis — Cascadia GO Looks Cheap",
+    "analystName": "Lina Chowdhry",
+    "sector": "Sovereign",
+    "ratingAction": "Initiate",
+    "targetOrSpreadView": "Cascadia 31 GO: 12-18bps cheap to peers",
+    "shortSummary": "Cascadia State GO bonds are dislocated from comparables. Adding to munis basket.",
+    "relatedSecurityId": "SEC-3301"
+  },
+  {
+    "researchId": "RES-2019",
+    "publishDate": "2026-03-29",
+    "title": "Consumer Staples — Covemark Steady",
+    "analystName": "Saoirse Quinlan",
+    "sector": "Consumer Staples",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "Neutral; fair value $46",
+    "shortSummary": "Covemark Q1 in line; volume/price dynamics stable. Reiterate Neutral.",
+    "relatedSecurityId": "SEC-3010"
+  },
+  {
+    "researchId": "RES-2020",
+    "publishDate": "2026-03-17",
+    "title": "IG Issuance Watch — May Update",
+    "analystName": "Tomas Vehring",
+    "sector": "Credit",
+    "ratingAction": "Reiterate",
+    "targetOrSpreadView": "IG OAS view: range-bound, +100/+110",
+    "shortSummary": "Heavy IG issuance absorbed well. Maintain a tactical long IG bias via INVG.",
+    "relatedSecurityId": "SEC-3401"
+  }
+]

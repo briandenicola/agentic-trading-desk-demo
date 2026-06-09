@@ -1,0 +1,2002 @@
+[
+  {
+    "printId": "PRN-6065",
+    "timestamp": "2026-02-21 09:01:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 91.9022,
+    "printSize": 25000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6068",
+    "timestamp": "2026-02-21 13:15:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 93.4631,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6104",
+    "timestamp": "2026-02-22 09:27:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 93.4288,
+    "printSize": 3000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6163",
+    "timestamp": "2026-02-22 11:32:00",
+    "securityId": "SEC-3001",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 78.482,
+    "printSize": 10000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6164",
+    "timestamp": "2026-02-23 08:34:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 91.1802,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6102",
+    "timestamp": "2026-02-23 09:25:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Offer",
+    "printPrice": 95.7875,
+    "printSize": 20000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6171",
+    "timestamp": "2026-02-23 11:37:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 216.2771,
+    "printSize": 2500,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6126",
+    "timestamp": "2026-02-25 08:19:00",
+    "securityId": "SEC-3102",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 98.543,
+    "printSize": 15000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6113",
+    "timestamp": "2026-02-25 09:12:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 215.3668,
+    "printSize": 40000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6011",
+    "timestamp": "2026-02-25 12:31:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 91.6078,
+    "printSize": 10000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6064",
+    "timestamp": "2026-02-25 12:58:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 31.4025,
+    "printSize": 25000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6056",
+    "timestamp": "2026-02-25 13:56:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 98.0382,
+    "printSize": 160000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6073",
+    "timestamp": "2026-02-26 13:59:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 97.9014,
+    "printSize": 10000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6070",
+    "timestamp": "2026-02-26 14:23:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 95.8915,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6103",
+    "timestamp": "2026-02-27 12:31:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 95.6316,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6051",
+    "timestamp": "2026-02-27 13:04:00",
+    "securityId": "SEC-3015",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 64.8027,
+    "printSize": 50000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6069",
+    "timestamp": "2026-03-01 16:34:00",
+    "securityId": "SEC-3108",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 99.3335,
+    "printSize": 7500000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6162",
+    "timestamp": "2026-03-02 08:48:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 76.2864,
+    "printSize": 20000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6136",
+    "timestamp": "2026-03-02 09:03:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 32.401,
+    "printSize": 120000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6027",
+    "timestamp": "2026-03-03 09:27:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 96.7553,
+    "printSize": 1000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6142",
+    "timestamp": "2026-03-03 16:08:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 92.0714,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6179",
+    "timestamp": "2026-03-03 16:57:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 162.887,
+    "printSize": 15000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6015",
+    "timestamp": "2026-03-04 11:41:00",
+    "securityId": "SEC-3102",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 97.9032,
+    "printSize": 15000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6178",
+    "timestamp": "2026-03-04 13:35:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 97.566,
+    "printSize": 40000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6008",
+    "timestamp": "2026-03-04 14:00:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 98.3162,
+    "printSize": 80000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6054",
+    "timestamp": "2026-03-04 14:32:00",
+    "securityId": "SEC-3108",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 99.0639,
+    "printSize": 2000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6001",
+    "timestamp": "2026-03-06 11:24:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 90.4685,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6041",
+    "timestamp": "2026-03-06 11:27:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 215.6055,
+    "printSize": 25000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6018",
+    "timestamp": "2026-03-07 08:08:00",
+    "securityId": "SEC-3302",
+    "assetClass": "Muni",
+    "marketSide": "Bid",
+    "printPrice": 98.1087,
+    "printSize": 2000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6007",
+    "timestamp": "2026-03-07 15:04:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Trade",
+    "printPrice": 76.0518,
+    "printSize": 75000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6061",
+    "timestamp": "2026-03-08 12:05:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.7233,
+    "printSize": 15000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6053",
+    "timestamp": "2026-03-09 09:19:00",
+    "securityId": "SEC-3109",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 96.9833,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6091",
+    "timestamp": "2026-03-09 14:32:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 101.6853,
+    "printSize": 7500000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6071",
+    "timestamp": "2026-03-10 08:22:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 32.3426,
+    "printSize": 10000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6182",
+    "timestamp": "2026-03-10 12:00:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 163.0828,
+    "printSize": 10000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6060",
+    "timestamp": "2026-03-10 12:03:00",
+    "securityId": "SEC-3010",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 45.61,
+    "printSize": 7500,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6141",
+    "timestamp": "2026-03-10 14:23:00",
+    "securityId": "SEC-3401",
+    "assetClass": "ETF",
+    "marketSide": "Trade",
+    "printPrice": 88.6302,
+    "printSize": 50000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6082",
+    "timestamp": "2026-03-10 16:23:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 214.6531,
+    "printSize": 60000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6052",
+    "timestamp": "2026-03-12 13:05:00",
+    "securityId": "SEC-3013",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 188.1291,
+    "printSize": 30000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6045",
+    "timestamp": "2026-03-12 15:04:00",
+    "securityId": "SEC-3403",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 41.8452,
+    "printSize": 100000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6134",
+    "timestamp": "2026-03-12 15:47:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Bid",
+    "printPrice": 76.2699,
+    "printSize": 25000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6092",
+    "timestamp": "2026-03-13 13:59:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Bid",
+    "printPrice": 75.9709,
+    "printSize": 25000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6109",
+    "timestamp": "2026-03-13 14:39:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 93.1716,
+    "printSize": 7500000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6180",
+    "timestamp": "2026-03-14 10:17:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 91.8155,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6057",
+    "timestamp": "2026-03-14 15:02:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 95.7043,
+    "printSize": 75000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6125",
+    "timestamp": "2026-03-15 08:53:00",
+    "securityId": "SEC-3202",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 99.5279,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6115",
+    "timestamp": "2026-03-15 15:58:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 97.4639,
+    "printSize": 80000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6175",
+    "timestamp": "2026-03-16 14:05:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.6941,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6083",
+    "timestamp": "2026-03-16 15:33:00",
+    "securityId": "SEC-3102",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 98.0033,
+    "printSize": 1000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6186",
+    "timestamp": "2026-03-16 16:01:00",
+    "securityId": "SEC-3010",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 45.5508,
+    "printSize": 20000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6128",
+    "timestamp": "2026-03-17 09:21:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.1192,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6155",
+    "timestamp": "2026-03-17 09:47:00",
+    "securityId": "SEC-3105",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 99.4669,
+    "printSize": 1000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6055",
+    "timestamp": "2026-03-17 11:08:00",
+    "securityId": "SEC-3015",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 64.6841,
+    "printSize": 10000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6107",
+    "timestamp": "2026-03-18 16:25:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 89.7902,
+    "printSize": 3000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6016",
+    "timestamp": "2026-03-19 09:53:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.1476,
+    "printSize": 2000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6158",
+    "timestamp": "2026-03-19 13:20:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 96.2191,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6120",
+    "timestamp": "2026-03-20 11:52:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 90.0386,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6084",
+    "timestamp": "2026-03-20 12:44:00",
+    "securityId": "SEC-3101",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 101.6559,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6025",
+    "timestamp": "2026-03-20 14:28:00",
+    "securityId": "SEC-3112",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 98.5689,
+    "printSize": 15000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6143",
+    "timestamp": "2026-03-21 08:48:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 96.4965,
+    "printSize": 7500000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6087",
+    "timestamp": "2026-03-21 09:12:00",
+    "securityId": "SEC-3011",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 28.9985,
+    "printSize": 7500,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6010",
+    "timestamp": "2026-03-21 09:40:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 97.4737,
+    "printSize": 3000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6151",
+    "timestamp": "2026-03-21 12:54:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 91.4747,
+    "printSize": 5000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6042",
+    "timestamp": "2026-03-21 13:49:00",
+    "securityId": "SEC-3109",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 97.019,
+    "printSize": 3000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6062",
+    "timestamp": "2026-03-21 15:56:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 95.2737,
+    "printSize": 25000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6058",
+    "timestamp": "2026-03-22 16:15:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 91.5131,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6124",
+    "timestamp": "2026-03-22 16:47:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 90.0073,
+    "printSize": 1000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6043",
+    "timestamp": "2026-03-23 09:09:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 97.0288,
+    "printSize": 25000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6121",
+    "timestamp": "2026-03-23 11:03:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 101.1499,
+    "printSize": 7500000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6172",
+    "timestamp": "2026-03-23 14:43:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 98.4179,
+    "printSize": 15000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6190",
+    "timestamp": "2026-03-24 13:10:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 89.938,
+    "printSize": 1000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6185",
+    "timestamp": "2026-03-24 13:24:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 89.6796,
+    "printSize": 5000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6144",
+    "timestamp": "2026-03-24 15:22:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 215.2868,
+    "printSize": 80000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6196",
+    "timestamp": "2026-03-24 16:11:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 213.9649,
+    "printSize": 10000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6093",
+    "timestamp": "2026-03-25 11:40:00",
+    "securityId": "SEC-3201",
+    "assetClass": "Treasury",
+    "marketSide": "Offer",
+    "printPrice": 100.2022,
+    "printSize": 20000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6160",
+    "timestamp": "2026-03-25 15:46:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 97.6796,
+    "printSize": 120000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6019",
+    "timestamp": "2026-03-26 08:08:00",
+    "securityId": "SEC-3001",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 78.2356,
+    "printSize": 25000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6132",
+    "timestamp": "2026-03-26 13:44:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 91.4508,
+    "printSize": 7500000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6131",
+    "timestamp": "2026-03-26 14:15:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 96.2749,
+    "printSize": 2000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6032",
+    "timestamp": "2026-03-27 12:58:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 93.4444,
+    "printSize": 1000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6118",
+    "timestamp": "2026-03-29 09:36:00",
+    "securityId": "SEC-3201",
+    "assetClass": "Treasury",
+    "marketSide": "Offer",
+    "printPrice": 99.7292,
+    "printSize": 75000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6066",
+    "timestamp": "2026-03-29 11:19:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 32.0814,
+    "printSize": 80000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6003",
+    "timestamp": "2026-03-29 11:38:00",
+    "securityId": "SEC-3001",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 78.5746,
+    "printSize": 5000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6119",
+    "timestamp": "2026-03-30 08:18:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 97.919,
+    "printSize": 15000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6040",
+    "timestamp": "2026-03-30 09:25:00",
+    "securityId": "SEC-3403",
+    "assetClass": "ETF",
+    "marketSide": "Trade",
+    "printPrice": 41.8253,
+    "printSize": 100000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6097",
+    "timestamp": "2026-03-30 12:30:00",
+    "securityId": "SEC-3108",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 98.8272,
+    "printSize": 10000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6193",
+    "timestamp": "2026-03-30 14:58:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.81,
+    "printSize": 5000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6037",
+    "timestamp": "2026-03-31 11:49:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 96.8698,
+    "printSize": 1000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6021",
+    "timestamp": "2026-03-31 15:41:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 95.4999,
+    "printSize": 15000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6181",
+    "timestamp": "2026-03-31 15:50:00",
+    "securityId": "SEC-3011",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 28.8489,
+    "printSize": 40000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6029",
+    "timestamp": "2026-04-01 13:06:00",
+    "securityId": "SEC-3014",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 22.1443,
+    "printSize": 2500,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6195",
+    "timestamp": "2026-04-02 09:19:00",
+    "securityId": "SEC-3105",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 99.5507,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6026",
+    "timestamp": "2026-04-02 14:20:00",
+    "securityId": "SEC-3401",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 88.8822,
+    "printSize": 75000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6130",
+    "timestamp": "2026-04-03 09:25:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 93.2295,
+    "printSize": 5000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6034",
+    "timestamp": "2026-04-03 09:56:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 95.7726,
+    "printSize": 20000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6183",
+    "timestamp": "2026-04-04 14:52:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 89.9359,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6049",
+    "timestamp": "2026-04-05 09:32:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 93.6416,
+    "printSize": 5000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6030",
+    "timestamp": "2026-04-06 16:23:00",
+    "securityId": "SEC-3109",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 97.2218,
+    "printSize": 2000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6046",
+    "timestamp": "2026-04-07 16:04:00",
+    "securityId": "SEC-3104",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 94.9746,
+    "printSize": 7500000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6005",
+    "timestamp": "2026-04-08 10:05:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 93.5154,
+    "printSize": 1000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6177",
+    "timestamp": "2026-04-08 12:06:00",
+    "securityId": "SEC-3101",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 101.5172,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6081",
+    "timestamp": "2026-04-08 14:36:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 97.6572,
+    "printSize": 5000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6006",
+    "timestamp": "2026-04-08 16:32:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 76.1485,
+    "printSize": 25000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6157",
+    "timestamp": "2026-04-08 16:56:00",
+    "securityId": "SEC-3012",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 18.445,
+    "printSize": 25000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6075",
+    "timestamp": "2026-04-09 14:56:00",
+    "securityId": "SEC-3014",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 22.1647,
+    "printSize": 25000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6188",
+    "timestamp": "2026-04-10 09:28:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 93.4184,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6176",
+    "timestamp": "2026-04-10 10:47:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 95.7572,
+    "printSize": 20000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6168",
+    "timestamp": "2026-04-10 14:35:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 32.5117,
+    "printSize": 2500,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6038",
+    "timestamp": "2026-04-10 16:45:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 96.9588,
+    "printSize": 40000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6063",
+    "timestamp": "2026-04-11 09:23:00",
+    "securityId": "SEC-3014",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 22.021,
+    "printSize": 80000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6156",
+    "timestamp": "2026-04-12 11:35:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.611,
+    "printSize": 7500000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6139",
+    "timestamp": "2026-04-12 12:52:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.1562,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6192",
+    "timestamp": "2026-04-12 15:49:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 163.7462,
+    "printSize": 10000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6099",
+    "timestamp": "2026-04-13 10:48:00",
+    "securityId": "SEC-3007",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 102.5959,
+    "printSize": 50000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6146",
+    "timestamp": "2026-04-13 15:14:00",
+    "securityId": "SEC-3007",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 102.3666,
+    "printSize": 2500,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6187",
+    "timestamp": "2026-04-14 15:08:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 89.7919,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6098",
+    "timestamp": "2026-04-15 15:29:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 31.7973,
+    "printSize": 2500,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6152",
+    "timestamp": "2026-04-15 16:33:00",
+    "securityId": "SEC-3201",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 100.1813,
+    "printSize": 50000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6039",
+    "timestamp": "2026-04-17 08:29:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 32.1645,
+    "printSize": 80000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6191",
+    "timestamp": "2026-04-17 09:00:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 97.8141,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6024",
+    "timestamp": "2026-04-17 09:50:00",
+    "securityId": "SEC-3012",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 18.4545,
+    "printSize": 120000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6077",
+    "timestamp": "2026-04-17 10:34:00",
+    "securityId": "SEC-3403",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 41.9007,
+    "printSize": 150000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6169",
+    "timestamp": "2026-04-17 13:36:00",
+    "securityId": "SEC-3105",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 99.7616,
+    "printSize": 1000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6085",
+    "timestamp": "2026-04-18 09:51:00",
+    "securityId": "SEC-3402",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 75.97,
+    "printSize": 10000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6059",
+    "timestamp": "2026-04-18 15:49:00",
+    "securityId": "SEC-3011",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 28.9428,
+    "printSize": 10000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6100",
+    "timestamp": "2026-04-19 11:09:00",
+    "securityId": "SEC-3015",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 64.7562,
+    "printSize": 60000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6090",
+    "timestamp": "2026-04-19 15:43:00",
+    "securityId": "SEC-3102",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 97.9057,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6138",
+    "timestamp": "2026-04-20 10:32:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 97.2426,
+    "printSize": 5000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6194",
+    "timestamp": "2026-04-20 11:33:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.771,
+    "printSize": 3000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6044",
+    "timestamp": "2026-04-21 15:43:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 31.4945,
+    "printSize": 5000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6088",
+    "timestamp": "2026-04-21 16:08:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 91.4284,
+    "printSize": 50000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6114",
+    "timestamp": "2026-04-22 08:45:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 214.7539,
+    "printSize": 80000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6122",
+    "timestamp": "2026-04-22 09:43:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 96.8091,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6123",
+    "timestamp": "2026-04-23 11:48:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 96.0063,
+    "printSize": 25000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6184",
+    "timestamp": "2026-04-23 13:11:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 91.315,
+    "printSize": 50000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6013",
+    "timestamp": "2026-04-24 14:17:00",
+    "securityId": "SEC-3109",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 97.3994,
+    "printSize": 10000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6022",
+    "timestamp": "2026-04-24 15:04:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.6344,
+    "printSize": 10000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6035",
+    "timestamp": "2026-04-24 15:26:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 215.4262,
+    "printSize": 15000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6076",
+    "timestamp": "2026-04-25 15:23:00",
+    "securityId": "SEC-3102",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 98.5586,
+    "printSize": 3000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6067",
+    "timestamp": "2026-04-25 16:01:00",
+    "securityId": "SEC-3004",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 41.3459,
+    "printSize": 60000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6173",
+    "timestamp": "2026-04-26 13:03:00",
+    "securityId": "SEC-3401",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 88.8313,
+    "printSize": 50000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6165",
+    "timestamp": "2026-04-26 14:51:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 101.0118,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6080",
+    "timestamp": "2026-04-27 10:01:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.4179,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6137",
+    "timestamp": "2026-04-28 15:07:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Trade",
+    "printPrice": 91.7585,
+    "printSize": 10000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6108",
+    "timestamp": "2026-04-28 15:09:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 95.5717,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6150",
+    "timestamp": "2026-04-29 13:44:00",
+    "securityId": "SEC-3106",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.1886,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6089",
+    "timestamp": "2026-04-29 14:49:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 93.1577,
+    "printSize": 10000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6199",
+    "timestamp": "2026-04-30 10:23:00",
+    "securityId": "SEC-3001",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 78.261,
+    "printSize": 10000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6153",
+    "timestamp": "2026-04-30 11:03:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 97.269,
+    "printSize": 60000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6189",
+    "timestamp": "2026-05-01 08:50:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.7272,
+    "printSize": 7500000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6140",
+    "timestamp": "2026-05-01 08:59:00",
+    "securityId": "SEC-3001",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 78.1322,
+    "printSize": 40000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6086",
+    "timestamp": "2026-05-01 12:57:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 96.5614,
+    "printSize": 1000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6014",
+    "timestamp": "2026-05-01 13:03:00",
+    "securityId": "SEC-3002",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 215.6395,
+    "printSize": 25000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6161",
+    "timestamp": "2026-05-01 15:11:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 96.68,
+    "printSize": 2000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6095",
+    "timestamp": "2026-05-04 08:52:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.9141,
+    "printSize": 7500000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6167",
+    "timestamp": "2026-05-04 11:44:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 91.5127,
+    "printSize": 25000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6105",
+    "timestamp": "2026-05-04 16:12:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 97.3233,
+    "printSize": 2500,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6048",
+    "timestamp": "2026-05-05 11:20:00",
+    "securityId": "SEC-3104",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 94.9712,
+    "printSize": 1000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6112",
+    "timestamp": "2026-05-05 11:46:00",
+    "securityId": "SEC-3104",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 94.9644,
+    "printSize": 15000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6101",
+    "timestamp": "2026-05-05 13:12:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 163.2768,
+    "printSize": 10000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6147",
+    "timestamp": "2026-05-05 13:36:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 101.2717,
+    "printSize": 3000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6159",
+    "timestamp": "2026-05-06 14:18:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.3736,
+    "printSize": 3000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6020",
+    "timestamp": "2026-05-07 09:28:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Offer",
+    "printPrice": 95.5898,
+    "printSize": 20000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6198",
+    "timestamp": "2026-05-07 14:24:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 96.3316,
+    "printSize": 2000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6017",
+    "timestamp": "2026-05-08 08:17:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 96.2402,
+    "printSize": 20000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6200",
+    "timestamp": "2026-05-08 14:39:00",
+    "securityId": "SEC-3012",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 18.4149,
+    "printSize": 120000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6078",
+    "timestamp": "2026-05-09 14:10:00",
+    "securityId": "SEC-3010",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 45.5372,
+    "printSize": 15000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6145",
+    "timestamp": "2026-05-10 08:15:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 98.3713,
+    "printSize": 5000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6050",
+    "timestamp": "2026-05-10 10:23:00",
+    "securityId": "SEC-3111",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 97.6435,
+    "printSize": 7500000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6079",
+    "timestamp": "2026-05-10 14:17:00",
+    "securityId": "SEC-3112",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 98.0896,
+    "printSize": 15000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6116",
+    "timestamp": "2026-05-10 15:12:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 101.7121,
+    "printSize": 10000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6031",
+    "timestamp": "2026-05-10 16:01:00",
+    "securityId": "SEC-3004",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 41.2095,
+    "printSize": 80000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6047",
+    "timestamp": "2026-05-10 16:24:00",
+    "securityId": "SEC-3011",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 28.8474,
+    "printSize": 15000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6106",
+    "timestamp": "2026-05-11 09:08:00",
+    "securityId": "SEC-3015",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 64.791,
+    "printSize": 120000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6166",
+    "timestamp": "2026-05-11 16:16:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.964,
+    "printSize": 2000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6004",
+    "timestamp": "2026-05-12 09:57:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 91.6106,
+    "printSize": 75000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6197",
+    "timestamp": "2026-05-12 10:11:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 101.0089,
+    "printSize": 15000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6072",
+    "timestamp": "2026-05-12 10:51:00",
+    "securityId": "SEC-3107",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 100.8874,
+    "printSize": 5000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6149",
+    "timestamp": "2026-05-12 14:35:00",
+    "securityId": "SEC-3103",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 91.115,
+    "printSize": 10000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6033",
+    "timestamp": "2026-05-13 08:05:00",
+    "securityId": "SEC-3013",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 188.8572,
+    "printSize": 40000,
+    "venue": "Equinox EX"
+  },
+  {
+    "printId": "PRN-6174",
+    "timestamp": "2026-05-13 12:50:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 162.8009,
+    "printSize": 40000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6009",
+    "timestamp": "2026-05-13 13:06:00",
+    "securityId": "SEC-3009",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 87.3081,
+    "printSize": 30000,
+    "venue": "DarkPool-B"
+  },
+  {
+    "printId": "PRN-6023",
+    "timestamp": "2026-05-13 16:45:00",
+    "securityId": "SEC-3401",
+    "assetClass": "ETF",
+    "marketSide": "Offer",
+    "printPrice": 88.4006,
+    "printSize": 25000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6094",
+    "timestamp": "2026-05-14 10:37:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.8367,
+    "printSize": 1000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6074",
+    "timestamp": "2026-05-14 11:18:00",
+    "securityId": "SEC-3011",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 29.023,
+    "printSize": 60000,
+    "venue": "NorthVenue ECN"
+  },
+  {
+    "printId": "PRN-6127",
+    "timestamp": "2026-05-14 16:33:00",
+    "securityId": "SEC-3108",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 99.5833,
+    "printSize": 3000000,
+    "venue": "Voice"
+  },
+  {
+    "printId": "PRN-6096",
+    "timestamp": "2026-05-15 11:49:00",
+    "securityId": "SEC-3302",
+    "assetClass": "Muni",
+    "marketSide": "Bid",
+    "printPrice": 98.7531,
+    "printSize": 5000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6002",
+    "timestamp": "2026-05-16 14:17:00",
+    "securityId": "SEC-3108",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 99.591,
+    "printSize": 3000000,
+    "venue": "MarketAxess-like"
+  },
+  {
+    "printId": "PRN-6148",
+    "timestamp": "2026-05-16 16:14:00",
+    "securityId": "SEC-3110",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 93.1661,
+    "printSize": 3000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6028",
+    "timestamp": "2026-05-17 09:26:00",
+    "securityId": "SEC-3003",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 163.8415,
+    "printSize": 160000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6135",
+    "timestamp": "2026-05-17 11:48:00",
+    "securityId": "SEC-3502",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Offer",
+    "printPrice": 91.9483,
+    "printSize": 5000000,
+    "venue": "Dealer-Run"
+  },
+  {
+    "printId": "PRN-6154",
+    "timestamp": "2026-05-17 16:13:00",
+    "securityId": "SEC-3009",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 87.472,
+    "printSize": 5000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6012",
+    "timestamp": "2026-05-17 16:26:00",
+    "securityId": "SEC-3004",
+    "assetClass": "Equity",
+    "marketSide": "Bid",
+    "printPrice": 41.3124,
+    "printSize": 40000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6129",
+    "timestamp": "2026-05-18 11:11:00",
+    "securityId": "SEC-3005",
+    "assetClass": "Equity",
+    "marketSide": "Offer",
+    "printPrice": 96.9918,
+    "printSize": 25000,
+    "venue": "LIT-Primary"
+  },
+  {
+    "printId": "PRN-6036",
+    "timestamp": "2026-05-18 15:33:00",
+    "securityId": "SEC-3009",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 87.13,
+    "printSize": 40000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6111",
+    "timestamp": "2026-05-20 08:38:00",
+    "securityId": "SEC-3204",
+    "assetClass": "Treasury",
+    "marketSide": "Offer",
+    "printPrice": 91.624,
+    "printSize": 50000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6133",
+    "timestamp": "2026-05-20 09:40:00",
+    "securityId": "SEC-3008",
+    "assetClass": "Equity",
+    "marketSide": "Trade",
+    "printPrice": 31.8113,
+    "printSize": 160000,
+    "venue": "DarkPool-A"
+  },
+  {
+    "printId": "PRN-6170",
+    "timestamp": "2026-05-20 15:17:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Trade",
+    "printPrice": 90.1631,
+    "printSize": 2000000,
+    "venue": "Bloomberg-like"
+  },
+  {
+    "printId": "PRN-6117",
+    "timestamp": "2026-05-22 11:44:00",
+    "securityId": "SEC-3501",
+    "assetClass": "Corporate Bond",
+    "marketSide": "Bid",
+    "printPrice": 89.8164,
+    "printSize": 3000000,
+    "venue": "Tradeweb-like"
+  },
+  {
+    "printId": "PRN-6110",
+    "timestamp": "2026-05-22 12:30:00",
+    "securityId": "SEC-3203",
+    "assetClass": "Treasury",
+    "marketSide": "Bid",
+    "printPrice": 96.1199,
+    "printSize": 50000000,
+    "venue": "Voice"
+  }
+]

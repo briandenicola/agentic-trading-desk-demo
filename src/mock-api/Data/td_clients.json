@@ -1,0 +1,227 @@
+[
+  {
+    "clientId": "CL-2001",
+    "clientName": "Hyperion Capital",
+    "clientType": "Hedge Fund",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Theo Wexler",
+    "preferredAssetClass": "Multi-Asset",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2002",
+    "clientName": "Atlas Mutual Insurance",
+    "clientType": "Insurance",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Priya Anand",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2003",
+    "clientName": "Northwind Asset Mgmt",
+    "clientType": "Asset Manager",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Marisol Cabrera",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2004",
+    "clientName": "Cascadia Pension Plan",
+    "clientType": "Pension",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Priya Anand",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2005",
+    "clientName": "Verity Sovereign Fund",
+    "clientType": "Sovereign",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Niall O'Connor",
+    "preferredAssetClass": "Multi-Asset",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2006",
+    "clientName": "Tradewinds Partners",
+    "clientType": "Hedge Fund",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Theo Wexler",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2007",
+    "clientName": "Elder Oak Capital",
+    "clientType": "Asset Manager",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Ada Voss",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2008",
+    "clientName": "Stonebridge Trust Bank",
+    "clientType": "Bank",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Kenji Wada",
+    "preferredAssetClass": "Treasury",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2009",
+    "clientName": "Polaris Endowment",
+    "clientType": "Pension",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Ada Voss",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2010",
+    "clientName": "Sirocco Macro Fund",
+    "clientType": "Hedge Fund",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Niall O'Connor",
+    "preferredAssetClass": "Treasury",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2011",
+    "clientName": "Bluefin Global Advisors",
+    "clientType": "Asset Manager",
+    "clientRegion": "APAC",
+    "coverageSalesperson": "Kenji Wada",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2012",
+    "clientName": "Granite Reinsurance",
+    "clientType": "Insurance",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Marisol Cabrera",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2013",
+    "clientName": "Halcyon Multistrat",
+    "clientType": "Hedge Fund",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Theo Wexler",
+    "preferredAssetClass": "Multi-Asset",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2014",
+    "clientName": "Meridian State Pension",
+    "clientType": "Pension",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Priya Anand",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2015",
+    "clientName": "Crestline Capital",
+    "clientType": "Asset Manager",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Ada Voss",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2016",
+    "clientName": "Aegis Life Insurance",
+    "clientType": "Insurance",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Priya Anand",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2017",
+    "clientName": "Vanguard Bay Sovereign",
+    "clientType": "Sovereign",
+    "clientRegion": "APAC",
+    "coverageSalesperson": "Kenji Wada",
+    "preferredAssetClass": "Multi-Asset",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2018",
+    "clientName": "Forge Hill Partners",
+    "clientType": "Hedge Fund",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Theo Wexler",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2019",
+    "clientName": "Ironclad Pension Trust",
+    "clientType": "Pension",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Marisol Cabrera",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2020",
+    "clientName": "Lumen Investment Mgmt",
+    "clientType": "Asset Manager",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Marisol Cabrera",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2021",
+    "clientName": "Sable Capital",
+    "clientType": "Hedge Fund",
+    "clientRegion": "APAC",
+    "coverageSalesperson": "Kenji Wada",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Aggressive"
+  },
+  {
+    "clientId": "CL-2022",
+    "clientName": "Pinecrest Family Office",
+    "clientType": "Asset Manager",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Ada Voss",
+    "preferredAssetClass": "Multi-Asset",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2023",
+    "clientName": "Northern Aurora Bank",
+    "clientType": "Bank",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Niall O'Connor",
+    "preferredAssetClass": "Treasury",
+    "riskStyle": "Conservative"
+  },
+  {
+    "clientId": "CL-2024",
+    "clientName": "Saltmarsh Pension Fund",
+    "clientType": "Pension",
+    "clientRegion": "EMEA",
+    "coverageSalesperson": "Marisol Cabrera",
+    "preferredAssetClass": "Corporate Bond",
+    "riskStyle": "Balanced"
+  },
+  {
+    "clientId": "CL-2025",
+    "clientName": "Heliotrope Asset Mgmt",
+    "clientType": "Asset Manager",
+    "clientRegion": "North America",
+    "coverageSalesperson": "Ada Voss",
+    "preferredAssetClass": "Equity",
+    "riskStyle": "Aggressive"
+  }
+]

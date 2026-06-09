@@ -1,0 +1,74 @@
+[
+  {
+    "rmId": "RM-101",
+    "name": "Sarah Kim",
+    "title": "SVP, Relationship Manager - West Coast",
+    "email": "sarah.kim@bank.example",
+    "phone": "(415) 555-0142",
+    "officeCity": "San Francisco",
+    "officeState": "CA",
+    "territory": "Pacific Northwest & California",
+    "statesCovered": "CA, OR, WA, ID, NV, HI, AK",
+    "customersInBook": 7
+  },
+  {
+    "rmId": "RM-102",
+    "name": "David Chen",
+    "title": "SVP, Relationship Manager - Mountain West",
+    "email": "david.chen@bank.example",
+    "phone": "(303) 555-0188",
+    "officeCity": "Denver",
+    "officeState": "CO",
+    "territory": "Mountain West & Desert Southwest",
+    "statesCovered": "CO, UT, AZ, NM, WY, MT",
+    "customersInBook": 6
+  },
+  {
+    "rmId": "RM-103",
+    "name": "Robert Alvarez",
+    "title": "SVP, Relationship Manager - South Central",
+    "email": "robert.alvarez@bank.example",
+    "phone": "(214) 555-0117",
+    "officeCity": "Dallas",
+    "officeState": "TX",
+    "territory": "Texas & South Central",
+    "statesCovered": "TX, OK, LA, AR",
+    "customersInBook": 4
+  },
+  {
+    "rmId": "RM-104",
+    "name": "Marcus Johnson",
+    "title": "SVP, Relationship Manager - Midwest",
+    "email": "marcus.johnson@bank.example",
+    "phone": "(312) 555-0163",
+    "officeCity": "Chicago",
+    "officeState": "IL",
+    "territory": "Great Lakes & Plains",
+    "statesCovered": "IL, IN, IA, KS, MI, MN, MO, NE, ND, OH, SD, WI",
+    "customersInBook": 14
+  },
+  {
+    "rmId": "RM-105",
+    "name": "Lisa Patel",
+    "title": "SVP, Relationship Manager - Southeast",
+    "email": "lisa.patel@bank.example",
+    "phone": "(404) 555-0195",
+    "officeCity": "Atlanta",
+    "officeState": "GA",
+    "territory": "Southeast",
+    "statesCovered": "AL, FL, GA, KY, MS, NC, SC, TN",
+    "customersInBook": 11
+  },
+  {
+    "rmId": "RM-106",
+    "name": "Jennifer Ross",
+    "title": "SVP, Relationship Manager - Northeast & Mid-Atlantic",
+    "email": "jennifer.ross@bank.example",
+    "phone": "(212) 555-0124",
+    "officeCity": "New York",
+    "officeState": "NY",
+    "territory": "Northeast & Mid-Atlantic",
+    "statesCovered": "CT, DC, DE, MA, MD, ME, NH, NJ, NY, PA, RI, VT, VA, WV",
+    "customersInBook": 8
+  }
+]

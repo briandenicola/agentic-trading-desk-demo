@@ -1,0 +1,482 @@
+[
+  {
+    "table": "CLIENT MASTER",
+    "field": "client_id",
+    "definition": "Unique client identifier (CL-XXXX)."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "client_name",
+    "definition": "Fictional institutional client name."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "client_type",
+    "definition": "Asset Manager, Hedge Fund, Pension, Insurance, Sovereign, Bank."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "client_region",
+    "definition": "Region of domicile / primary coverage."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "coverage_salesperson",
+    "definition": "Salesperson responsible for the relationship."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "preferred_asset_class",
+    "definition": "Primary asset focus of the account."
+  },
+  {
+    "table": "CLIENT MASTER",
+    "field": "risk_style",
+    "definition": "Conservative / Balanced / Aggressive."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "security_id",
+    "definition": "Unique security identifier (SEC-XXXX)."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "security_name",
+    "definition": "Fictional security display name."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "asset_class",
+    "definition": "Equity, Corporate Bond, Treasury, Muni, ETF."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "sector",
+    "definition": "GICS-style sector or 'Sovereign' / 'Credit' for funds."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "issuer",
+    "definition": "Fictional issuing entity."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "currency",
+    "definition": "ISO currency code."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "region",
+    "definition": "Region of issuance / primary listing."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "rating",
+    "definition": "Credit rating where applicable; blank for equities/ETFs."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "maturity_date",
+    "definition": "Maturity for fixed income; blank for equities/ETFs."
+  },
+  {
+    "table": "SECURITY MASTER",
+    "field": "reference_price",
+    "definition": "Indicative reference level (price for equities/ETFs; clean price /100 for bonds)."
+  },
+  {
+    "table": "TRADES",
+    "field": "trade_id",
+    "definition": "Unique trade identifier (TRD-XXXX)."
+  },
+  {
+    "table": "TRADES",
+    "field": "trade_date",
+    "definition": "Execution date."
+  },
+  {
+    "table": "TRADES",
+    "field": "client_id",
+    "definition": "Foreign key to CLIENT MASTER."
+  },
+  {
+    "table": "TRADES",
+    "field": "security_id",
+    "definition": "Foreign key to SECURITY MASTER."
+  },
+  {
+    "table": "TRADES",
+    "field": "direction",
+    "definition": "Buy / Sell from the client's perspective."
+  },
+  {
+    "table": "TRADES",
+    "field": "quantity",
+    "definition": "Shares (equities/ETFs) or face value (fixed income)."
+  },
+  {
+    "table": "TRADES",
+    "field": "price",
+    "definition": "Equity price or clean bond price /100."
+  },
+  {
+    "table": "TRADES",
+    "field": "notional",
+    "definition": "Quantity × price (bonds use /100 convention)."
+  },
+  {
+    "table": "TRADES",
+    "field": "trader_name",
+    "definition": "Bank-side trader."
+  },
+  {
+    "table": "TRADES",
+    "field": "salesperson_name",
+    "definition": "Bank-side salesperson."
+  },
+  {
+    "table": "TRADES",
+    "field": "execution_channel",
+    "definition": "Voice, Chat, RFQ, Electronic, Algo."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "print_id",
+    "definition": "Unique print identifier (PRN-XXXX)."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "timestamp",
+    "definition": "Timestamp of the print."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "security_id",
+    "definition": "Foreign key to SECURITY MASTER."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "asset_class",
+    "definition": "Mirrors security master."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "market_side",
+    "definition": "Bid / Offer / Trade."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "print_price",
+    "definition": "Observed price."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "print_size",
+    "definition": "Observed size."
+  },
+  {
+    "table": "MARKET PRINTS",
+    "field": "venue",
+    "definition": "Trading venue / protocol."
+  },
+  {
+    "table": "RFQs",
+    "field": "rfq_id",
+    "definition": "Unique RFQ identifier (RFQ-XXXX)."
+  },
+  {
+    "table": "RFQs",
+    "field": "rfq_date",
+    "definition": "Date the RFQ was received."
+  },
+  {
+    "table": "RFQs",
+    "field": "client_id",
+    "definition": "Foreign key to CLIENT MASTER."
+  },
+  {
+    "table": "RFQs",
+    "field": "security_id",
+    "definition": "Foreign key to SECURITY MASTER."
+  },
+  {
+    "table": "RFQs",
+    "field": "direction",
+    "definition": "Buy / Sell from the client's perspective."
+  },
+  {
+    "table": "RFQs",
+    "field": "quantity",
+    "definition": "Requested size."
+  },
+  {
+    "table": "RFQs",
+    "field": "response_status",
+    "definition": "Quoted / Traded / Passed / No Follow-Up."
+  },
+  {
+    "table": "RFQs",
+    "field": "salesperson_name",
+    "definition": "Coverage salesperson."
+  },
+  {
+    "table": "RFQs",
+    "field": "trader_name",
+    "definition": "Market-making trader."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "crm_id",
+    "definition": "Unique CRM record (CRM-XXXX)."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "entry_date",
+    "definition": "Date of the call / meeting / follow-up."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "client_id",
+    "definition": "Foreign key to CLIENT MASTER."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "coverage_salesperson",
+    "definition": "Author of the note."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "meeting_type",
+    "definition": "Call / Meeting / Email Follow-Up."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "topic",
+    "definition": "Short topic descriptor."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "call_report_text",
+    "definition": "Free-text salesperson note."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "client_interest",
+    "definition": "Synthesized stance for downstream querying."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "follow_up_action",
+    "definition": "Action committed by the desk."
+  },
+  {
+    "table": "CRM ENTRIES",
+    "field": "urgency",
+    "definition": "Low / Medium / High."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "holding_id",
+    "definition": "Unique holdings record (HLD-XXXX)."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "as_of_date",
+    "definition": "Snapshot date (today)."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "client_id",
+    "definition": "Foreign key to CLIENT MASTER."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "security_id",
+    "definition": "Foreign key to SECURITY MASTER."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "quantity",
+    "definition": "Position quantity."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "market_value",
+    "definition": "Indicative market value."
+  },
+  {
+    "table": "CLIENT HOLDINGS",
+    "field": "weight_pct",
+    "definition": "Percent of total portfolio at the snapshot."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "inventory_id",
+    "definition": "Unique inventory record (INV-XXXX)."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "as_of_date",
+    "definition": "Snapshot date."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "security_id",
+    "definition": "Foreign key to SECURITY MASTER."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "inventory_size",
+    "definition": "Bank net position. Positive = long; negative = short."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "bid_price",
+    "definition": "Indicative bid price."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "offer_price",
+    "definition": "Indicative offer price."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "trader_name",
+    "definition": "Position-owning trader."
+  },
+  {
+    "table": "BANK INVENTORY",
+    "field": "desk",
+    "definition": "Trading desk."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "inquiry_id",
+    "definition": "Unique inquiry record (INQ-XXXX)."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "inquiry_date",
+    "definition": "Inquiry date."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "client_id",
+    "definition": "Foreign key to CLIENT MASTER."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "channel",
+    "definition": "Email / Chat / Call / Voice Note."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "raw_inquiry_text",
+    "definition": "Original less-structured text."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "inferred_security",
+    "definition": "Best-guess security_id; blank if ambiguous."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "inferred_direction",
+    "definition": "Best-guess Buy / Sell; blank if ambiguous."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "inferred_size",
+    "definition": "Best-guess size; blank if ambiguous."
+  },
+  {
+    "table": "CLIENT INQUIRIES",
+    "field": "sentiment",
+    "definition": "Bullish / Bearish / Neutral / Exploratory / Urgent."
+  },
+  {
+    "table": "NEWS",
+    "field": "news_id",
+    "definition": "Unique news item (NEWS-XXXX)."
+  },
+  {
+    "table": "NEWS",
+    "field": "publish_timestamp",
+    "definition": "Publication timestamp."
+  },
+  {
+    "table": "NEWS",
+    "field": "headline",
+    "definition": "Headline text."
+  },
+  {
+    "table": "NEWS",
+    "field": "summary",
+    "definition": "Short body / abstract."
+  },
+  {
+    "table": "NEWS",
+    "field": "related_security_id",
+    "definition": "Primary related security."
+  },
+  {
+    "table": "NEWS",
+    "field": "related_sector",
+    "definition": "Primary related sector."
+  },
+  {
+    "table": "NEWS",
+    "field": "sentiment",
+    "definition": "Positive / Negative / Mixed / Neutral."
+  },
+  {
+    "table": "NEWS",
+    "field": "macro_theme",
+    "definition": "Thematic tag for cross-referencing."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "research_id",
+    "definition": "Unique research note (RES-XXXX)."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "publish_date",
+    "definition": "Publication date."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "title",
+    "definition": "Research title."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "analyst_name",
+    "definition": "Publishing analyst."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "sector",
+    "definition": "Coverage sector."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "rating_action",
+    "definition": "Upgrade / Downgrade / Initiate / Reiterate / Neutral."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "target_or_spread_view",
+    "definition": "Equity target price or bond spread view."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "short_summary",
+    "definition": "Concise thesis."
+  },
+  {
+    "table": "PUBLISHED RESEARCH",
+    "field": "related_security_id",
+    "definition": "Primary related security."
+  }
+]

@@ -1,0 +1,2801 @@
+[
+  {
+    "holdingId": "HLD-7001",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3107",
+    "quantity": 10000000,
+    "marketValue": 10040000,
+    "weightPct": 5.49
+  },
+  {
+    "holdingId": "HLD-7002",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3101",
+    "quantity": 10000000,
+    "marketValue": 10185000,
+    "weightPct": 5.57
+  },
+  {
+    "holdingId": "HLD-7003",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3106",
+    "quantity": 10000000,
+    "marketValue": 9585000,
+    "weightPct": 5.24
+  },
+  {
+    "holdingId": "HLD-7004",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3402",
+    "quantity": 100000,
+    "marketValue": 7620000,
+    "weightPct": 4.17
+  },
+  {
+    "holdingId": "HLD-7005",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3001",
+    "quantity": 50000,
+    "marketValue": 3920000,
+    "weightPct": 2.14
+  },
+  {
+    "holdingId": "HLD-7006",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3002",
+    "quantity": 250000,
+    "marketValue": 53550000,
+    "weightPct": 29.3
+  },
+  {
+    "holdingId": "HLD-7007",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3011",
+    "quantity": 100000,
+    "marketValue": 2895000,
+    "weightPct": 1.58
+  },
+  {
+    "holdingId": "HLD-7008",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3003",
+    "quantity": 250000,
+    "marketValue": 40637500,
+    "weightPct": 22.24
+  },
+  {
+    "holdingId": "HLD-7009",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3501",
+    "quantity": 22500000,
+    "marketValue": 20115000,
+    "weightPct": 11.01
+  },
+  {
+    "holdingId": "HLD-7010",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2001",
+    "securityId": "SEC-3005",
+    "quantity": 250000,
+    "marketValue": 24212500,
+    "weightPct": 13.25
+  },
+  {
+    "holdingId": "HLD-7011",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3204",
+    "quantity": 50000000,
+    "marketValue": 46050000,
+    "weightPct": 31.59
+  },
+  {
+    "holdingId": "HLD-7012",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3010",
+    "quantity": 250000,
+    "marketValue": 11400000,
+    "weightPct": 7.82
+  },
+  {
+    "holdingId": "HLD-7013",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3111",
+    "quantity": 10000000,
+    "marketValue": 9620000,
+    "weightPct": 6.6
+  },
+  {
+    "holdingId": "HLD-7014",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3301",
+    "quantity": 2000000,
+    "marketValue": 2004000,
+    "weightPct": 1.37
+  },
+  {
+    "holdingId": "HLD-7015",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3003",
+    "quantity": 50000,
+    "marketValue": 8127500,
+    "weightPct": 5.58
+  },
+  {
+    "holdingId": "HLD-7016",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3102",
+    "quantity": 2000000,
+    "marketValue": 1964000,
+    "weightPct": 1.35
+  },
+  {
+    "holdingId": "HLD-7017",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3104",
+    "quantity": 20000000,
+    "marketValue": 18950000,
+    "weightPct": 13
+  },
+  {
+    "holdingId": "HLD-7018",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3008",
+    "quantity": 100000,
+    "marketValue": 3120000,
+    "weightPct": 2.14
+  },
+  {
+    "holdingId": "HLD-7019",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3106",
+    "quantity": 20000000,
+    "marketValue": 19170000,
+    "weightPct": 13.15
+  },
+  {
+    "holdingId": "HLD-7020",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3006",
+    "quantity": 20000,
+    "marketValue": 1082000,
+    "weightPct": 0.74
+  },
+  {
+    "holdingId": "HLD-7021",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3109",
+    "quantity": 5000000,
+    "marketValue": 4855000,
+    "weightPct": 3.33
+  },
+  {
+    "holdingId": "HLD-7022",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3303",
+    "quantity": 10000000,
+    "marketValue": 10110000,
+    "weightPct": 6.93
+  },
+  {
+    "holdingId": "HLD-7023",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2002",
+    "securityId": "SEC-3110",
+    "quantity": 10000000,
+    "marketValue": 9330000,
+    "weightPct": 6.4
+  },
+  {
+    "holdingId": "HLD-7024",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3107",
+    "quantity": 10000000,
+    "marketValue": 10040000,
+    "weightPct": 9.33
+  },
+  {
+    "holdingId": "HLD-7025",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3010",
+    "quantity": 100000,
+    "marketValue": 4560000,
+    "weightPct": 4.24
+  },
+  {
+    "holdingId": "HLD-7026",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3011",
+    "quantity": 20000,
+    "marketValue": 579000,
+    "weightPct": 0.54
+  },
+  {
+    "holdingId": "HLD-7027",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3005",
+    "quantity": 75000,
+    "marketValue": 7263750,
+    "weightPct": 6.75
+  },
+  {
+    "holdingId": "HLD-7028",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3111",
+    "quantity": 5000000,
+    "marketValue": 4810000,
+    "weightPct": 4.47
+  },
+  {
+    "holdingId": "HLD-7029",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3109",
+    "quantity": 5000000,
+    "marketValue": 4855000,
+    "weightPct": 4.51
+  },
+  {
+    "holdingId": "HLD-7030",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3403",
+    "quantity": 50000,
+    "marketValue": 2090000,
+    "weightPct": 1.94
+  },
+  {
+    "holdingId": "HLD-7031",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3001",
+    "quantity": 75000,
+    "marketValue": 5880000,
+    "weightPct": 5.47
+  },
+  {
+    "holdingId": "HLD-7032",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3104",
+    "quantity": 10000000,
+    "marketValue": 9475000,
+    "weightPct": 8.81
+  },
+  {
+    "holdingId": "HLD-7033",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3108",
+    "quantity": 2000000,
+    "marketValue": 1984000,
+    "weightPct": 1.84
+  },
+  {
+    "holdingId": "HLD-7034",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3013",
+    "quantity": 250000,
+    "marketValue": 47075000,
+    "weightPct": 43.76
+  },
+  {
+    "holdingId": "HLD-7035",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3008",
+    "quantity": 20000,
+    "marketValue": 624000,
+    "weightPct": 0.58
+  },
+  {
+    "holdingId": "HLD-7036",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3103",
+    "quantity": 2000000,
+    "marketValue": 1848000,
+    "weightPct": 1.72
+  },
+  {
+    "holdingId": "HLD-7037",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2003",
+    "securityId": "SEC-3015",
+    "quantity": 100000,
+    "marketValue": 6485000,
+    "weightPct": 6.03
+  },
+  {
+    "holdingId": "HLD-7038",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3105",
+    "quantity": 5000000,
+    "marketValue": 4980000,
+    "weightPct": 4.35
+  },
+  {
+    "holdingId": "HLD-7039",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3109",
+    "quantity": 15000000,
+    "marketValue": 14565000,
+    "weightPct": 12.72
+  },
+  {
+    "holdingId": "HLD-7040",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3202",
+    "quantity": 10000000,
+    "marketValue": 9920000,
+    "weightPct": 8.67
+  },
+  {
+    "holdingId": "HLD-7041",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3108",
+    "quantity": 2000000,
+    "marketValue": 1984000,
+    "weightPct": 1.73
+  },
+  {
+    "holdingId": "HLD-7042",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3015",
+    "quantity": 75000,
+    "marketValue": 4863750,
+    "weightPct": 4.25
+  },
+  {
+    "holdingId": "HLD-7043",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3303",
+    "quantity": 2000000,
+    "marketValue": 2022000,
+    "weightPct": 1.77
+  },
+  {
+    "holdingId": "HLD-7044",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3204",
+    "quantity": 50000000,
+    "marketValue": 46050000,
+    "weightPct": 40.23
+  },
+  {
+    "holdingId": "HLD-7045",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3111",
+    "quantity": 10000000,
+    "marketValue": 9620000,
+    "weightPct": 8.4
+  },
+  {
+    "holdingId": "HLD-7046",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3104",
+    "quantity": 2000000,
+    "marketValue": 1895000,
+    "weightPct": 1.66
+  },
+  {
+    "holdingId": "HLD-7047",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3203",
+    "quantity": 10000000,
+    "marketValue": 9640000,
+    "weightPct": 8.42
+  },
+  {
+    "holdingId": "HLD-7048",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3004",
+    "quantity": 75000,
+    "marketValue": 3097500,
+    "weightPct": 2.71
+  },
+  {
+    "holdingId": "HLD-7049",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3006",
+    "quantity": 50000,
+    "marketValue": 2705000,
+    "weightPct": 2.36
+  },
+  {
+    "holdingId": "HLD-7050",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2004",
+    "securityId": "SEC-3008",
+    "quantity": 100000,
+    "marketValue": 3120000,
+    "weightPct": 2.73
+  },
+  {
+    "holdingId": "HLD-7051",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3201",
+    "quantity": 25000000,
+    "marketValue": 24962500,
+    "weightPct": 23.28
+  },
+  {
+    "holdingId": "HLD-7052",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3001",
+    "quantity": 150000,
+    "marketValue": 11760000,
+    "weightPct": 10.97
+  },
+  {
+    "holdingId": "HLD-7053",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3111",
+    "quantity": 15000000,
+    "marketValue": 14430000,
+    "weightPct": 13.46
+  },
+  {
+    "holdingId": "HLD-7054",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3103",
+    "quantity": 5000000,
+    "marketValue": 4620000,
+    "weightPct": 4.31
+  },
+  {
+    "holdingId": "HLD-7055",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3002",
+    "quantity": 20000,
+    "marketValue": 4284000,
+    "weightPct": 4
+  },
+  {
+    "holdingId": "HLD-7056",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3003",
+    "quantity": 20000,
+    "marketValue": 3251000,
+    "weightPct": 3.03
+  },
+  {
+    "holdingId": "HLD-7057",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3102",
+    "quantity": 10000000,
+    "marketValue": 9820000,
+    "weightPct": 9.16
+  },
+  {
+    "holdingId": "HLD-7058",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3015",
+    "quantity": 50000,
+    "marketValue": 3242500,
+    "weightPct": 3.02
+  },
+  {
+    "holdingId": "HLD-7059",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3010",
+    "quantity": 50000,
+    "marketValue": 2280000,
+    "weightPct": 2.13
+  },
+  {
+    "holdingId": "HLD-7060",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3009",
+    "quantity": 100000,
+    "marketValue": 8740000,
+    "weightPct": 8.15
+  },
+  {
+    "holdingId": "HLD-7061",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2005",
+    "securityId": "SEC-3108",
+    "quantity": 20000000,
+    "marketValue": 19840000,
+    "weightPct": 18.5
+  },
+  {
+    "holdingId": "HLD-7062",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3014",
+    "quantity": 20000,
+    "marketValue": 442000,
+    "weightPct": 0.42
+  },
+  {
+    "holdingId": "HLD-7063",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3012",
+    "quantity": 75000,
+    "marketValue": 1383750,
+    "weightPct": 1.32
+  },
+  {
+    "holdingId": "HLD-7064",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3111",
+    "quantity": 20000000,
+    "marketValue": 19240000,
+    "weightPct": 18.39
+  },
+  {
+    "holdingId": "HLD-7065",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3101",
+    "quantity": 15000000,
+    "marketValue": 15277500,
+    "weightPct": 14.6
+  },
+  {
+    "holdingId": "HLD-7066",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3203",
+    "quantity": 25000000,
+    "marketValue": 24100000,
+    "weightPct": 23.04
+  },
+  {
+    "holdingId": "HLD-7067",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3007",
+    "quantity": 20000,
+    "marketValue": 2055000,
+    "weightPct": 1.96
+  },
+  {
+    "holdingId": "HLD-7068",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3501",
+    "quantity": 2000000,
+    "marketValue": 1788000,
+    "weightPct": 1.71
+  },
+  {
+    "holdingId": "HLD-7069",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3103",
+    "quantity": 5000000,
+    "marketValue": 4620000,
+    "weightPct": 4.42
+  },
+  {
+    "holdingId": "HLD-7070",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3015",
+    "quantity": 50000,
+    "marketValue": 3242500,
+    "weightPct": 3.1
+  },
+  {
+    "holdingId": "HLD-7071",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3108",
+    "quantity": 10000000,
+    "marketValue": 9920000,
+    "weightPct": 9.48
+  },
+  {
+    "holdingId": "HLD-7072",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3005",
+    "quantity": 20000,
+    "marketValue": 1937000,
+    "weightPct": 1.85
+  },
+  {
+    "holdingId": "HLD-7073",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3004",
+    "quantity": 100000,
+    "marketValue": 4130000,
+    "weightPct": 3.95
+  },
+  {
+    "holdingId": "HLD-7074",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3002",
+    "quantity": 20000,
+    "marketValue": 4284000,
+    "weightPct": 4.1
+  },
+  {
+    "holdingId": "HLD-7075",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2006",
+    "securityId": "SEC-3003",
+    "quantity": 75000,
+    "marketValue": 12191250,
+    "weightPct": 11.65
+  },
+  {
+    "holdingId": "HLD-7076",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3111",
+    "quantity": 15000000,
+    "marketValue": 14430000,
+    "weightPct": 14.6
+  },
+  {
+    "holdingId": "HLD-7077",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3104",
+    "quantity": 2000000,
+    "marketValue": 1895000,
+    "weightPct": 1.92
+  },
+  {
+    "holdingId": "HLD-7078",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3013",
+    "quantity": 75000,
+    "marketValue": 14122500,
+    "weightPct": 14.29
+  },
+  {
+    "holdingId": "HLD-7079",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3401",
+    "quantity": 300000,
+    "marketValue": 26595000,
+    "weightPct": 26.91
+  },
+  {
+    "holdingId": "HLD-7080",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3001",
+    "quantity": 100000,
+    "marketValue": 7840000,
+    "weightPct": 7.93
+  },
+  {
+    "holdingId": "HLD-7081",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3010",
+    "quantity": 75000,
+    "marketValue": 3420000,
+    "weightPct": 3.46
+  },
+  {
+    "holdingId": "HLD-7082",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3003",
+    "quantity": 50000,
+    "marketValue": 8127500,
+    "weightPct": 8.22
+  },
+  {
+    "holdingId": "HLD-7083",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3014",
+    "quantity": 75000,
+    "marketValue": 1657500,
+    "weightPct": 1.68
+  },
+  {
+    "holdingId": "HLD-7084",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3008",
+    "quantity": 150000,
+    "marketValue": 4680000,
+    "weightPct": 4.74
+  },
+  {
+    "holdingId": "HLD-7085",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3108",
+    "quantity": 2000000,
+    "marketValue": 1984000,
+    "weightPct": 2.01
+  },
+  {
+    "holdingId": "HLD-7086",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3102",
+    "quantity": 5000000,
+    "marketValue": 4910000,
+    "weightPct": 4.97
+  },
+  {
+    "holdingId": "HLD-7087",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3011",
+    "quantity": 250000,
+    "marketValue": 7237500,
+    "weightPct": 7.32
+  },
+  {
+    "holdingId": "HLD-7088",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2007",
+    "securityId": "SEC-3106",
+    "quantity": 2000000,
+    "marketValue": 1917000,
+    "weightPct": 1.94
+  },
+  {
+    "holdingId": "HLD-7089",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3302",
+    "quantity": 10000000,
+    "marketValue": 9840000,
+    "weightPct": 4.58
+  },
+  {
+    "holdingId": "HLD-7090",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3111",
+    "quantity": 15000000,
+    "marketValue": 14430000,
+    "weightPct": 6.71
+  },
+  {
+    "holdingId": "HLD-7091",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3301",
+    "quantity": 10000000,
+    "marketValue": 10020000,
+    "weightPct": 4.66
+  },
+  {
+    "holdingId": "HLD-7092",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3108",
+    "quantity": 15000000,
+    "marketValue": 14880000,
+    "weightPct": 6.92
+  },
+  {
+    "holdingId": "HLD-7093",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3109",
+    "quantity": 20000000,
+    "marketValue": 19420000,
+    "weightPct": 9.04
+  },
+  {
+    "holdingId": "HLD-7094",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3103",
+    "quantity": 5000000,
+    "marketValue": 4620000,
+    "weightPct": 2.15
+  },
+  {
+    "holdingId": "HLD-7095",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3204",
+    "quantity": 100000000,
+    "marketValue": 92100000,
+    "weightPct": 42.86
+  },
+  {
+    "holdingId": "HLD-7096",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2008",
+    "securityId": "SEC-3202",
+    "quantity": 50000000,
+    "marketValue": 49600000,
+    "weightPct": 23.08
+  },
+  {
+    "holdingId": "HLD-7097",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3102",
+    "quantity": 20000000,
+    "marketValue": 19640000,
+    "weightPct": 27.97
+  },
+  {
+    "holdingId": "HLD-7098",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3202",
+    "quantity": 25000000,
+    "marketValue": 24800000,
+    "weightPct": 35.31
+  },
+  {
+    "holdingId": "HLD-7099",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3004",
+    "quantity": 20000,
+    "marketValue": 826000,
+    "weightPct": 1.18
+  },
+  {
+    "holdingId": "HLD-7100",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3010",
+    "quantity": 100000,
+    "marketValue": 4560000,
+    "weightPct": 6.49
+  },
+  {
+    "holdingId": "HLD-7101",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3007",
+    "quantity": 50000,
+    "marketValue": 5137500,
+    "weightPct": 7.32
+  },
+  {
+    "holdingId": "HLD-7102",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3012",
+    "quantity": 50000,
+    "marketValue": 922500,
+    "weightPct": 1.31
+  },
+  {
+    "holdingId": "HLD-7103",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3006",
+    "quantity": 50000,
+    "marketValue": 2705000,
+    "weightPct": 3.85
+  },
+  {
+    "holdingId": "HLD-7104",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3105",
+    "quantity": 5000000,
+    "marketValue": 4980000,
+    "weightPct": 7.09
+  },
+  {
+    "holdingId": "HLD-7105",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3104",
+    "quantity": 5000000,
+    "marketValue": 4737500,
+    "weightPct": 6.75
+  },
+  {
+    "holdingId": "HLD-7106",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2009",
+    "securityId": "SEC-3106",
+    "quantity": 2000000,
+    "marketValue": 1917000,
+    "weightPct": 2.73
+  },
+  {
+    "holdingId": "HLD-7107",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3109",
+    "quantity": 2000000,
+    "marketValue": 1942000,
+    "weightPct": 1.42
+  },
+  {
+    "holdingId": "HLD-7108",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3102",
+    "quantity": 2000000,
+    "marketValue": 1964000,
+    "weightPct": 1.43
+  },
+  {
+    "holdingId": "HLD-7109",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3501",
+    "quantity": 15000000,
+    "marketValue": 13410000,
+    "weightPct": 9.77
+  },
+  {
+    "holdingId": "HLD-7110",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3013",
+    "quantity": 150000,
+    "marketValue": 28245000,
+    "weightPct": 20.58
+  },
+  {
+    "holdingId": "HLD-7111",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3006",
+    "quantity": 100000,
+    "marketValue": 5410000,
+    "weightPct": 3.94
+  },
+  {
+    "holdingId": "HLD-7112",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3005",
+    "quantity": 150000,
+    "marketValue": 14527500,
+    "weightPct": 10.59
+  },
+  {
+    "holdingId": "HLD-7113",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3402",
+    "quantity": 200000,
+    "marketValue": 15240000,
+    "weightPct": 11.11
+  },
+  {
+    "holdingId": "HLD-7114",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3111",
+    "quantity": 10000000,
+    "marketValue": 9620000,
+    "weightPct": 7.01
+  },
+  {
+    "holdingId": "HLD-7115",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3502",
+    "quantity": 20000000,
+    "marketValue": 18360000,
+    "weightPct": 13.38
+  },
+  {
+    "holdingId": "HLD-7116",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3401",
+    "quantity": 300000,
+    "marketValue": 26595000,
+    "weightPct": 19.38
+  },
+  {
+    "holdingId": "HLD-7117",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2010",
+    "securityId": "SEC-3106",
+    "quantity": 2000000,
+    "marketValue": 1917000,
+    "weightPct": 1.4
+  },
+  {
+    "holdingId": "HLD-7118",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3106",
+    "quantity": 20000000,
+    "marketValue": 19170000,
+    "weightPct": 11.64
+  },
+  {
+    "holdingId": "HLD-7119",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3011",
+    "quantity": 75000,
+    "marketValue": 2171250,
+    "weightPct": 1.32
+  },
+  {
+    "holdingId": "HLD-7120",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3006",
+    "quantity": 100000,
+    "marketValue": 5410000,
+    "weightPct": 3.28
+  },
+  {
+    "holdingId": "HLD-7121",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3015",
+    "quantity": 75000,
+    "marketValue": 4863750,
+    "weightPct": 2.95
+  },
+  {
+    "holdingId": "HLD-7122",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3005",
+    "quantity": 100000,
+    "marketValue": 9685000,
+    "weightPct": 5.88
+  },
+  {
+    "holdingId": "HLD-7123",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3105",
+    "quantity": 15000000,
+    "marketValue": 14940000,
+    "weightPct": 9.07
+  },
+  {
+    "holdingId": "HLD-7124",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3109",
+    "quantity": 20000000,
+    "marketValue": 19420000,
+    "weightPct": 11.79
+  },
+  {
+    "holdingId": "HLD-7125",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3013",
+    "quantity": 150000,
+    "marketValue": 28245000,
+    "weightPct": 17.15
+  },
+  {
+    "holdingId": "HLD-7126",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3103",
+    "quantity": 15000000,
+    "marketValue": 13860000,
+    "weightPct": 8.41
+  },
+  {
+    "holdingId": "HLD-7127",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3104",
+    "quantity": 2000000,
+    "marketValue": 1895000,
+    "weightPct": 1.15
+  },
+  {
+    "holdingId": "HLD-7128",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3004",
+    "quantity": 50000,
+    "marketValue": 2065000,
+    "weightPct": 1.25
+  },
+  {
+    "holdingId": "HLD-7129",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3003",
+    "quantity": 75000,
+    "marketValue": 12191250,
+    "weightPct": 7.4
+  },
+  {
+    "holdingId": "HLD-7130",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3402",
+    "quantity": 300000,
+    "marketValue": 22860000,
+    "weightPct": 13.88
+  },
+  {
+    "holdingId": "HLD-7131",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3014",
+    "quantity": 50000,
+    "marketValue": 1105000,
+    "weightPct": 0.67
+  },
+  {
+    "holdingId": "HLD-7132",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2011",
+    "securityId": "SEC-3010",
+    "quantity": 150000,
+    "marketValue": 6840000,
+    "weightPct": 4.15
+  },
+  {
+    "holdingId": "HLD-7133",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3102",
+    "quantity": 10000000,
+    "marketValue": 9820000,
+    "weightPct": 2.85
+  },
+  {
+    "holdingId": "HLD-7134",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3007",
+    "quantity": 75000,
+    "marketValue": 7706250,
+    "weightPct": 2.24
+  },
+  {
+    "holdingId": "HLD-7135",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3303",
+    "quantity": 5000000,
+    "marketValue": 5055000,
+    "weightPct": 1.47
+  },
+  {
+    "holdingId": "HLD-7136",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3202",
+    "quantity": 100000000,
+    "marketValue": 99200000,
+    "weightPct": 28.77
+  },
+  {
+    "holdingId": "HLD-7137",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3002",
+    "quantity": 250000,
+    "marketValue": 53550000,
+    "weightPct": 15.53
+  },
+  {
+    "holdingId": "HLD-7138",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3010",
+    "quantity": 250000,
+    "marketValue": 11400000,
+    "weightPct": 3.31
+  },
+  {
+    "holdingId": "HLD-7139",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3008",
+    "quantity": 20000,
+    "marketValue": 624000,
+    "weightPct": 0.18
+  },
+  {
+    "holdingId": "HLD-7140",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3301",
+    "quantity": 2000000,
+    "marketValue": 2004000,
+    "weightPct": 0.58
+  },
+  {
+    "holdingId": "HLD-7141",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3201",
+    "quantity": 25000000,
+    "marketValue": 24962500,
+    "weightPct": 7.24
+  },
+  {
+    "holdingId": "HLD-7142",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3015",
+    "quantity": 75000,
+    "marketValue": 4863750,
+    "weightPct": 1.41
+  },
+  {
+    "holdingId": "HLD-7143",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3302",
+    "quantity": 10000000,
+    "marketValue": 9840000,
+    "weightPct": 2.85
+  },
+  {
+    "holdingId": "HLD-7144",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3204",
+    "quantity": 100000000,
+    "marketValue": 92100000,
+    "weightPct": 26.71
+  },
+  {
+    "holdingId": "HLD-7145",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3009",
+    "quantity": 75000,
+    "marketValue": 6555000,
+    "weightPct": 1.9
+  },
+  {
+    "holdingId": "HLD-7146",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3004",
+    "quantity": 75000,
+    "marketValue": 3097500,
+    "weightPct": 0.9
+  },
+  {
+    "holdingId": "HLD-7147",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2012",
+    "securityId": "SEC-3110",
+    "quantity": 15000000,
+    "marketValue": 13995000,
+    "weightPct": 4.06
+  },
+  {
+    "holdingId": "HLD-7148",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3109",
+    "quantity": 2000000,
+    "marketValue": 1942000,
+    "weightPct": 2.51
+  },
+  {
+    "holdingId": "HLD-7149",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3501",
+    "quantity": 10000000,
+    "marketValue": 8940000,
+    "weightPct": 11.54
+  },
+  {
+    "holdingId": "HLD-7150",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3004",
+    "quantity": 250000,
+    "marketValue": 10325000,
+    "weightPct": 13.33
+  },
+  {
+    "holdingId": "HLD-7151",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3008",
+    "quantity": 150000,
+    "marketValue": 4680000,
+    "weightPct": 6.04
+  },
+  {
+    "holdingId": "HLD-7152",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3105",
+    "quantity": 15000000,
+    "marketValue": 14940000,
+    "weightPct": 19.29
+  },
+  {
+    "holdingId": "HLD-7153",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3013",
+    "quantity": 50000,
+    "marketValue": 9415000,
+    "weightPct": 12.16
+  },
+  {
+    "holdingId": "HLD-7154",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3403",
+    "quantity": 50000,
+    "marketValue": 2090000,
+    "weightPct": 2.7
+  },
+  {
+    "holdingId": "HLD-7155",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3106",
+    "quantity": 5000000,
+    "marketValue": 4792500,
+    "weightPct": 6.19
+  },
+  {
+    "holdingId": "HLD-7156",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3108",
+    "quantity": 5000000,
+    "marketValue": 4960000,
+    "weightPct": 6.4
+  },
+  {
+    "holdingId": "HLD-7157",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3010",
+    "quantity": 50000,
+    "marketValue": 2280000,
+    "weightPct": 2.94
+  },
+  {
+    "holdingId": "HLD-7158",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3014",
+    "quantity": 20000,
+    "marketValue": 442000,
+    "weightPct": 0.57
+  },
+  {
+    "holdingId": "HLD-7159",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3002",
+    "quantity": 50000,
+    "marketValue": 10710000,
+    "weightPct": 13.83
+  },
+  {
+    "holdingId": "HLD-7160",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2013",
+    "securityId": "SEC-3005",
+    "quantity": 20000,
+    "marketValue": 1937000,
+    "weightPct": 2.5
+  },
+  {
+    "holdingId": "HLD-7161",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3203",
+    "quantity": 25000000,
+    "marketValue": 24100000,
+    "weightPct": 13.45
+  },
+  {
+    "holdingId": "HLD-7162",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3103",
+    "quantity": 10000000,
+    "marketValue": 9240000,
+    "weightPct": 5.16
+  },
+  {
+    "holdingId": "HLD-7163",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3204",
+    "quantity": 100000000,
+    "marketValue": 92100000,
+    "weightPct": 51.41
+  },
+  {
+    "holdingId": "HLD-7164",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3010",
+    "quantity": 150000,
+    "marketValue": 6840000,
+    "weightPct": 3.82
+  },
+  {
+    "holdingId": "HLD-7165",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3101",
+    "quantity": 15000000,
+    "marketValue": 15277500,
+    "weightPct": 8.53
+  },
+  {
+    "holdingId": "HLD-7166",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3302",
+    "quantity": 2000000,
+    "marketValue": 1968000,
+    "weightPct": 1.1
+  },
+  {
+    "holdingId": "HLD-7167",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3301",
+    "quantity": 5000000,
+    "marketValue": 5010000,
+    "weightPct": 2.8
+  },
+  {
+    "holdingId": "HLD-7168",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3014",
+    "quantity": 150000,
+    "marketValue": 3315000,
+    "weightPct": 1.85
+  },
+  {
+    "holdingId": "HLD-7169",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3012",
+    "quantity": 150000,
+    "marketValue": 2767500,
+    "weightPct": 1.54
+  },
+  {
+    "holdingId": "HLD-7170",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3303",
+    "quantity": 5000000,
+    "marketValue": 5055000,
+    "weightPct": 2.82
+  },
+  {
+    "holdingId": "HLD-7171",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3011",
+    "quantity": 75000,
+    "marketValue": 2171250,
+    "weightPct": 1.21
+  },
+  {
+    "holdingId": "HLD-7172",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3104",
+    "quantity": 5000000,
+    "marketValue": 4737500,
+    "weightPct": 2.64
+  },
+  {
+    "holdingId": "HLD-7173",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2014",
+    "securityId": "SEC-3009",
+    "quantity": 75000,
+    "marketValue": 6555000,
+    "weightPct": 3.66
+  },
+  {
+    "holdingId": "HLD-7174",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3103",
+    "quantity": 2000000,
+    "marketValue": 1848000,
+    "weightPct": 0.95
+  },
+  {
+    "holdingId": "HLD-7175",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3102",
+    "quantity": 15000000,
+    "marketValue": 14730000,
+    "weightPct": 7.54
+  },
+  {
+    "holdingId": "HLD-7176",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3001",
+    "quantity": 50000,
+    "marketValue": 3920000,
+    "weightPct": 2.01
+  },
+  {
+    "holdingId": "HLD-7177",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3002",
+    "quantity": 250000,
+    "marketValue": 53550000,
+    "weightPct": 27.43
+  },
+  {
+    "holdingId": "HLD-7178",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3009",
+    "quantity": 50000,
+    "marketValue": 4370000,
+    "weightPct": 2.24
+  },
+  {
+    "holdingId": "HLD-7179",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3014",
+    "quantity": 150000,
+    "marketValue": 3315000,
+    "weightPct": 1.7
+  },
+  {
+    "holdingId": "HLD-7180",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3007",
+    "quantity": 20000,
+    "marketValue": 2055000,
+    "weightPct": 1.05
+  },
+  {
+    "holdingId": "HLD-7181",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3008",
+    "quantity": 50000,
+    "marketValue": 1560000,
+    "weightPct": 0.8
+  },
+  {
+    "holdingId": "HLD-7182",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3011",
+    "quantity": 75000,
+    "marketValue": 2171250,
+    "weightPct": 1.11
+  },
+  {
+    "holdingId": "HLD-7183",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3101",
+    "quantity": 20000000,
+    "marketValue": 20370000,
+    "weightPct": 10.43
+  },
+  {
+    "holdingId": "HLD-7184",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3107",
+    "quantity": 10000000,
+    "marketValue": 10040000,
+    "weightPct": 5.14
+  },
+  {
+    "holdingId": "HLD-7185",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3003",
+    "quantity": 250000,
+    "marketValue": 40637500,
+    "weightPct": 20.81
+  },
+  {
+    "holdingId": "HLD-7186",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3106",
+    "quantity": 10000000,
+    "marketValue": 9585000,
+    "weightPct": 4.91
+  },
+  {
+    "holdingId": "HLD-7187",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3109",
+    "quantity": 15000000,
+    "marketValue": 14565000,
+    "weightPct": 7.46
+  },
+  {
+    "holdingId": "HLD-7188",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3403",
+    "quantity": 300000,
+    "marketValue": 12540000,
+    "weightPct": 6.42
+  },
+  {
+    "holdingId": "HLD-7189",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3103",
+    "quantity": 20000000,
+    "marketValue": 18480000,
+    "weightPct": 8.66
+  },
+  {
+    "holdingId": "HLD-7190",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3302",
+    "quantity": 10000000,
+    "marketValue": 9840000,
+    "weightPct": 4.61
+  },
+  {
+    "holdingId": "HLD-7191",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3101",
+    "quantity": 10000000,
+    "marketValue": 10185000,
+    "weightPct": 4.77
+  },
+  {
+    "holdingId": "HLD-7192",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3014",
+    "quantity": 150000,
+    "marketValue": 3315000,
+    "weightPct": 1.55
+  },
+  {
+    "holdingId": "HLD-7193",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3107",
+    "quantity": 20000000,
+    "marketValue": 20080000,
+    "weightPct": 9.41
+  },
+  {
+    "holdingId": "HLD-7194",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3106",
+    "quantity": 20000000,
+    "marketValue": 19170000,
+    "weightPct": 8.99
+  },
+  {
+    "holdingId": "HLD-7195",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3012",
+    "quantity": 75000,
+    "marketValue": 1383750,
+    "weightPct": 0.65
+  },
+  {
+    "holdingId": "HLD-7196",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3003",
+    "quantity": 75000,
+    "marketValue": 12191250,
+    "weightPct": 5.72
+  },
+  {
+    "holdingId": "HLD-7197",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3303",
+    "quantity": 10000000,
+    "marketValue": 10110000,
+    "weightPct": 4.74
+  },
+  {
+    "holdingId": "HLD-7198",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3006",
+    "quantity": 20000,
+    "marketValue": 1082000,
+    "weightPct": 0.51
+  },
+  {
+    "holdingId": "HLD-7199",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3203",
+    "quantity": 100000000,
+    "marketValue": 96400000,
+    "weightPct": 45.19
+  },
+  {
+    "holdingId": "HLD-7200",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3009",
+    "quantity": 20000,
+    "marketValue": 1748000,
+    "weightPct": 0.82
+  },
+  {
+    "holdingId": "HLD-7201",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2016",
+    "securityId": "SEC-3110",
+    "quantity": 10000000,
+    "marketValue": 9330000,
+    "weightPct": 4.37
+  },
+  {
+    "holdingId": "HLD-7202",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3011",
+    "quantity": 50000,
+    "marketValue": 1447500,
+    "weightPct": 1.13
+  },
+  {
+    "holdingId": "HLD-7203",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3002",
+    "quantity": 20000,
+    "marketValue": 4284000,
+    "weightPct": 3.35
+  },
+  {
+    "holdingId": "HLD-7204",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3004",
+    "quantity": 150000,
+    "marketValue": 6195000,
+    "weightPct": 4.85
+  },
+  {
+    "holdingId": "HLD-7205",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3502",
+    "quantity": 15000000,
+    "marketValue": 13770000,
+    "weightPct": 10.78
+  },
+  {
+    "holdingId": "HLD-7206",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3202",
+    "quantity": 50000000,
+    "marketValue": 49600000,
+    "weightPct": 38.83
+  },
+  {
+    "holdingId": "HLD-7207",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3104",
+    "quantity": 5000000,
+    "marketValue": 4737500,
+    "weightPct": 3.71
+  },
+  {
+    "holdingId": "HLD-7208",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3010",
+    "quantity": 250000,
+    "marketValue": 11400000,
+    "weightPct": 8.92
+  },
+  {
+    "holdingId": "HLD-7209",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3102",
+    "quantity": 2000000,
+    "marketValue": 1964000,
+    "weightPct": 1.54
+  },
+  {
+    "holdingId": "HLD-7210",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3107",
+    "quantity": 15000000,
+    "marketValue": 15060000,
+    "weightPct": 11.79
+  },
+  {
+    "holdingId": "HLD-7211",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3101",
+    "quantity": 10000000,
+    "marketValue": 10185000,
+    "weightPct": 7.97
+  },
+  {
+    "holdingId": "HLD-7212",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3005",
+    "quantity": 75000,
+    "marketValue": 7263750,
+    "weightPct": 5.69
+  },
+  {
+    "holdingId": "HLD-7213",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2017",
+    "securityId": "SEC-3012",
+    "quantity": 100000,
+    "marketValue": 1845000,
+    "weightPct": 1.44
+  },
+  {
+    "holdingId": "HLD-7214",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3010",
+    "quantity": 150000,
+    "marketValue": 6840000,
+    "weightPct": 6.54
+  },
+  {
+    "holdingId": "HLD-7215",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3001",
+    "quantity": 75000,
+    "marketValue": 5880000,
+    "weightPct": 5.62
+  },
+  {
+    "holdingId": "HLD-7216",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3501",
+    "quantity": 5000000,
+    "marketValue": 4470000,
+    "weightPct": 4.27
+  },
+  {
+    "holdingId": "HLD-7217",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3401",
+    "quantity": 100000,
+    "marketValue": 8865000,
+    "weightPct": 8.48
+  },
+  {
+    "holdingId": "HLD-7218",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3106",
+    "quantity": 10000000,
+    "marketValue": 9585000,
+    "weightPct": 9.17
+  },
+  {
+    "holdingId": "HLD-7219",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3011",
+    "quantity": 20000,
+    "marketValue": 579000,
+    "weightPct": 0.55
+  },
+  {
+    "holdingId": "HLD-7220",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3101",
+    "quantity": 15000000,
+    "marketValue": 15277500,
+    "weightPct": 14.61
+  },
+  {
+    "holdingId": "HLD-7221",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3003",
+    "quantity": 50000,
+    "marketValue": 8127500,
+    "weightPct": 7.77
+  },
+  {
+    "holdingId": "HLD-7222",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3015",
+    "quantity": 250000,
+    "marketValue": 16212500,
+    "weightPct": 15.5
+  },
+  {
+    "holdingId": "HLD-7223",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3006",
+    "quantity": 75000,
+    "marketValue": 4057500,
+    "weightPct": 3.88
+  },
+  {
+    "holdingId": "HLD-7224",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3108",
+    "quantity": 20000000,
+    "marketValue": 19840000,
+    "weightPct": 18.97
+  },
+  {
+    "holdingId": "HLD-7225",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2018",
+    "securityId": "SEC-3005",
+    "quantity": 50000,
+    "marketValue": 4842500,
+    "weightPct": 4.63
+  },
+  {
+    "holdingId": "HLD-7226",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3109",
+    "quantity": 15000000,
+    "marketValue": 14565000,
+    "weightPct": 6.99
+  },
+  {
+    "holdingId": "HLD-7227",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3008",
+    "quantity": 20000,
+    "marketValue": 624000,
+    "weightPct": 0.3
+  },
+  {
+    "holdingId": "HLD-7228",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3204",
+    "quantity": 100000000,
+    "marketValue": 92100000,
+    "weightPct": 44.18
+  },
+  {
+    "holdingId": "HLD-7229",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3301",
+    "quantity": 2000000,
+    "marketValue": 2004000,
+    "weightPct": 0.96
+  },
+  {
+    "holdingId": "HLD-7230",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3201",
+    "quantity": 10000000,
+    "marketValue": 9985000,
+    "weightPct": 4.79
+  },
+  {
+    "holdingId": "HLD-7231",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3107",
+    "quantity": 15000000,
+    "marketValue": 15060000,
+    "weightPct": 7.22
+  },
+  {
+    "holdingId": "HLD-7232",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3108",
+    "quantity": 5000000,
+    "marketValue": 4960000,
+    "weightPct": 2.38
+  },
+  {
+    "holdingId": "HLD-7233",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3002",
+    "quantity": 150000,
+    "marketValue": 32130000,
+    "weightPct": 15.41
+  },
+  {
+    "holdingId": "HLD-7234",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3103",
+    "quantity": 2000000,
+    "marketValue": 1848000,
+    "weightPct": 0.89
+  },
+  {
+    "holdingId": "HLD-7235",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3302",
+    "quantity": 10000000,
+    "marketValue": 9840000,
+    "weightPct": 4.72
+  },
+  {
+    "holdingId": "HLD-7236",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3006",
+    "quantity": 100000,
+    "marketValue": 5410000,
+    "weightPct": 2.6
+  },
+  {
+    "holdingId": "HLD-7237",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2019",
+    "securityId": "SEC-3105",
+    "quantity": 20000000,
+    "marketValue": 19920000,
+    "weightPct": 9.56
+  },
+  {
+    "holdingId": "HLD-7238",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3015",
+    "quantity": 20000,
+    "marketValue": 1297000,
+    "weightPct": 2.09
+  },
+  {
+    "holdingId": "HLD-7239",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3007",
+    "quantity": 100000,
+    "marketValue": 10275000,
+    "weightPct": 16.59
+  },
+  {
+    "holdingId": "HLD-7240",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3109",
+    "quantity": 10000000,
+    "marketValue": 9710000,
+    "weightPct": 15.68
+  },
+  {
+    "holdingId": "HLD-7241",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3402",
+    "quantity": 100000,
+    "marketValue": 7620000,
+    "weightPct": 12.31
+  },
+  {
+    "holdingId": "HLD-7242",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3101",
+    "quantity": 10000000,
+    "marketValue": 10185000,
+    "weightPct": 16.45
+  },
+  {
+    "holdingId": "HLD-7243",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3403",
+    "quantity": 50000,
+    "marketValue": 2090000,
+    "weightPct": 3.38
+  },
+  {
+    "holdingId": "HLD-7244",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3104",
+    "quantity": 2000000,
+    "marketValue": 1895000,
+    "weightPct": 3.06
+  },
+  {
+    "holdingId": "HLD-7245",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3011",
+    "quantity": 100000,
+    "marketValue": 2895000,
+    "weightPct": 4.68
+  },
+  {
+    "holdingId": "HLD-7246",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3012",
+    "quantity": 75000,
+    "marketValue": 1383750,
+    "weightPct": 2.23
+  },
+  {
+    "holdingId": "HLD-7247",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3105",
+    "quantity": 5000000,
+    "marketValue": 4980000,
+    "weightPct": 8.04
+  },
+  {
+    "holdingId": "HLD-7248",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3102",
+    "quantity": 5000000,
+    "marketValue": 4910000,
+    "weightPct": 7.93
+  },
+  {
+    "holdingId": "HLD-7249",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2020",
+    "securityId": "SEC-3008",
+    "quantity": 150000,
+    "marketValue": 4680000,
+    "weightPct": 7.56
+  },
+  {
+    "holdingId": "HLD-7250",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3202",
+    "quantity": 10000000,
+    "marketValue": 9920000,
+    "weightPct": 9.48
+  },
+  {
+    "holdingId": "HLD-7251",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3109",
+    "quantity": 2000000,
+    "marketValue": 1942000,
+    "weightPct": 1.86
+  },
+  {
+    "holdingId": "HLD-7252",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3502",
+    "quantity": 20000000,
+    "marketValue": 18360000,
+    "weightPct": 17.54
+  },
+  {
+    "holdingId": "HLD-7253",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3111",
+    "quantity": 5000000,
+    "marketValue": 4810000,
+    "weightPct": 4.59
+  },
+  {
+    "holdingId": "HLD-7254",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3403",
+    "quantity": 200000,
+    "marketValue": 8360000,
+    "weightPct": 7.99
+  },
+  {
+    "holdingId": "HLD-7255",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3006",
+    "quantity": 20000,
+    "marketValue": 1082000,
+    "weightPct": 1.03
+  },
+  {
+    "holdingId": "HLD-7256",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3105",
+    "quantity": 10000000,
+    "marketValue": 9960000,
+    "weightPct": 9.51
+  },
+  {
+    "holdingId": "HLD-7257",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3501",
+    "quantity": 20000000,
+    "marketValue": 17880000,
+    "weightPct": 17.08
+  },
+  {
+    "holdingId": "HLD-7258",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3102",
+    "quantity": 5000000,
+    "marketValue": 4910000,
+    "weightPct": 4.69
+  },
+  {
+    "holdingId": "HLD-7259",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3003",
+    "quantity": 20000,
+    "marketValue": 3251000,
+    "weightPct": 3.11
+  },
+  {
+    "holdingId": "HLD-7260",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2021",
+    "securityId": "SEC-3005",
+    "quantity": 250000,
+    "marketValue": 24212500,
+    "weightPct": 23.13
+  },
+  {
+    "holdingId": "HLD-7261",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3011",
+    "quantity": 150000,
+    "marketValue": 4342500,
+    "weightPct": 4.7
+  },
+  {
+    "holdingId": "HLD-7262",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3013",
+    "quantity": 150000,
+    "marketValue": 28245000,
+    "weightPct": 30.58
+  },
+  {
+    "holdingId": "HLD-7263",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3302",
+    "quantity": 5000000,
+    "marketValue": 4920000,
+    "weightPct": 5.33
+  },
+  {
+    "holdingId": "HLD-7264",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3103",
+    "quantity": 5000000,
+    "marketValue": 4620000,
+    "weightPct": 5
+  },
+  {
+    "holdingId": "HLD-7265",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3010",
+    "quantity": 20000,
+    "marketValue": 912000,
+    "weightPct": 0.99
+  },
+  {
+    "holdingId": "HLD-7266",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3403",
+    "quantity": 50000,
+    "marketValue": 2090000,
+    "weightPct": 2.26
+  },
+  {
+    "holdingId": "HLD-7267",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3401",
+    "quantity": 200000,
+    "marketValue": 17730000,
+    "weightPct": 19.2
+  },
+  {
+    "holdingId": "HLD-7268",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3109",
+    "quantity": 10000000,
+    "marketValue": 9710000,
+    "weightPct": 10.51
+  },
+  {
+    "holdingId": "HLD-7269",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3005",
+    "quantity": 100000,
+    "marketValue": 9685000,
+    "weightPct": 10.49
+  },
+  {
+    "holdingId": "HLD-7270",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2022",
+    "securityId": "SEC-3303",
+    "quantity": 10000000,
+    "marketValue": 10110000,
+    "weightPct": 10.95
+  },
+  {
+    "holdingId": "HLD-7271",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3102",
+    "quantity": 2000000,
+    "marketValue": 1964000,
+    "weightPct": 1.39
+  },
+  {
+    "holdingId": "HLD-7272",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3107",
+    "quantity": 5000000,
+    "marketValue": 5020000,
+    "weightPct": 3.56
+  },
+  {
+    "holdingId": "HLD-7273",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3202",
+    "quantity": 25000000,
+    "marketValue": 24800000,
+    "weightPct": 17.57
+  },
+  {
+    "holdingId": "HLD-7274",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3104",
+    "quantity": 5000000,
+    "marketValue": 4737500,
+    "weightPct": 3.36
+  },
+  {
+    "holdingId": "HLD-7275",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3203",
+    "quantity": 25000000,
+    "marketValue": 24100000,
+    "weightPct": 17.08
+  },
+  {
+    "holdingId": "HLD-7276",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3106",
+    "quantity": 2000000,
+    "marketValue": 1917000,
+    "weightPct": 1.36
+  },
+  {
+    "holdingId": "HLD-7277",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3303",
+    "quantity": 10000000,
+    "marketValue": 10110000,
+    "weightPct": 7.16
+  },
+  {
+    "holdingId": "HLD-7278",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3302",
+    "quantity": 10000000,
+    "marketValue": 9840000,
+    "weightPct": 6.97
+  },
+  {
+    "holdingId": "HLD-7279",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3109",
+    "quantity": 5000000,
+    "marketValue": 4855000,
+    "weightPct": 3.44
+  },
+  {
+    "holdingId": "HLD-7280",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3301",
+    "quantity": 2000000,
+    "marketValue": 2004000,
+    "weightPct": 1.42
+  },
+  {
+    "holdingId": "HLD-7281",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3201",
+    "quantity": 50000000,
+    "marketValue": 49925000,
+    "weightPct": 35.38
+  },
+  {
+    "holdingId": "HLD-7282",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2023",
+    "securityId": "SEC-3103",
+    "quantity": 2000000,
+    "marketValue": 1848000,
+    "weightPct": 1.31
+  },
+  {
+    "holdingId": "HLD-7283",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3012",
+    "quantity": 100000,
+    "marketValue": 1845000,
+    "weightPct": 0.8
+  },
+  {
+    "holdingId": "HLD-7284",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3013",
+    "quantity": 100000,
+    "marketValue": 18830000,
+    "weightPct": 8.14
+  },
+  {
+    "holdingId": "HLD-7285",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3111",
+    "quantity": 15000000,
+    "marketValue": 14430000,
+    "weightPct": 6.24
+  },
+  {
+    "holdingId": "HLD-7286",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3003",
+    "quantity": 20000,
+    "marketValue": 3251000,
+    "weightPct": 1.41
+  },
+  {
+    "holdingId": "HLD-7287",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3007",
+    "quantity": 150000,
+    "marketValue": 15412500,
+    "weightPct": 6.66
+  },
+  {
+    "holdingId": "HLD-7288",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3202",
+    "quantity": 50000000,
+    "marketValue": 49600000,
+    "weightPct": 21.44
+  },
+  {
+    "holdingId": "HLD-7289",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3004",
+    "quantity": 100000,
+    "marketValue": 4130000,
+    "weightPct": 1.79
+  },
+  {
+    "holdingId": "HLD-7290",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3106",
+    "quantity": 5000000,
+    "marketValue": 4792500,
+    "weightPct": 2.07
+  },
+  {
+    "holdingId": "HLD-7291",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3203",
+    "quantity": 25000000,
+    "marketValue": 24100000,
+    "weightPct": 10.42
+  },
+  {
+    "holdingId": "HLD-7292",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3011",
+    "quantity": 250000,
+    "marketValue": 7237500,
+    "weightPct": 3.13
+  },
+  {
+    "holdingId": "HLD-7293",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3009",
+    "quantity": 250000,
+    "marketValue": 21850000,
+    "weightPct": 9.44
+  },
+  {
+    "holdingId": "HLD-7294",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3102",
+    "quantity": 2000000,
+    "marketValue": 1964000,
+    "weightPct": 0.85
+  },
+  {
+    "holdingId": "HLD-7295",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3201",
+    "quantity": 50000000,
+    "marketValue": 49925000,
+    "weightPct": 21.58
+  },
+  {
+    "holdingId": "HLD-7296",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2024",
+    "securityId": "SEC-3110",
+    "quantity": 15000000,
+    "marketValue": 13995000,
+    "weightPct": 6.05
+  },
+  {
+    "holdingId": "HLD-7297",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3005",
+    "quantity": 150000,
+    "marketValue": 14527500,
+    "weightPct": 9.7
+  },
+  {
+    "holdingId": "HLD-7298",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3013",
+    "quantity": 50000,
+    "marketValue": 9415000,
+    "weightPct": 6.29
+  },
+  {
+    "holdingId": "HLD-7299",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3006",
+    "quantity": 75000,
+    "marketValue": 4057500,
+    "weightPct": 2.71
+  },
+  {
+    "holdingId": "HLD-7300",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3401",
+    "quantity": 100000,
+    "marketValue": 8865000,
+    "weightPct": 5.92
+  },
+  {
+    "holdingId": "HLD-7301",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3106",
+    "quantity": 10000000,
+    "marketValue": 9585000,
+    "weightPct": 6.4
+  },
+  {
+    "holdingId": "HLD-7302",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3004",
+    "quantity": 250000,
+    "marketValue": 10325000,
+    "weightPct": 6.9
+  },
+  {
+    "holdingId": "HLD-7303",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3109",
+    "quantity": 15000000,
+    "marketValue": 14565000,
+    "weightPct": 9.73
+  },
+  {
+    "holdingId": "HLD-7304",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3015",
+    "quantity": 75000,
+    "marketValue": 4863750,
+    "weightPct": 3.25
+  },
+  {
+    "holdingId": "HLD-7305",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3104",
+    "quantity": 5000000,
+    "marketValue": 4737500,
+    "weightPct": 3.16
+  },
+  {
+    "holdingId": "HLD-7306",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3402",
+    "quantity": 50000,
+    "marketValue": 3810000,
+    "weightPct": 2.54
+  },
+  {
+    "holdingId": "HLD-7307",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3102",
+    "quantity": 20000000,
+    "marketValue": 19640000,
+    "weightPct": 13.12
+  },
+  {
+    "holdingId": "HLD-7308",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3002",
+    "quantity": 100000,
+    "marketValue": 21420000,
+    "weightPct": 14.3
+  },
+  {
+    "holdingId": "HLD-7309",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3003",
+    "quantity": 50000,
+    "marketValue": 8127500,
+    "weightPct": 5.43
+  },
+  {
+    "holdingId": "HLD-7310",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3014",
+    "quantity": 250000,
+    "marketValue": 5525000,
+    "weightPct": 3.69
+  },
+  {
+    "holdingId": "HLD-7311",
+    "asOfDate": "2026-05-22",
+    "clientId": "CL-2025",
+    "securityId": "SEC-3007",
+    "quantity": 100000,
+    "marketValue": 10275000,
+    "weightPct": 6.86
+  }
+]

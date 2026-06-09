@@ -1,0 +1,302 @@
+[
+  {
+    "newsId": "NEWS-1001",
+    "publishTimestamp": "2026-03-13 13:06:00",
+    "headline": "Nimbus Cloud beats Q1 estimates on AI cloud demand",
+    "summary": "Nimbus Cloud Holdings reported Q1 revenue up 38% YoY, citing accelerating GenAI infrastructure spend by enterprise customers. Raised FY guidance.",
+    "relatedSecurityId": "SEC-3002",
+    "relatedSector": "Technology",
+    "sentiment": "Positive",
+    "macroTheme": "AI Capex Cycle"
+  },
+  {
+    "newsId": "NEWS-1002",
+    "publishTimestamp": "2026-03-28 11:39:00",
+    "headline": "Quartzite Semi unveils next-gen training accelerator",
+    "summary": "Quartzite Semiconductors announced its 'QX-9' family of training accelerators with sampling in H2. Customers include three hyperscalers per company release.",
+    "relatedSecurityId": "SEC-3003",
+    "relatedSector": "Technology",
+    "sentiment": "Positive",
+    "macroTheme": "AI Capex Cycle"
+  },
+  {
+    "newsId": "NEWS-1003",
+    "publishTimestamp": "2026-04-07 10:12:00",
+    "headline": "Zenith Robotics raises capex outlook, sees humanoid pull-through",
+    "summary": "Zenith Robotics raised 2026 capex guidance by 22% to support new humanoid line. Order book extended through 2027.",
+    "relatedSecurityId": "SEC-3005",
+    "relatedSector": "Technology",
+    "sentiment": "Positive",
+    "macroTheme": "AI Capex Cycle"
+  },
+  {
+    "newsId": "NEWS-1004",
+    "publishTimestamp": "2026-04-17 08:59:00",
+    "headline": "Telara Networks signs multi-year cloud interconnect deal",
+    "summary": "Telara Networks announced a five-year frame agreement with a top-three cloud provider, valued at $1.2B over the life of the contract.",
+    "relatedSecurityId": "SEC-3008",
+    "relatedSector": "Technology",
+    "sentiment": "Positive",
+    "macroTheme": "AI Capex Cycle"
+  },
+  {
+    "newsId": "NEWS-1005",
+    "publishTimestamp": "2026-04-12 13:13:00",
+    "headline": "Meridian Pacific Bancorp posts Q1 deposit outflows of $4.2B",
+    "summary": "Meridian Pacific Bancorp disclosed $4.2B in Q1 deposit outflows. Management guided to higher provisioning. Shares fell 14% in after-hours.",
+    "relatedSecurityId": "SEC-3011",
+    "relatedSector": "Financials",
+    "sentiment": "Negative",
+    "macroTheme": "Regional Bank Stress"
+  },
+  {
+    "newsId": "NEWS-1006",
+    "publishTimestamp": "2026-04-22 14:52:00",
+    "headline": "Rating agency places Meridian Pacific on watch negative",
+    "summary": "A major rating agency placed Meridian Pacific Bancorp's BBB- senior debt on watch for downgrade citing deposit concentration and CRE exposure.",
+    "relatedSecurityId": "SEC-3103",
+    "relatedSector": "Financials",
+    "sentiment": "Negative",
+    "macroTheme": "Regional Bank Stress"
+  },
+  {
+    "newsId": "NEWS-1007",
+    "publishTimestamp": "2026-04-24 10:45:00",
+    "headline": "Regional bank sector ETF off 6% as deposit concerns spread",
+    "summary": "Regional bank shares broadly lower on contagion fears from Meridian Pacific.",
+    "relatedSecurityId": "SEC-3011",
+    "relatedSector": "Financials",
+    "sentiment": "Negative",
+    "macroTheme": "Regional Bank Stress"
+  },
+  {
+    "newsId": "NEWS-1008",
+    "publishTimestamp": "2026-05-02 12:06:00",
+    "headline": "Eldoria Bank issues reassuring Q1 trading update",
+    "summary": "Eldoria Bank Holdings released an interim update affirming deposit stability and Q1 NIM in line with prior guidance.",
+    "relatedSecurityId": "SEC-3109",
+    "relatedSector": "Financials",
+    "sentiment": "Mixed",
+    "macroTheme": "Regional Bank Stress"
+  },
+  {
+    "newsId": "NEWS-1009",
+    "publishTimestamp": "2026-03-23 13:02:00",
+    "headline": "CPI hotter than expected at 3.6% YoY, core sticky at 3.9%",
+    "summary": "Headline CPI printed at 3.6% YoY versus 3.4% consensus. Core services ex-housing remained sticky. Markets repriced terminal rate higher.",
+    "relatedSecurityId": "SEC-3203",
+    "relatedSector": "Sovereign",
+    "sentiment": "Negative",
+    "macroTheme": "Rates Hawkish"
+  },
+  {
+    "newsId": "NEWS-1010",
+    "publishTimestamp": "2026-04-02 16:07:00",
+    "headline": "Central bank minutes emphasize patience on cuts",
+    "summary": "Minutes from the most recent meeting struck a hawkish tone, with members emphasizing the need to see further disinflation before easing.",
+    "relatedSecurityId": "SEC-3203",
+    "relatedSector": "Sovereign",
+    "sentiment": "Negative",
+    "macroTheme": "Rates Hawkish"
+  },
+  {
+    "newsId": "NEWS-1011",
+    "publishTimestamp": "2026-04-27 14:29:00",
+    "headline": "Treasury announces larger-than-expected refunding",
+    "summary": "Treasury announced refunding sizes for 10s and 30s above market expectations, putting pressure on the long end.",
+    "relatedSecurityId": "SEC-3204",
+    "relatedSector": "Sovereign",
+    "sentiment": "Negative",
+    "macroTheme": "Rates Hawkish"
+  },
+  {
+    "newsId": "NEWS-1012",
+    "publishTimestamp": "2026-04-10 16:32:00",
+    "headline": "Brightgate Energy in talks to acquire North Atlas assets — report",
+    "summary": "Press report citing unnamed sources says Brightgate Energy is in advanced discussions to acquire North Atlas Energy's upstream assets in the Permian.",
+    "relatedSecurityId": "SEC-3006",
+    "relatedSector": "Energy",
+    "sentiment": "Positive",
+    "macroTheme": "Energy M&A"
+  },
+  {
+    "newsId": "NEWS-1013",
+    "publishTimestamp": "2026-04-20 09:31:00",
+    "headline": "Brightgate CEO neither confirms nor denies North Atlas talks",
+    "summary": "Asked on the earnings call, Brightgate's CEO declined to comment on M&A but highlighted the company's appetite for scale in core basins.",
+    "relatedSecurityId": "SEC-3006",
+    "relatedSector": "Energy",
+    "sentiment": "Mixed",
+    "macroTheme": "Energy M&A"
+  },
+  {
+    "newsId": "NEWS-1014",
+    "publishTimestamp": "2026-04-30 07:33:00",
+    "headline": "North Atlas board hires advisors for strategic review",
+    "summary": "North Atlas Energy disclosed it has retained advisors to evaluate strategic alternatives.",
+    "relatedSecurityId": "SEC-3101",
+    "relatedSector": "Energy",
+    "sentiment": "Positive",
+    "macroTheme": "Energy M&A"
+  },
+  {
+    "newsId": "NEWS-1015",
+    "publishTimestamp": "2026-03-28 07:35:00",
+    "headline": "Karmania reaches preliminary IMF staff-level agreement",
+    "summary": "Republic of Karmania announced a preliminary staff-level agreement on a $4B EFF program, conditional on fiscal milestones.",
+    "relatedSecurityId": "SEC-3501",
+    "relatedSector": "Sovereign",
+    "sentiment": "Positive",
+    "macroTheme": "EM Restructuring"
+  },
+  {
+    "newsId": "NEWS-1016",
+    "publishTimestamp": "2026-04-17 13:53:00",
+    "headline": "Karmania finance minister reaffirms commitment to reforms",
+    "summary": "Speaking at a regional forum, Karmania's finance minister reiterated the government's commitment to subsidy reform and tax base expansion.",
+    "relatedSecurityId": "SEC-3501",
+    "relatedSector": "Sovereign",
+    "sentiment": "Positive",
+    "macroTheme": "EM Restructuring"
+  },
+  {
+    "newsId": "NEWS-1017",
+    "publishTimestamp": "2026-03-18 16:30:00",
+    "headline": "Solterra Renewables green bond oversubscribed at issuance follow-on",
+    "summary": "Solterra Renewables priced a tap of its 2035 green bond. Order book reached 3.5x cover; pricing tightened 12bps from initial guidance.",
+    "relatedSecurityId": "SEC-3110",
+    "relatedSector": "Utilities",
+    "sentiment": "Positive",
+    "macroTheme": "ESG Inflows"
+  },
+  {
+    "newsId": "NEWS-1018",
+    "publishTimestamp": "2026-03-31 15:49:00",
+    "headline": "Insurance industry ESG mandates ramp into Q2",
+    "summary": "Industry survey shows 64% of insurance mandates now have explicit ESG sleeves, up from 41% a year ago.",
+    "relatedSecurityId": "SEC-3110",
+    "relatedSector": "Utilities",
+    "sentiment": "Positive",
+    "macroTheme": "ESG Inflows"
+  },
+  {
+    "newsId": "NEWS-1019",
+    "publishTimestamp": "2026-05-02 09:44:00",
+    "headline": "Velder Industries misses Q1, cuts FY guidance",
+    "summary": "Velder Industries reported Q1 EBITDA below consensus and trimmed FY guidance by ~8%. Cited softness in European auto OEM volumes.",
+    "relatedSecurityId": "SEC-3004",
+    "relatedSector": "Industrials",
+    "sentiment": "Negative",
+    "macroTheme": "Cyclicals Slowdown"
+  },
+  {
+    "newsId": "NEWS-1020",
+    "publishTimestamp": "2026-05-07 16:11:00",
+    "headline": "Veridate Auto warns on European demand",
+    "summary": "Veridate Auto Plc issued a profit warning citing weaker than expected European demand and inventory build at dealerships.",
+    "relatedSecurityId": "SEC-3015",
+    "relatedSector": "Consumer Discretionary",
+    "sentiment": "Negative",
+    "macroTheme": "Cyclicals Slowdown"
+  },
+  {
+    "newsId": "NEWS-1021",
+    "publishTimestamp": "2026-05-04 09:06:00",
+    "headline": "Industrial metals lower on weaker China data",
+    "summary": "Industrial metals lower across the board after China factory PMI undershot consensus.",
+    "relatedSecurityId": "SEC-3403",
+    "relatedSector": "Materials",
+    "sentiment": "Negative",
+    "macroTheme": "Cyclicals Slowdown"
+  },
+  {
+    "newsId": "NEWS-1022",
+    "publishTimestamp": "2026-04-02 13:42:00",
+    "headline": "Helix Therapeutics reports positive Phase 3 readout",
+    "summary": "Helix Therapeutics reported statistically significant Phase 3 results for its lead oncology candidate. Shares up 9% in pre-market.",
+    "relatedSecurityId": "SEC-3001",
+    "relatedSector": "Healthcare",
+    "sentiment": "Positive",
+    "macroTheme": "Healthcare Catalysts"
+  },
+  {
+    "newsId": "NEWS-1023",
+    "publishTimestamp": "2026-04-12 16:38:00",
+    "headline": "Ravenglass Pharma's lead candidate hits trial endpoint",
+    "summary": "Ravenglass Pharma announced its anti-inflammatory candidate met its primary endpoint in a Phase 2b study.",
+    "relatedSecurityId": "SEC-3007",
+    "relatedSector": "Healthcare",
+    "sentiment": "Positive",
+    "macroTheme": "Healthcare Catalysts"
+  },
+  {
+    "newsId": "NEWS-1024",
+    "publishTimestamp": "2026-03-21 12:32:00",
+    "headline": "Keppra Defense wins multi-billion contract for next-gen missile system",
+    "summary": "Keppra Defense Systems was awarded a $7.8B contract for the development and production of a next-generation precision-strike system.",
+    "relatedSecurityId": "SEC-3013",
+    "relatedSector": "Industrials",
+    "sentiment": "Positive",
+    "macroTheme": "Defense Spending"
+  },
+  {
+    "newsId": "NEWS-1025",
+    "publishTimestamp": "2026-03-15 13:26:00",
+    "headline": "Investment-grade primary market sees record May issuance",
+    "summary": "IG primary market issuance through May tracking 14% above prior-year levels.",
+    "relatedSecurityId": "SEC-3401",
+    "relatedSector": "Credit",
+    "sentiment": "Mixed",
+    "macroTheme": "IG Issuance Boom"
+  },
+  {
+    "newsId": "NEWS-1026",
+    "publishTimestamp": "2026-04-09 16:58:00",
+    "headline": "Nimbus Cloud taps the bond market for $3B",
+    "summary": "Nimbus Cloud priced a 7-year deal at T+135, inside initial guidance of T+155.",
+    "relatedSecurityId": "SEC-3111",
+    "relatedSector": "Credit",
+    "sentiment": "Positive",
+    "macroTheme": "IG Issuance Boom"
+  },
+  {
+    "newsId": "NEWS-1027",
+    "publishTimestamp": "2026-03-25 10:17:00",
+    "headline": "Covemark Foods reports inline Q1; modest price/mix tailwind",
+    "summary": "Covemark Foods Q1 EPS in line with consensus. Pricing actions continue to offset volume softness.",
+    "relatedSecurityId": "SEC-3010",
+    "relatedSector": "Consumer Staples",
+    "sentiment": "Neutral",
+    "macroTheme": "Consumer Resilience"
+  },
+  {
+    "newsId": "NEWS-1028",
+    "publishTimestamp": "2026-05-12 13:21:00",
+    "headline": "Magnetar Logistics raises 2026 outlook on freight recovery",
+    "summary": "Magnetar Logistics raised its FY revenue outlook citing improving freight rates and contract renewals.",
+    "relatedSecurityId": "SEC-3009",
+    "relatedSector": "Industrials",
+    "sentiment": "Positive",
+    "macroTheme": "Cyclicals Slowdown"
+  },
+  {
+    "newsId": "NEWS-1029",
+    "publishTimestamp": "2026-04-27 11:28:00",
+    "headline": "Harpoon Media reports subscriber miss; ad market softens",
+    "summary": "Harpoon Media Group reported a Q1 subscriber miss and softer ad market.",
+    "relatedSecurityId": "SEC-3014",
+    "relatedSector": "Communication",
+    "sentiment": "Negative",
+    "macroTheme": "Ad Market Softness"
+  },
+  {
+    "newsId": "NEWS-1030",
+    "publishTimestamp": "2026-05-10 09:08:00",
+    "headline": "Global PMI broadly softer; services holding up",
+    "summary": "Composite PMIs softened across major economies; services sub-indices remained in expansionary territory.",
+    "relatedSecurityId": "SEC-3203",
+    "relatedSector": "Sovereign",
+    "sentiment": "Mixed",
+    "macroTheme": "Macro Slowdown"
+  }
+]

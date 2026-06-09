@@ -1,0 +1,392 @@
+[
+  {
+    "inventoryId": "INV-4001",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3001",
+    "inventorySize": 0,
+    "bidPrice": 78.325,
+    "offerPrice": 78.475,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4002",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3002",
+    "inventorySize": -10000,
+    "bidPrice": 214.1,
+    "offerPrice": 214.3,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4003",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3003",
+    "inventorySize": -10000,
+    "bidPrice": 162.45,
+    "offerPrice": 162.65,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4004",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3004",
+    "inventorySize": 25000,
+    "bidPrice": 41.225,
+    "offerPrice": 41.375,
+    "traderName": "Mei Lin",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4005",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3005",
+    "inventorySize": 5000,
+    "bidPrice": 96.75,
+    "offerPrice": 96.95,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4006",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3006",
+    "inventorySize": -50000,
+    "bidPrice": 54.025,
+    "offerPrice": 54.175,
+    "traderName": "Mei Lin",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4007",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3007",
+    "inventorySize": -50000,
+    "bidPrice": 102.675,
+    "offerPrice": 102.825,
+    "traderName": "Mei Lin",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4008",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3008",
+    "inventorySize": -10000,
+    "bidPrice": 31.1,
+    "offerPrice": 31.3,
+    "traderName": "Devon Park",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4009",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3009",
+    "inventorySize": 50000,
+    "bidPrice": 87.325,
+    "offerPrice": 87.475,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4010",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3010",
+    "inventorySize": 10000,
+    "bidPrice": 45.525,
+    "offerPrice": 45.675,
+    "traderName": "Devon Park",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4011",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3011",
+    "inventorySize": 0,
+    "bidPrice": 28.875,
+    "offerPrice": 29.025,
+    "traderName": "Devon Park",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4012",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3012",
+    "inventorySize": -50000,
+    "bidPrice": 18.375,
+    "offerPrice": 18.525,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4013",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3013",
+    "inventorySize": -25000,
+    "bidPrice": 188.225,
+    "offerPrice": 188.375,
+    "traderName": "Bree Halvorsen",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4014",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3014",
+    "inventorySize": 0,
+    "bidPrice": 22.025,
+    "offerPrice": 22.175,
+    "traderName": "Devon Park",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4015",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3015",
+    "inventorySize": 50000,
+    "bidPrice": 64.775,
+    "offerPrice": 64.925,
+    "traderName": "Devon Park",
+    "desk": "Cash Equities"
+  },
+  {
+    "inventoryId": "INV-4016",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3101",
+    "inventorySize": 2000000,
+    "bidPrice": 101.675,
+    "offerPrice": 102.025,
+    "traderName": "Rashid Karam",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4017",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3102",
+    "inventorySize": -5000000,
+    "bidPrice": 98.025,
+    "offerPrice": 98.375,
+    "traderName": "Yara Khalil",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4018",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3103",
+    "inventorySize": 15000000,
+    "bidPrice": 91.55,
+    "offerPrice": 92.3,
+    "traderName": "Yara Khalil",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4019",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3104",
+    "inventorySize": -2000000,
+    "bidPrice": 94.575,
+    "offerPrice": 94.925,
+    "traderName": "Rashid Karam",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4020",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3105",
+    "inventorySize": 8000000,
+    "bidPrice": 99.425,
+    "offerPrice": 99.775,
+    "traderName": "Yara Khalil",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4021",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3106",
+    "inventorySize": 0,
+    "bidPrice": 95.675,
+    "offerPrice": 96.025,
+    "traderName": "Sven Ostrom",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4022",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3107",
+    "inventorySize": 5000,
+    "bidPrice": 100.2,
+    "offerPrice": 100.6,
+    "traderName": "Rashid Karam",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4023",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3108",
+    "inventorySize": 0,
+    "bidPrice": 99.025,
+    "offerPrice": 99.375,
+    "traderName": "Rashid Karam",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4024",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3109",
+    "inventorySize": -5000000,
+    "bidPrice": 96.925,
+    "offerPrice": 97.275,
+    "traderName": "Sven Ostrom",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4025",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3110",
+    "inventorySize": 6000000,
+    "bidPrice": 92.95,
+    "offerPrice": 93.4,
+    "traderName": "Yara Khalil",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4026",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3111",
+    "inventorySize": -10000,
+    "bidPrice": 96,
+    "offerPrice": 96.4,
+    "traderName": "Sven Ostrom",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4027",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3112",
+    "inventorySize": 2000000,
+    "bidPrice": 98.275,
+    "offerPrice": 98.625,
+    "traderName": "Sven Ostrom",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4028",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3201",
+    "inventorySize": 0,
+    "bidPrice": 99.675,
+    "offerPrice": 100.025,
+    "traderName": "Sven Ostrom",
+    "desk": "Rates"
+  },
+  {
+    "inventoryId": "INV-4029",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3202",
+    "inventorySize": 8000000,
+    "bidPrice": 99.025,
+    "offerPrice": 99.375,
+    "traderName": "Sven Ostrom",
+    "desk": "Rates"
+  },
+  {
+    "inventoryId": "INV-4030",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3203",
+    "inventorySize": 2000000,
+    "bidPrice": 96.225,
+    "offerPrice": 96.575,
+    "traderName": "Rashid Karam",
+    "desk": "Rates"
+  },
+  {
+    "inventoryId": "INV-4031",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3204",
+    "inventorySize": -2000000,
+    "bidPrice": 91.925,
+    "offerPrice": 92.275,
+    "traderName": "Yara Khalil",
+    "desk": "Rates"
+  },
+  {
+    "inventoryId": "INV-4032",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3301",
+    "inventorySize": -2000000,
+    "bidPrice": 100.025,
+    "offerPrice": 100.375,
+    "traderName": "Rashid Karam",
+    "desk": "Munis"
+  },
+  {
+    "inventoryId": "INV-4033",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3302",
+    "inventorySize": 8000000,
+    "bidPrice": 98.225,
+    "offerPrice": 98.575,
+    "traderName": "Yara Khalil",
+    "desk": "Munis"
+  },
+  {
+    "inventoryId": "INV-4034",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3303",
+    "inventorySize": -2000000,
+    "bidPrice": 100.925,
+    "offerPrice": 101.275,
+    "traderName": "Yara Khalil",
+    "desk": "Munis"
+  },
+  {
+    "inventoryId": "INV-4035",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3401",
+    "inventorySize": 10000,
+    "bidPrice": 88.575,
+    "offerPrice": 88.725,
+    "traderName": "Mei Lin",
+    "desk": "ETF Trading"
+  },
+  {
+    "inventoryId": "INV-4036",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3402",
+    "inventorySize": 10000,
+    "bidPrice": 76.125,
+    "offerPrice": 76.275,
+    "traderName": "Mei Lin",
+    "desk": "ETF Trading"
+  },
+  {
+    "inventoryId": "INV-4037",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3403",
+    "inventorySize": 50000,
+    "bidPrice": 41.725,
+    "offerPrice": 41.875,
+    "traderName": "Devon Park",
+    "desk": "ETF Trading"
+  },
+  {
+    "inventoryId": "INV-4038",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3501",
+    "inventorySize": -5000000,
+    "bidPrice": 89.2,
+    "offerPrice": 89.85,
+    "traderName": "Rashid Karam",
+    "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4039",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3502",
+    "inventorySize": 2000000,
+    "bidPrice": 91.625,
+    "offerPrice": 91.975,
+    "traderName": "Sven Ostrom",
+    "desk": "IG/HY Credit"
+  }
+]
