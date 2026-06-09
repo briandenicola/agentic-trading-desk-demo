@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Azure.AI.Agents.Persistent;
 using Azure.AI.Projects;
 using Azure.Identity;
 using Microsoft.Agents.AI;
@@ -35,6 +34,10 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
     /// agent per call, so agents do not accumulate and all runs are traceable under one agent.
     /// </summary>
     private const string AgentName = "morning-brief";
+
+    /// <summary>Description stored on the Foundry agent definition (visible in the portal).</summary>
+    private const string AgentDescription =
+        "Synthesizes the municipal-sales morning brief by calling the mock systems-of-record as tools.";
 
     public async Task<MorningBrief> RunAsync(string eventId, string? date, CancellationToken ct = default)
     {
@@ -103,14 +106,18 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
     // ---------------------------------------------------------------- Foundry wiring (isolated)
 
     /// <summary>
-    /// Resolve a Foundry-backed <see cref="AIAgent"/> for the morning brief. The agent itself is
-    /// <b>persistent</b> in Foundry (registered by <c>agent-provisioner</c>); this method looks it up
-    /// by name and returns a local <see cref="AIAgent"/> proxy with the mock-api tools attached for
-    /// client-side execution. If the persistent agent is not found (e.g. provisioner has not run yet),
-    /// it falls back to creating one so LIVE mode still works.
+    /// Resolve a Foundry-backed <see cref="AIAgent"/> for the morning brief. The agent is
+    /// <b>persistent</b> in Foundry (registered by <c>agent-provisioner</c> as a versioned "prompt"
+    /// agent on the new Foundry surface); this method retrieves it <b>by name</b> via the Agent
+    /// Framework SDK (<see cref="Azure.AI.Projects.AzureAIProjectChatClientExtensions.GetAIAgentAsync"/>),
+    /// which returns a local <see cref="AIAgent"/> proxy over the latest version with the mock-api
+    /// tools attached for client-side execution. If the agent has not been provisioned yet, it falls
+    /// back to creating it (a new version under the same name) so LIVE mode still works.
     ///
-    /// This is the only method that touches the prerelease Azure AI Foundry surface; it is isolated so
-    /// a signature change in the rc5 package cannot affect the offline DEMO path.
+    /// This deliberately uses ONLY the new-Foundry surface (the same one the reference
+    /// online-banking-demo uses); it does not touch the classic Assistants (<c>/assistants</c>) API.
+    /// It is the only method that touches the prerelease Azure AI Foundry surface, isolated so a
+    /// signature change in the rc5 package cannot affect the offline DEMO path.
     /// </summary>
     private async Task<AIAgent> CreateFoundryAgentAsync(string endpoint, string model, string instructions, CancellationToken ct)
     {
@@ -120,23 +127,24 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
 
         var aiTools = BuildTools();
 
-        // Prefer reusing the persistent agent the provisioner registered.
-        var existingId = await TryFindPersistentAgentIdAsync(endpoint, credential, ct);
-
 #pragma warning disable CS0618 // rc5 transitional API; native AIProjectClient.Agents APIs are not yet stable. Tracked for LIVE follow-up.
         AIAgent baseAgent;
-        if (existingId is not null)
+        try
         {
-            logger.LogInformation("Reusing persistent Foundry agent '{Agent}' (id={Id}).", AgentName, existingId);
-            baseAgent = await projectClient.GetAIAgentAsync(existingId, aiTools, cancellationToken: ct);
+            // Reuse the persistent agent the provisioner registered, resolved by NAME (latest version).
+            baseAgent = await projectClient.GetAIAgentAsync(AgentName, aiTools, cancellationToken: ct);
+            logger.LogInformation("Reusing persistent Foundry agent '{Agent}'.", AgentName);
         }
-        else
+        catch (Exception ex)
         {
-            logger.LogWarning("Persistent agent '{Agent}' not found; creating it (run the provisioner to persist it).", AgentName);
+            // Self-healing: the provisioner has not run yet (or the agent was deleted). Create the
+            // prompt agent on the new Foundry surface so subsequent runs reuse it by name.
+            logger.LogWarning(ex, "Persistent agent '{Agent}' not found; creating it (run the provisioner to persist it).", AgentName);
             baseAgent = await projectClient.CreateAIAgentAsync(
-                model: model,
                 name: AgentName,
+                model: model,
                 instructions: instructions,
+                description: AgentDescription,
                 tools: aiTools,
                 cancellationToken: ct);
         }
@@ -151,32 +159,6 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
             .AsBuilder()
             .UseOpenTelemetry(sourceName: OrchestrationTelemetry.SourceName, configure: c => c.EnableSensitiveData = captureContent)
             .Build();
-    }
-
-    /// <summary>
-    /// Look up the id of the persistent <see cref="AgentName"/> agent in Foundry. Returns
-    /// <see langword="null"/> (never throws) if enumeration fails or no match exists, so the
-    /// caller can fall back to creating an agent.
-    /// </summary>
-    private async Task<string?> TryFindPersistentAgentIdAsync(string endpoint, DefaultAzureCredential credential, CancellationToken ct)
-    {
-        try
-        {
-            var admin = new PersistentAgentsAdministrationClient(new Uri(endpoint), credential);
-            await foreach (var agent in admin.GetAgentsAsync(cancellationToken: ct))
-            {
-                if (string.Equals(agent.Name, AgentName, StringComparison.Ordinal))
-                {
-                    return agent.Id;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Could not enumerate persistent agents; falling back to create.");
-        }
-
-        return null;
     }
 
     /// <summary>Expose the mock-api tool functions to the agent (typed HttpClient under the hood).

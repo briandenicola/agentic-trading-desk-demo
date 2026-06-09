@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <!--
-    T020: idempotently registers the morning-brief agent version in Azure AI Foundry
-    via PersistentAgentsClient + DefaultAzureCredential. No-ops without Foundry creds.
+    T020: idempotently registers the morning-brief agent in Azure AI Foundry as a versioned
+    "prompt" agent on the new Foundry surface via Azure.AI.Projects + Microsoft.Agents.AI.AzureAI
+    (the same SDK the runtime connects with) + DefaultAzureCredential. No-ops without Foundry creds.
   -->
   <ItemGroup>
-    <PackageReference Include="Azure.AI.Agents.Persistent" />
+    <PackageReference Include="Azure.AI.Projects" />
+    <PackageReference Include="Microsoft.Agents.AI.AzureAI" />
     <PackageReference Include="Azure.Identity" />
   </ItemGroup>
 

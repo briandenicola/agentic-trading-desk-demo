@@ -1,15 +1,22 @@
 // Agent provisioner (T020).
 //
-// Idempotently registers the "morning-brief" agent version in Azure AI Foundry via
-// PersistentAgentsClient + DefaultAzureCredential, reading the instructions from the
-// prompt authored in orchestration-api/Prompts (T017). Mirrors the reference
-// init_agents.py. Guarded so it cleanly no-ops when Foundry credentials/endpoint are
-// absent (e.g. DEMO/local) instead of failing — no credential is acquired in that case.
+// Idempotently registers the "morning-brief" agent in Azure AI Foundry as a versioned
+// "prompt" agent on the NEW Foundry surface, using the Microsoft Agent Framework SDK
+// (Azure.AI.Projects + Microsoft.Agents.AI.AzureAI) + DefaultAzureCredential. This is the
+// same surface the runtime (orchestration-api AgentRunner) connects to by name, and the
+// same one the reference online-banking-demo uses (init_agents.py / ADR-005). It does NOT
+// touch the classic Assistants (/assistants) API.
+//
+// Guarded so it cleanly no-ops when Foundry credentials/endpoint are absent (e.g. DEMO/local)
+// instead of failing — no credential is acquired in that case.
 
-using Azure.AI.Agents.Persistent;
+using Azure.AI.Projects;
 using Azure.Identity;
+using Microsoft.Extensions.AI;
 
 const string AgentName = "morning-brief";
+const string AgentDescription =
+    "Synthesizes the municipal-sales morning brief by calling the mock systems-of-record as tools.";
 
 var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT");
 var model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini";
@@ -25,28 +32,30 @@ var instructions = await LoadInstructionsAsync();
 
 try
 {
-    var admin = new PersistentAgentsAdministrationClient(endpoint, new DefaultAzureCredential());
+    var projectClient = new AIProjectClient(new Uri(endpoint), new DefaultAzureCredential());
 
-    // Idempotency: if an agent with this name already exists, update it; otherwise create it.
-    string? existingId = null;
-    foreach (var agent in admin.GetAgents())
-    {
-        if (string.Equals(agent.Name, AgentName, StringComparison.Ordinal))
-        {
-            existingId = agent.Id;
-            break;
-        }
-    }
+    // The runtime binds the real mock-api tools at request time; the stored definition itself
+    // carries no tools (matches the reference init_agents.py PromptAgentDefinition pattern).
+    var noTools = Array.Empty<AITool>();
 
-    if (existingId is null)
+#pragma warning disable CS0618 // rc5 transitional API; native AIProjectClient.Agents APIs are not yet stable.
+    // Idempotency: if a named agent already exists, leave it; otherwise create it (new Foundry).
+    try
     {
-        var created = admin.CreateAgent(model: model, name: AgentName, instructions: instructions);
-        Console.WriteLine($"agent-provisioner: registered agent '{AgentName}' (id={created.Value.Id}, model={model}).");
+        await projectClient.GetAIAgentAsync(AgentName, noTools);
+        Console.WriteLine($"agent-provisioner: agent '{AgentName}' already registered; leaving the existing version in place.");
     }
-    else
+    catch (Exception)
     {
-        Console.WriteLine($"agent-provisioner: agent '{AgentName}' already registered (id={existingId}); instructions are current.");
+        var created = await projectClient.CreateAIAgentAsync(
+            name: AgentName,
+            model: model,
+            instructions: instructions,
+            description: AgentDescription,
+            tools: noTools);
+        Console.WriteLine($"agent-provisioner: registered agent '{created.Name}' (model={model}) on the new Foundry surface.");
     }
+#pragma warning restore CS0618
 
     return 0;
 }

@@ -17,7 +17,6 @@
     <PackageReference Include="Microsoft.Agents.AI" />
     <PackageReference Include="Microsoft.Agents.AI.AzureAI" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
-    <PackageReference Include="Azure.AI.Agents.Persistent" />
     <PackageReference Include="Azure.Identity" />
   </ItemGroup>
 
