@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import RmBriefingScene from './scenes/RmBriefing/RmBriefingScene';
 import MorningBriefScene from './scenes/MorningBrief/MorningBriefScene';
+import AdminScene from './scenes/Admin/AdminScene';
 
 export default function App() {
   return (
@@ -9,6 +10,7 @@ export default function App() {
       <Route path="/" element={<RmBriefingScene />} />
       <Route path="/rm-briefing" element={<RmBriefingScene />} />
       <Route path="/morning-brief" element={<MorningBriefScene />} />
+      <Route path="/admin" element={<AdminScene />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

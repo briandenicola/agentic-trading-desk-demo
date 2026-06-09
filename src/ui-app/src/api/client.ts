@@ -282,3 +282,34 @@ export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief>(
 
   return () => source.close();
 }
+
+// ---------------------------------------------------------------------------
+// Admin news injection (002 US3). Posts through the orchestration proxy to the
+// SAME ingestion endpoint a real intraday event uses (FR-016), so an injected item
+// flows through the reactive SSE path and open briefings react within ~10s.
+// ---------------------------------------------------------------------------
+
+export interface AdminNewsSubmission {
+  headline: string;
+  summary: string;
+  source?: string;
+  severity: 'low' | 'medium' | 'high';
+  type: 'macro_rate' | 'sector' | 'issuer_credit' | 'client_headline';
+  direction?: 'positive' | 'negative' | 'neutral';
+  affectedEntities: AffectedEntities;
+  sceneTargeting?: LiveScene[];
+}
+
+/** Inject an operator-authored news item. Resolves to the stored intraday event. */
+export async function ingestNews(submission: AdminNewsSubmission): Promise<MarketEvent> {
+  const { data } = await apiClient.post<MarketEvent>('/events', submission);
+  return data;
+}
+
+/** List the current event store (overnight seeds + injected intraday events). */
+export async function listEvents(scope?: 'overnight' | 'intraday'): Promise<MarketEvent[]> {
+  const { data } = await apiClient.get<MarketEvent[]>('/events', {
+    params: scope ? { scope } : undefined,
+  });
+  return data;
+}

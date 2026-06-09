@@ -66,19 +66,19 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 ### Tests for User Story 1
 
-- [ ] T014 [P] [US1] DEMO determinism + conflict net-score tests in `tests\orchestration-api.Tests`: identical seeds → byte-stable JSON; two events hitting one entity net deterministically and BOTH remain visible as drivers. (SC-004, R6)
-- [ ] T015 [P] [US1] No-impact + empty-store tests in `tests\orchestration-api.Tests`: an event matching no portfolio entity leaves ranking unchanged; empty store renders baseline ranking ("no events processed"). (US1 AS3, R11)
+- [x] T014 [P] [US1] DEMO determinism + conflict net-score tests in `tests\orchestration-api.Tests`: identical seeds → byte-stable JSON; two events hitting one entity net deterministically and BOTH remain visible as drivers. (SC-004, R6)
+- [x] T015 [P] [US1] No-impact + empty-store tests in `tests\orchestration-api.Tests`: an event matching no portfolio entity leaves ranking unchanged; empty store renders baseline ranking ("no events processed"). (US1 AS3, R11)
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Implement deterministic `src\orchestration-api\Agents\Demo\EventImpactResolver.cs`: pure event→entity mapping (R5), signed contribution, net-sum conflict resolution with sorted-stable output and per-driver rationale. (FR-008, SC-005, R6)
-- [ ] T017 [US1] Extend `src\orchestration-api\Agents\Demo\RmBriefingComposer.cs` to read events via `EventTools`, apply the netted delta on top of `RmCallScorer.Score(...)` (scorer reused unchanged), populate `EventsConsidered` + `PriorityCall.DrivingEvents`, and re-sort. (FR-006, FR-007, FR-008)
-- [ ] T018 [US1] Extend `src\orchestration-api\Agents\Demo\MorningBriefComposer.cs` to apply events into the existing `0.40 wallet / 0.30 engagement / 0.30 event-relevance` blend, populate `EventsConsidered` + affected-client `DrivingEvents`, and re-rank. (FR-006, FR-007, FR-008)
-- [ ] T019 [P] [US1] Expose the event tools to the RM agent in `src\orchestration-api\Agents\Tools\RmBriefingTools.cs`. (FR-006)
-- [ ] T020 [P] [US1] Expose the event tools to the morning-brief agent in `src\orchestration-api\Agents\Tools\MorningBriefTools.cs`. (FR-006)
-- [ ] T021 [US1] Render `eventsConsidered` + per-call `drivingEvents` (event "why") in `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.tsx` and `PriorityCallCard.tsx` — mode-blind, using existing M.INT primitives. (FR-007, SC-005)
-- [ ] T022 [US1] Render `eventsConsidered` + per-holding `drivingEvents` in `src\ui-app\src\scenes\MorningBrief\MorningBriefScene.tsx` (and `CallPlan.tsx`/`MarketStrip.tsx` as needed). (FR-007, SC-005)
-- [ ] T023 [P] [US1] Vitest/RTL: scenes render events-considered list and per-item driving events in `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.test.tsx` and `MorningBrief\MorningBriefScene.test.tsx`. (Principle VII)
+- [x] T016 [US1] Implement deterministic `src\orchestration-api\Agents\Demo\EventImpactResolver.cs`: pure event→entity mapping (R5), signed contribution, net-sum conflict resolution with sorted-stable output and per-driver rationale. (FR-008, SC-005, R6)
+- [x] T017 [US1] Extend `src\orchestration-api\Agents\Demo\RmBriefingComposer.cs` to read events via `EventTools`, apply the netted delta on top of `RmCallScorer.Score(...)` (scorer reused unchanged), populate `EventsConsidered` + `PriorityCall.DrivingEvents`, and re-sort. (FR-006, FR-007, FR-008)
+- [x] T018 [US1] Extend `src\orchestration-api\Agents\Demo\MorningBriefComposer.cs` to apply events into the existing `0.40 wallet / 0.30 engagement / 0.30 event-relevance` blend, populate `EventsConsidered` + affected-client `DrivingEvents`, and re-rank. (FR-006, FR-007, FR-008)
+- [x] T019 [P] [US1] Expose the event tools to the RM agent in `src\orchestration-api\Agents\Tools\RmBriefingTools.cs`. (FR-006)
+- [x] T020 [P] [US1] Expose the event tools to the morning-brief agent in `src\orchestration-api\Agents\Tools\MorningBriefTools.cs`. (FR-006)
+- [x] T021 [US1] Render `eventsConsidered` + per-call `drivingEvents` (event "why") in `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.tsx` and `PriorityCallCard.tsx` — mode-blind, using existing M.INT primitives. (FR-007, SC-005)
+- [x] T022 [US1] Render `eventsConsidered` + per-holding `drivingEvents` in `src\ui-app\src\scenes\MorningBrief\MorningBriefScene.tsx` (and `CallPlan.tsx`/`MarketStrip.tsx` as needed). (FR-007, SC-005)
+- [x] T023 [P] [US1] Vitest/RTL: scenes render events-considered list and per-item driving events in `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.test.tsx` and `MorningBrief\MorningBriefScene.test.tsx`. (Principle VII)
 
 **Checkpoint**: US1 is independently demoable — the overnight multi-event MVP. STOP and validate (SC-001/004/005) before proceeding.
 
@@ -92,18 +92,18 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] SSE hub tests in `tests\orchestration-api.Tests`: ingest triggers a re-synthesized full DTO push; a burst within the coalesce window yields ONE consolidated update; reconnect with `Last-Event-ID` returns a fresh snapshot. (FR-012, R3, R4)
+- [x] T024 [P] [US2] SSE hub tests in `tests\orchestration-api.Tests`: ingest triggers a re-synthesized full DTO push; a burst within the coalesce window yields ONE consolidated update; reconnect with `Last-Event-ID` returns a fresh snapshot. (FR-012, R3, R4)
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Implement `src\orchestration-api\Live\BriefingEventStream.cs` SSE hub: subscribe per scene/persona, debounce/coalesce ingests (~`SSE_COALESCE_WINDOW_MS`, R3), re-run the composer/runner for the affected scene, emit `LiveUpdate` with monotonic `sequence` as SSE `id:` (R4, R7) and a `LiveAlert` (incl. `noImpact`). (FR-010, FR-011, FR-012)
-- [ ] T026 [US2] Map SSE endpoints (`GET /api/agent/rm-briefing/stream`, `GET /api/agent/morning-brief/stream`) and register the stream + event services in `src\orchestration-api\Program.cs`, honoring existing CORS. (FR-010, FR-013; `contracts/event-stream.sse.md`)
-- [ ] T027 [P] [US2] Add an SSE pass-through location to `src\ui-app\nginx.conf` (`proxy_buffering off;`, `proxy_cache off;`, raised `proxy_read_timeout`, clear hop-by-hop `Connection`) so streams traverse the ACA ingress. (FR-013, R2)
-- [ ] T028 [US2] Add `subscribeToEvents(scene)` via native `EventSource` to `src\ui-app\src\api\client.ts` (auto-reconnect / `Last-Event-ID`). (FR-010, FR-012)
-- [ ] T029 [P] [US2] Create `src\ui-app\src\components\LiveAlertBanner.tsx` driven by SSE updates, styled with the existing M.INT theme/primitives (info/notice/urgent → severity; `noImpact` low-priority variant). (FR-011)
-- [ ] T030 [US2] Wire SSE consumption into `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.tsx`: show `LiveAlertBanner` and apply the re-synthesized DTO (alert + in-place re-rank). (FR-010, FR-011)
-- [ ] T031 [US2] Wire SSE consumption into `src\ui-app\src\scenes\MorningBrief\MorningBriefScene.tsx`: same alert + re-rank from the pushed DTO. (FR-010, FR-011)
-- [ ] T032 [P] [US2] Vitest/RTL: `LiveAlertBanner` rendering + SSE-driven re-rank (mock `EventSource`) for both scenes. (Principle VII)
+- [x] T025 [US2] Implement `src\orchestration-api\Live\BriefingEventStream.cs` SSE hub: subscribe per scene/persona, debounce/coalesce ingests (~`SSE_COALESCE_WINDOW_MS`, R3), re-run the composer/runner for the affected scene, emit `LiveUpdate` with monotonic `sequence` as SSE `id:` (R4, R7) and a `LiveAlert` (incl. `noImpact`). (FR-010, FR-011, FR-012)
+- [x] T026 [US2] Map SSE endpoints (`GET /api/agent/rm-briefing/stream`, `GET /api/agent/morning-brief/stream`) and register the stream + event services in `src\orchestration-api\Program.cs`, honoring existing CORS. (FR-010, FR-013; `contracts/event-stream.sse.md`)
+- [x] T027 [P] [US2] Add an SSE pass-through location to `src\ui-app\nginx.conf` (`proxy_buffering off;`, `proxy_cache off;`, raised `proxy_read_timeout`, clear hop-by-hop `Connection`) so streams traverse the ACA ingress. (FR-013, R2)
+- [x] T028 [US2] Add `subscribeToEvents(scene)` via native `EventSource` to `src\ui-app\src\api\client.ts` (auto-reconnect / `Last-Event-ID`). (FR-010, FR-012)
+- [x] T029 [P] [US2] Create `src\ui-app\src\components\LiveAlertBanner.tsx` driven by SSE updates, styled with the existing M.INT theme/primitives (info/notice/urgent → severity; `noImpact` low-priority variant). (FR-011)
+- [x] T030 [US2] Wire SSE consumption into `src\ui-app\src\scenes\RmBriefing\RmBriefingScene.tsx`: show `LiveAlertBanner` and apply the re-synthesized DTO (alert + in-place re-rank). (FR-010, FR-011)
+- [x] T031 [US2] Wire SSE consumption into `src\ui-app\src\scenes\MorningBrief\MorningBriefScene.tsx`: same alert + re-rank from the pushed DTO. (FR-010, FR-011)
+- [x] T032 [P] [US2] Vitest/RTL: `LiveAlertBanner` rendering + SSE-driven re-rank (mock `EventSource`) for both scenes. (Principle VII)
 
 **Checkpoint**: US1 + US2 both work — intraday live push demoable within the 10 s budget.
 
@@ -117,16 +117,16 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 ### Tests for User Story 3
 
-- [ ] T033 [P] [US3] Server-side validation + reactive-path tests in `tests\orchestration-api.Tests` / `tests\mock-api.Tests`: admin submission missing headline or affected entity is rejected and ingests nothing; a valid admin ingest (`origin=admin`, `scope=intraday`) triggers the SSE reaction. (FR-015, FR-016)
+- [x] T033 [P] [US3] Server-side validation + reactive-path tests in `tests\orchestration-api.Tests` / `tests\mock-api.Tests`: admin submission missing headline or affected entity is rejected and ingests nothing; a valid admin ingest (`origin=admin`, `scope=intraday`) triggers the SSE reaction. (FR-015, FR-016)
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Add admin `ingestNews(submission)` + `listEvents()` calls to `src\ui-app\src\api\client.ts`, POSTing to the same ingestion endpoint a real intraday event uses (FR-016). (FR-014, FR-017)
-- [ ] T035 [P] [US3] Create `src\ui-app\src\scenes\Admin\NewsForm.tsx`: headline, summary, source, severity, type, affected entities, scene targeting; client-side validation rejecting incomplete submissions with a clear message (FR-015). (FR-014)
-- [ ] T036 [P] [US3] Create `src\ui-app\src\scenes\Admin\EventList.tsx` listing current events (overnight + injected) for situational awareness. (FR-017)
-- [ ] T037 [US3] Create `src\ui-app\src\scenes\Admin\AdminScene.tsx` composing `NewsForm` + `EventList`, built from the existing M.INT components (`MintBrand`, `SectionTitle`, `AiInsightPanel`) — do not duplicate them. (FR-014, FR-017)
-- [ ] T038 [US3] Add the `/admin` route in `src\ui-app\src\App.tsx` and an Admin entry point in `src\ui-app\src\components\CockpitNav.tsx`. (FR-014, R10)
-- [ ] T039 [P] [US3] Vitest/RTL: `AdminScene` rejects incomplete submissions and ingests nothing; valid submit calls the client once. (FR-015; Principle VII)
+- [x] T034 [US3] Add admin `ingestNews(submission)` + `listEvents()` calls to `src\ui-app\src\api\client.ts`, POSTing to the same ingestion endpoint a real intraday event uses (FR-016). (FR-014, FR-017)
+- [x] T035 [P] [US3] Create `src\ui-app\src\scenes\Admin\NewsForm.tsx`: headline, summary, source, severity, type, affected entities, scene targeting; client-side validation rejecting incomplete submissions with a clear message (FR-015). (FR-014)
+- [x] T036 [P] [US3] Create `src\ui-app\src\scenes\Admin\EventList.tsx` listing current events (overnight + injected) for situational awareness. (FR-017)
+- [x] T037 [US3] Create `src\ui-app\src\scenes\Admin\AdminScene.tsx` composing `NewsForm` + `EventList`, built from the existing M.INT components (`MintBrand`, `SectionTitle`, `AiInsightPanel`) — do not duplicate them. (FR-014, FR-017)
+- [x] T038 [US3] Add the `/admin` route in `src\ui-app\src\App.tsx` and an Admin entry point in `src\ui-app\src\components\CockpitNav.tsx`. (FR-014, R10)
+- [x] T039 [P] [US3] Vitest/RTL: `AdminScene` rejects incomplete submissions and ingests nothing; valid submit calls the client once. (FR-015; Principle VII)
 
 **Checkpoint**: US1–US3 all independently functional — the demo can be driven live from `/admin`, both scenes react (SC-006).
 

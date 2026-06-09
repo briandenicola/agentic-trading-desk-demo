@@ -71,3 +71,22 @@ public sealed record LiveAlert
     public required IReadOnlyList<string> EventIds { get; init; } // triggering event id(s); ≥1
     public required bool NoImpact { get; init; }            // true => new event, ranking unchanged
 }
+
+/// <summary>
+/// Operator-authored payload from the <c>/admin</c> route (002 US3 / FR-014). On a successful POST
+/// it becomes an intraday <see cref="MarketEvent"/> (scope=intraday, origin=admin) and flows through
+/// the SAME ingestion + reactive SSE path as a real intraday event (FR-016). Validated server-side
+/// (FR-015) before it reaches the event store; nothing is ingested on failure. Mirrors
+/// <c>specs/002-.../contracts/admin-submission.schema.json</c>. All data is fictional.
+/// </summary>
+public sealed record AdminNewsSubmission
+{
+    public string? Headline { get; init; }
+    public string? Summary { get; init; }
+    public string? Source { get; init; }
+    public string? Severity { get; init; }                  // low | medium | high
+    public string? Type { get; init; }                      // macro_rate | sector | issuer_credit | client_headline
+    public string? Direction { get; init; }                 // positive | negative | neutral
+    public AffectedEntities? AffectedEntities { get; init; }
+    public IReadOnlyList<string>? SceneTargeting { get; init; }
+}

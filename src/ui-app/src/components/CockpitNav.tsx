@@ -10,6 +10,7 @@ import { mint } from '../theme/theme';
 const TABS = [
   { label: 'RM Daily Briefing', to: '/' },
   { label: 'Trading Morning Brief', to: '/morning-brief' },
+  { label: 'News Desk', to: '/admin' },
 ];
 
 const WORKSPACE = [
@@ -27,7 +28,11 @@ const WORKSPACE = [
  */
 export default function CockpitNav() {
   const { pathname } = useLocation();
-  const active = pathname.startsWith('/morning-brief') ? '/morning-brief' : '/';
+  const active = pathname.startsWith('/morning-brief')
+    ? '/morning-brief'
+    : pathname.startsWith('/admin')
+      ? '/admin'
+      : '/';
 
   return (
     <AppBar

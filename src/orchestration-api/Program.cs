@@ -170,6 +170,57 @@ app.MapPost("/api/agent/rm-briefing", async (
     }
 });
 
+// --- Admin / feed ingest endpoints (002 US3): same ingestion + reactive path as a real
+// intraday event (FR-016). The browser reaches the mock-api event store ONLY through this
+// orchestration proxy (Principle II); the SSE poller then pushes the reaction to open briefings. ---
+app.MapGet("/api/events", async (EventTools eventTools, [FromQuery] string? scope, CancellationToken ct) =>
+{
+    var events = await eventTools.ListEventsAsync(scope, ct);
+    return Results.Json(events, RmBriefingJson.Options);
+});
+
+app.MapPost("/api/events", async (
+    [FromBody] AdminNewsSubmission submission,
+    EventTools eventTools,
+    CancellationToken ct) =>
+{
+    var error = ValidateSubmission(submission);
+    if (error is not null)
+    {
+        return Results.Problem(
+            title: "Invalid news submission",
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    var marketEvent = new MarketEvent
+    {
+        Id = string.Empty, // server-set by the event store
+        Type = submission.Type!,
+        Headline = submission.Headline!,
+        Summary = submission.Summary!,
+        Source = string.IsNullOrWhiteSpace(submission.Source) ? "Admin desk (fictional)" : submission.Source,
+        Severity = submission.Severity!,
+        Direction = submission.Direction,
+        Origin = "admin",
+        AffectedEntities = submission.AffectedEntities ?? new AffectedEntities()
+    };
+
+    var result = await eventTools.IngestEventAsync(marketEvent, ct);
+    if (!result.Succeeded || result.Event is null)
+    {
+        return Results.Problem(
+            title: "Ingestion failed",
+            detail: "The event store rejected or could not accept the submission.",
+            statusCode: StatusCodes.Status502BadGateway);
+    }
+
+    return Results.Json(
+        result.Event,
+        RmBriefingJson.Options,
+        statusCode: result.Added ? StatusCodes.Status201Created : StatusCodes.Status200OK);
+});
+
 app.MapGet("/api/agent/rm-briefing/stream", (
     HttpContext ctx,
     BriefingEventStream stream,
@@ -184,6 +235,28 @@ app.MapGet("/api/agent/morning-brief/stream", (
         StreamSceneAsync(ctx, stream, "morning-brief", null, ct));
 
 app.Run();
+
+static string? ValidateSubmission(AdminNewsSubmission s)
+{
+    if (s is null) return "Submission body is required.";
+    if (string.IsNullOrWhiteSpace(s.Headline)) return "headline is required.";
+    if (string.IsNullOrWhiteSpace(s.Summary)) return "summary is required.";
+    if (!IsOneOf(s.Severity, "low", "medium", "high")) return "severity must be one of: low, medium, high.";
+    if (!IsOneOf(s.Type, "macro_rate", "sector", "issuer_credit", "client_headline"))
+        return "type must be one of: macro_rate, sector, issuer_credit, client_headline.";
+    var ae = s.AffectedEntities;
+    var hasSelector =
+        (ae?.CustomerIds?.Count ?? 0) > 0 ||
+        (ae?.Tickers?.Count ?? 0) > 0 ||
+        (ae?.Sectors?.Count ?? 0) > 0 ||
+        (ae?.Issuers?.Count ?? 0) > 0;
+    if (!hasSelector)
+        return "affectedEntities must contain at least one selector (customerIds, tickers, sectors, or issuers).";
+    return null;
+
+    static bool IsOneOf(string? value, params string[] allowed) =>
+        value is not null && allowed.Any(a => string.Equals(a, value, StringComparison.OrdinalIgnoreCase));
+}
 
 // --- SSE stream endpoints (002 US2): GET /api/agent/{scene}/stream (contracts/event-stream.sse.md) ---
 // A long-lived text/event-stream: emits `ready`, an initial snapshot, then `briefing-update`
