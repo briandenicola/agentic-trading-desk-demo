@@ -71,7 +71,10 @@ failures return a structured `{"error": …}` object so the loop degrades gracef
 - OpenTelemetry tracing/metrics with ASP.NET Core + outbound-HTTP instrumentation, so tool calls
   surface as HTTP dependency spans.
 - The persistent agent's runs and tool-call steps are visible natively in the **Foundry portal**
-  (thread/run view), because runs are no longer scattered across throwaway agents.
+  (thread/run view). The runtime reuses the `morning-brief` agent by name when it is found;
+  otherwise it falls back to creating one per run. (A reuse gap — the runtime not finding the
+  provisioner-registered agent — is currently under investigation; it does not affect the
+  per-request trace correlation below.)
 - **Azure Monitor OpenTelemetry exporter** (`Azure.Monitor.OpenTelemetry.Exporter`) attaches
   automatically when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set, so traces **and** metrics flow
   to Application Insights in the container apps. The OTLP exporter still attaches in parallel when
