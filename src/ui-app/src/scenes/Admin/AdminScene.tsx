@@ -5,6 +5,7 @@ import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBullete
 import { ingestNews, listEvents, type AdminNewsSubmission, type MarketEvent } from '../../api/client';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
+import AiInsightPanel from '../../components/AiInsightPanel';
 import { mint } from '../../theme/theme';
 import NewsForm from './NewsForm';
 import EventList from './EventList';
@@ -86,6 +87,22 @@ export default function AdminScene() {
                 <NewsForm onSubmit={handleSubmit} submitting={submitting} />
               </Box>
             </Paper>
+
+            <Box sx={{ mt: 3 }}>
+              <AiInsightPanel title="How injection works">
+                <Stack spacing={1}>
+                  <Typography variant="body2" sx={{ color: '#cdd6e6' }}>
+                    Injected items flow through the same ingestion path as a live feed — tagged
+                    <Box component="span" sx={{ color: mint.violetBright }}> origin: admin</Box> ·
+                    <Box component="span" sx={{ color: mint.cyan }}> scope: intraday</Box>.
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#cdd6e6' }}>
+                    The reactive poller detects the event and the specialist fan-out re-ranks open
+                    briefings within ~10 seconds.
+                  </Typography>
+                </Stack>
+              </AiInsightPanel>
+            </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 5 }}>
             <Paper sx={{ p: 3 }}>

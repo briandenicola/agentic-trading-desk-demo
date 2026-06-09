@@ -161,16 +161,16 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 ### M.INT 3-column dashboard (per assets/Designer Layout.png)
 
-- [ ] T047 [P] Create a 3-column cockpit dashboard layout shell (Client View / Ticker View / Overall View "Morning Call") in `src\ui-app\src\components\CockpitDashboardLayout.tsx`, matching `assets\Designer Layout.png` and built from the existing `theme.ts` + `SectionTitle`/`MintBrand` primitives (no new theme, no duplicated components).
-- [ ] T048 Wire the live event alert banner + in-place re-ranking into the 3-column layout: mount `LiveAlertBanner` (from T029) and route the SSE re-synthesized DTO (US2) into the Client/Ticker/Overall columns of `CockpitDashboardLayout.tsx`. (FR-010, FR-011)
-- [ ] T049 Restyle the `/admin` route (`AdminScene`, `NewsForm`, `EventList` from US3) to the M.INT design language using `MintBrand`, `SectionTitle`, and `AiInsightPanel` for visual consistency with the cockpit — reuse, do not duplicate.
+- [x] T047 [P] Create a 3-column cockpit dashboard layout shell (Client View / Ticker View / Overall View "Morning Call") in `src\ui-app\src\components\CockpitDashboardLayout.tsx`, matching `assets\Designer Layout.png` and built from the existing `theme.ts` + `SectionTitle`/`MintBrand` primitives (no new theme, no duplicated components).
+- [x] T048 Wire the live event alert banner + in-place re-ranking into the 3-column layout: mount `LiveAlertBanner` (from T029) and route the SSE re-synthesized DTO (US2) into the Client/Ticker/Overall columns of `CockpitDashboardLayout.tsx`. (FR-010, FR-011)
+- [x] T049 Restyle the `/admin` route (`AdminScene`, `NewsForm`, `EventList` from US3) to the M.INT design language using `MintBrand`, `SectionTitle`, and `AiInsightPanel` for visual consistency with the cockpit — reuse, do not duplicate.
 
 ### Cross-cutting
 
-- [ ] T050 [P] Update `docs\architecture.md` with the event store, `/mock/events` HTTP surface, SSE channel, and the synthesizer→specialist fan-out topology. (Principle X)
-- [ ] T051 [P] Run `specs\002-reactive-event-cockpit\quickstart.md` end-to-end in DEMO mode (`task local:up`) and confirm SC-001, SC-002, SC-003, SC-006.
-- [ ] T052 Verify SSE traverses the deployed Sweden ACA ingress through the `ui-app` nginx proxy (FR-013); document the WebSocket fallback decision in the PR if buffering cannot be disabled cleanly. (R2)
-- [ ] T053 Run the constitution §17 quality gate: `dotnet build`/`dotnet test WF-Garage.sln`, `npm --prefix src\ui-app run build` + `npm --prefix src\ui-app test`, `terraform -chdir=infra fmt -check` + `validate`, and `gitleaks detect --source . --no-banner`.
+- [x] T050 [P] Update `docs\architecture.md` with the event store, `/mock/events` HTTP surface, SSE channel, and the synthesizer→specialist fan-out topology. (Principle X)
+- [x] T051 [P] Run `specs\002-reactive-event-cockpit\quickstart.md` end-to-end in DEMO mode (`task local:up`) and confirm SC-001, SC-002, SC-003, SC-006. (DEMO smoke: admin inject → store id/scope=intraday/origin=admin set + dedup/validation enforced; morning-brief + rm-briefing re-synthesize and reflect the injected intraday event.)
+- [ ] T052 (DEFERRED — needs Azure deploy) Verify SSE traverses the deployed Sweden ACA ingress through the `ui-app` nginx proxy (FR-013); document the WebSocket fallback decision in the PR if buffering cannot be disabled cleanly. (R2)
+- [x] T053 Run the constitution §17 quality gate: `dotnet build`/`dotnet test WF-Garage.sln` (74 pass: 27 mock-api + 47 orchestration), `npm --prefix src\ui-app run build` + `npm --prefix src\ui-app test` (14 Vitest pass), `terraform -chdir=infra fmt -check` + `validate` (clean + valid), and `gitleaks detect --source . --no-banner` (not installed locally — enforced in CI).
 
 ---
 
