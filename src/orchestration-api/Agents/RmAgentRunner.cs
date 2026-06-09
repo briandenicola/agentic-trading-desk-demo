@@ -5,6 +5,7 @@ using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OrchestrationApi.Agents.Demo;
+using OrchestrationApi.Agents.EventSynthesis;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 
@@ -18,6 +19,11 @@ namespace OrchestrationApi.Agents;
 /// (<see cref="RmBriefingTools"/>) and emits the same <see cref="RmBriefing"/> DTO the DEMO
 /// composer returns (Principle III / FR-010).
 ///
+/// In LIVE mode the agent acts as the <b>briefing synthesizer</b> (002 US4): before it runs,
+/// <see cref="EventFanOut"/> fans out one <see cref="FoundryEventSpecialist"/> assessment per
+/// current event (concurrently, traceably), and those assessments are fed into the synthesizer
+/// so the call ranking reflects every event (FR-018, SC-007).
+///
 /// Mirrors <see cref="AgentRunner"/> (the municipal morning brief) but is a separate class
 /// so the two scenes stay decoupled. Construction is side-effect free: no credential is
 /// acquired and nothing on Foundry runs unless <see cref="RunAsync"/> is invoked (only in
@@ -25,7 +31,13 @@ namespace OrchestrationApi.Agents;
 /// <see cref="CreateFoundryAgentAsync"/> so a prerelease (rc5) API change cannot affect the
 /// offline DEMO path.
 /// </summary>
-public sealed class RmAgentRunner(IConfiguration config, RmBriefingTools tools, ILogger<RmAgentRunner> logger)
+public sealed class RmAgentRunner(
+    IConfiguration config,
+    RmBriefingTools tools,
+    EventTools eventTools,
+    EventFanOut fanOut,
+    FoundryEventSpecialist specialist,
+    ILogger<RmAgentRunner> logger)
 {
     private const string AgentName = "rm-daily-briefing";
 
@@ -67,7 +79,8 @@ public sealed class RmAgentRunner(IConfiguration config, RmBriefingTools tools, 
 
         try
         {
-            var response = await agent.RunAsync(userMessage, cancellationToken: ct);
+            var synthMessage = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            var response = await agent.RunAsync(synthMessage, cancellationToken: ct);
 
             var usage = response.Usage;
             if (usage is not null)
@@ -95,6 +108,44 @@ public sealed class RmAgentRunner(IConfiguration config, RmBriefingTools tools, 
             logger.LogError(ex, "Foundry RM-briefing agent run failed; returning a degraded briefing.");
             return Degraded(rmId, date, $"LIVE agent run failed: {ex.Message}");
         }
+    }
+
+    // ---------------------------------------------------------------- event fan-out (US4)
+
+    /// <summary>
+    /// LIVE synthesizer pre-step (002 US4): list the current events, fan out one specialist
+    /// assessment per event (concurrent + traceable), and append the assessments to the
+    /// synthesizer's user message so the call ranking reflects every event. Failures degrade to
+    /// the un-augmented message (FR-011) — the briefing is still produced.
+    /// </summary>
+    private async Task<string> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
+    {
+        IReadOnlyList<EventImpactAssessment> assessments = [];
+        try
+        {
+            var events = await eventTools.ListEventsAsync(null, ct);
+            if (events.Count > 0)
+            {
+                var specialistAgent = await specialist.CreateAgentAsync(ct);
+                assessments = await fanOut.AssessAllAsync(
+                    "rm-briefing", events, (e, c) => specialist.AssessAsync(specialistAgent, e, c), ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Event fan-out failed; synthesizing the RM briefing without per-event assessments.");
+        }
+
+        runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
+        if (assessments.Count == 0)
+        {
+            return userMessage;
+        }
+
+        return userMessage +
+            "\n\nPER-EVENT IMPACT ASSESSMENTS (from specialist agents — fold each contribution into " +
+            "the affected customers' scores, re-rank, and list every contributing event as a driver):\n" +
+            JsonSerializer.Serialize(assessments, RmBriefingJson.Options);
     }
 
     // ---------------------------------------------------------------- Foundry wiring (isolated)

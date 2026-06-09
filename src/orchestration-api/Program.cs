@@ -42,6 +42,11 @@ builder.Services.AddScoped<AgentRunner>();
 // --- Reactive event tools (002): HTTP wrappers over the mock-api event store ---
 builder.Services.AddScoped<EventTools>();
 
+// --- Per-event multi-agent fan-out (002 US4): specialist assessments feed the LIVE
+// synthesizer. Construction is side-effect free; nothing touches Foundry in DEMO. ---
+builder.Services.AddScoped<OrchestrationApi.Agents.EventSynthesis.EventFanOut>();
+builder.Services.AddScoped<OrchestrationApi.Agents.EventSynthesis.FoundryEventSpecialist>();
+
 // --- Reactive SSE hub (002 US2): live event push to open briefings (FR-010..FR-013) ---
 builder.Services.AddSingleton<BriefingEventStream>();
 builder.Services.AddHostedService<EventStreamPollingService>();

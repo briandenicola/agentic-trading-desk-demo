@@ -140,16 +140,16 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 ### Tests for User Story 4
 
-- [ ] T040 [P] [US4] LIVE/DEMO parity test in `tests\orchestration-api.Tests`: for identical event inputs the `RmBriefing` / `MorningBrief` JSON shape is identical across modes; assert the fan-out produces a traceable synthesizer→specialist→tool graph (via the `OrchestrationTelemetry` source). (SC-004, SC-007, FR-009)
+- [x] T040 [P] [US4] LIVE/DEMO parity test in `tests\orchestration-api.Tests`: for identical event inputs the `RmBriefing` / `MorningBrief` JSON shape is identical across modes; assert the fan-out produces a traceable synthesizer→specialist→tool graph (via the `OrchestrationTelemetry` source). (SC-004, SC-007, FR-009)
 
 ### Implementation for User Story 4
 
-- [ ] T041 [P] [US4] Author `src\orchestration-api\Prompts\event-specialist.md` (per-event impact assessment → structured linkage resolving to typed selectors). (FR-018)
-- [ ] T042 [P] [US4] Author `src\orchestration-api\Prompts\briefing-synthesizer.md` (combine specialist outputs → unchanged briefing DTO). (FR-018)
-- [ ] T043 [US4] Implement `src\orchestration-api\Agents\EventSynthesis\` fan-out + synthesizer orchestration: one specialist run per event/cluster, concurrent via `Task.WhenAll` bounded by `EVENT_FANOUT_MAX_CONCURRENCY` and `MAX_TOOL_HOPS`, wrapped with `.AsBuilder().UseOpenTelemetry(sourceName: OrchestrationTelemetry.SourceName, …)`. (FR-018, FR-019, SC-007, R8)
-- [ ] T044 [US4] Wire the fan-out into `src\orchestration-api\Agents\RmAgentRunner.cs` (LIVE RM path) via the resolve-by-name pattern (`GetAIAgentAsync` → fallback create). (FR-018)
-- [ ] T045 [US4] Wire the same fan-out into `src\orchestration-api\Agents\AgentRunner.cs` (LIVE morning-brief path). (FR-018)
-- [ ] T046 [US4] Add idempotent `AgentSpec` entries for `event-specialist` and `briefing-synthesizer` to `src\agent-provisioner\Program.cs` (`GetAIAgentAsync` first, `CreateAIAgentAsync` only when absent). (FR-021, Principle X, R9)
+- [x] T041 [P] [US4] Author `src\orchestration-api\Prompts\event-specialist.md` (per-event impact assessment → structured linkage resolving to typed selectors). (FR-018)
+- [x] T042 [P] [US4] Author `src\orchestration-api\Prompts\briefing-synthesizer.md` (combine specialist outputs → unchanged briefing DTO). (FR-018)
+- [x] T043 [US4] Implement `src\orchestration-api\Agents\EventSynthesis\` fan-out + synthesizer orchestration: one specialist run per event/cluster, concurrent via `Task.WhenAll` bounded by `EVENT_FANOUT_MAX_CONCURRENCY` and `MAX_TOOL_HOPS`, wrapped with `.AsBuilder().UseOpenTelemetry(sourceName: OrchestrationTelemetry.SourceName, …)`. (FR-018, FR-019, SC-007, R8)
+- [x] T044 [US4] Wire the fan-out into `src\orchestration-api\Agents\RmAgentRunner.cs` (LIVE RM path) via the resolve-by-name pattern (`GetAIAgentAsync` → fallback create). (FR-018)
+- [x] T045 [US4] Wire the same fan-out into `src\orchestration-api\Agents\AgentRunner.cs` (LIVE morning-brief path). (FR-018)
+- [x] T046 [US4] Add idempotent `AgentSpec` entries for `event-specialist` and `briefing-synthesizer` to `src\agent-provisioner\Program.cs` (`GetAIAgentAsync` first, `CreateAIAgentAsync` only when absent). (FR-021, Principle X, R9)
 
 **Checkpoint**: All four user stories functional; LIVE traceability story (SC-007) complete; DEMO parity preserved (SC-004).
 

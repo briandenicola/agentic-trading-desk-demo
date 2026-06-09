@@ -26,6 +26,12 @@
     <Content Include="..\orchestration-api\Prompts\rm-daily-briefing.md"
              Link="Prompts\rm-daily-briefing.md"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\event-specialist.md"
+             Link="Prompts\event-specialist.md"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\briefing-synthesizer.md"
+             Link="Prompts\briefing-synthesizer.md"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

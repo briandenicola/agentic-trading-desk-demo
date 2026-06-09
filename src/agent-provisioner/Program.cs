@@ -40,6 +40,17 @@ var agents = new[]
         "morning-brief",
         "Synthesizes the municipal-sales morning brief by calling the mock systems-of-record as tools.",
         "morning-brief.md"),
+    // 002 US4 — per-event multi-agent fan-out. The event-specialist is run once per current
+    // event by the LIVE runners; the briefing-synthesizer is the shared synthesis contract the
+    // per-scene briefing agents fulfil (registered for traceability/consolidation, R9).
+    new AgentSpec(
+        "event-specialist",
+        "Assesses one market/news event's portfolio impact and resolves it to typed entity selectors with a signed priority contribution.",
+        "event-specialist.md"),
+    new AgentSpec(
+        "briefing-synthesizer",
+        "Combines per-event specialist assessments with the systems-of-record to synthesize the final briefing DTO unchanged.",
+        "briefing-synthesizer.md"),
 };
 
 try
