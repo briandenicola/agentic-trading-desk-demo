@@ -9,12 +9,13 @@ const BAND_COLOR: Record<number, string> = {
   4: '#3ddc97', // green
 };
 
-const TAG_COLOR: Record<CallTagKind, 'error' | 'warning' | 'success' | 'info' | 'default'> = {
+const TAG_COLOR: Record<CallTagKind, 'error' | 'warning' | 'success' | 'info' | 'default' | 'secondary'> = {
   escalated: 'error',
   'in-progress': 'warning',
   followup: 'info',
   closing: 'success',
   stuck: 'default',
+  event: 'secondary',
 };
 
 function formatRevenue(mm?: number): string {
@@ -81,6 +82,33 @@ export default function PriorityCallCard({ call }: PriorityCallCardProps) {
               {reason}
             </Typography>
           ))}
+        </Box>
+      )}
+
+      {call.drivingEvents && call.drivingEvents.length > 0 && (
+        <Box
+          data-testid={`driving-events-${call.customerId}`}
+          sx={{
+            mt: 1,
+            p: 1,
+            borderRadius: 1,
+            border: '1px solid rgba(124,92,255,0.35)',
+            bgcolor: 'rgba(124,92,255,0.08)',
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 700, letterSpacing: '0.08em', color: 'secondary.main' }}
+          >
+            ⚡ DRIVING EVENTS
+          </Typography>
+          <Box component="ul" sx={{ pl: 2.5, my: 0.5, '& li': { mb: 0.25 } }}>
+            {call.drivingEvents.map((ev) => (
+              <Typography component="li" key={ev.eventId} variant="body2" color="text.secondary">
+                {ev.rationale}
+              </Typography>
+            ))}
+          </Box>
         </Box>
       )}
 

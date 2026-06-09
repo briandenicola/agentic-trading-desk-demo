@@ -19,6 +19,7 @@ import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { runRmBriefing, type RmBriefing } from '../../api/client';
 import CockpitNav from '../../components/CockpitNav';
@@ -183,6 +184,49 @@ export default function RmBriefingScene() {
                 ))}
               </Stack>
             </Box>
+
+            {brief.eventsConsidered && brief.eventsConsidered.length > 0 && (
+              <Box data-testid="events-considered">
+                <SectionTitle
+                  icon={<BoltOutlinedIcon fontSize="inherit" />}
+                  caption="— overnight & intraday signals the agent weighed into the ranking"
+                >
+                  Events considered ({brief.eventsConsidered.length})
+                </SectionTitle>
+                <Stack spacing={1} sx={{ mt: 1.5 }}>
+                  {brief.eventsConsidered.map((ev) => (
+                    <Paper
+                      key={ev.id}
+                      data-testid={`event-${ev.id}`}
+                      sx={{ p: 1.5, bgcolor: 'rgba(255,255,255,0.02)' }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                        <Chip
+                          label={ev.severity.toUpperCase()}
+                          size="small"
+                          color={ev.severity === 'high' ? 'error' : ev.severity === 'medium' ? 'warning' : 'default'}
+                          sx={{ fontSize: '10px', fontWeight: 700, height: 20 }}
+                        />
+                        {ev.scope && (
+                          <Chip
+                            label={ev.scope}
+                            size="small"
+                            variant="outlined"
+                            sx={{ fontSize: '10px', height: 20, borderColor: mint.border }}
+                          />
+                        )}
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {ev.headline}
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                        {ev.summary}
+                      </Typography>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            )}
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper sx={{ height: '100%' }}>

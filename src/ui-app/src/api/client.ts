@@ -41,6 +41,7 @@ export interface AffectedClient {
   tier: string;
   exposure: string;
   concern: { label: string; kind: 'sell' | 'warm' | 'info' };
+  drivingEvents?: EventLinkage[];
 }
 
 export interface RankingRationale {
@@ -60,6 +61,38 @@ export interface OutreachItem {
   rationale: RankingRationale;
 }
 
+// Reactive event cockpit (002). MarketEvent + per-item EventLinkage mirror the
+// orchestration DTOs; both are additive and present in DEMO and LIVE alike.
+export interface AffectedEntities {
+  customerIds?: string[];
+  tickers?: string[];
+  sectors?: string[];
+  issuers?: string[];
+}
+
+export interface MarketEvent {
+  id: string;
+  type: 'macro_rate' | 'sector' | 'issuer_credit' | 'client_headline';
+  headline: string;
+  summary: string;
+  source?: string;
+  severity: 'low' | 'medium' | 'high';
+  publishedAt?: string;
+  ingestedAt?: string;
+  scope?: 'overnight' | 'intraday';
+  origin?: 'seed' | 'admin' | 'feed';
+  direction?: 'positive' | 'negative' | 'neutral';
+  affectedEntities?: AffectedEntities;
+}
+
+export interface EventLinkage {
+  eventId: string;
+  headline: string;
+  entityRef: string;
+  contribution: number;
+  rationale: string;
+}
+
 export interface MorningBrief {
   mode: 'DEMO' | 'LIVE';
   asOf: string;
@@ -69,6 +102,7 @@ export interface MorningBrief {
   mostAffectedClients: AffectedClient[];
   outreach: OutreachItem[];
   notes?: string[];
+  eventsConsidered?: MarketEvent[];
 }
 
 // Implemented end-to-end in Phase 3 (T021). Defined here so the scaffold compiles.
@@ -110,7 +144,7 @@ export interface RmKpis {
   activeComplaints: number;
 }
 
-export type CallTagKind = 'escalated' | 'in-progress' | 'followup' | 'closing' | 'stuck';
+export type CallTagKind = 'escalated' | 'in-progress' | 'followup' | 'closing' | 'stuck' | 'event';
 
 export interface CallTag {
   label: string;
@@ -131,6 +165,7 @@ export interface PriorityCall {
   tags: CallTag[];
   reasons: string[];
   suggestedAction: string;
+  drivingEvents?: EventLinkage[];
 }
 
 export interface ComplaintSnapshot {
@@ -170,6 +205,7 @@ export interface RmBriefing {
   macroSnapshot: MacroBullet[];
   suggestedFirstAction: string;
   notes?: string[];
+  eventsConsidered?: MarketEvent[];
 }
 
 export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBriefing> {

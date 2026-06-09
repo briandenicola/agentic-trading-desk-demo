@@ -176,6 +176,34 @@ export default function MorningBriefScene() {
               </Box>
             </Paper>
 
+            {brief.eventsConsidered && brief.eventsConsidered.length > 0 && (
+              <Paper sx={{ p: 3 }} data-testid="events-considered">
+                <SectionTitle
+                  icon={<NewspaperOutlinedIcon fontSize="inherit" />}
+                  caption="— overnight & intraday signals weighed into client linkage"
+                >
+                  Events considered ({brief.eventsConsidered.length})
+                </SectionTitle>
+                <Stack spacing={1} sx={{ mt: 2 }}>
+                  {brief.eventsConsidered.map((ev) => (
+                    <Box
+                      key={ev.id}
+                      data-testid={`event-${ev.id}`}
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}
+                    >
+                      <Chip
+                        label={ev.severity.toUpperCase()}
+                        size="small"
+                        color={ev.severity === 'high' ? 'error' : ev.severity === 'medium' ? 'warning' : 'default'}
+                        sx={{ fontSize: '10px', fontWeight: 700, height: 20 }}
+                      />
+                      <Typography variant="body2">{ev.headline}</Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </Paper>
+            )}
+
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper sx={{ height: '100%' }}>
                 <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
@@ -204,6 +232,19 @@ export default function MorningBriefScene() {
                           <Typography variant="caption" color="text.secondary">
                             {client.tier}
                           </Typography>
+                          {client.drivingEvents && client.drivingEvents.length > 0 && (
+                            <Box data-testid={`driving-events-${client.cid}`} sx={{ mt: 0.5 }}>
+                              {client.drivingEvents.map((ev) => (
+                                <Typography
+                                  key={ev.eventId}
+                                  variant="caption"
+                                  sx={{ display: 'block', color: mint.violetBright }}
+                                >
+                                  ⚡ {ev.headline}
+                                </Typography>
+                              ))}
+                            </Box>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">{client.exposure}</Typography>

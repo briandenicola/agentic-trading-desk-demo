@@ -31,6 +31,15 @@ const mockBrief: MorningBrief = {
       tier: 'Tier 1',
       exposure: 'Heavy long-duration bonds',
       concern: { label: 'Price drop', kind: 'sell' },
+      drivingEvents: [
+        {
+          eventId: 'evt-20260604-001',
+          headline: 'Fed surprise 25bp hike jolts long-duration holders',
+          entityRef: 'ATLAS',
+          contribution: 30,
+          rationale: 'High-severity macro rate event hits long-duration exposure.',
+        },
+      ],
     },
     {
       cid: 'BROOK',
@@ -38,6 +47,18 @@ const mockBrief: MorningBrief = {
       tier: 'Tier 1',
       exposure: 'Interest-rate swaps book',
       concern: { label: 'Hedge adjust', kind: 'warm' },
+    },
+  ],
+  eventsConsidered: [
+    {
+      id: 'evt-20260604-001',
+      type: 'macro_rate',
+      headline: 'Fed surprise 25bp hike jolts long-duration holders',
+      summary: 'A fictional surprise hike pushed rates higher overnight.',
+      severity: 'high',
+      scope: 'overnight',
+      origin: 'seed',
+      direction: 'negative',
     },
   ],
   outreach: [
@@ -130,5 +151,16 @@ describe('MorningBriefScene call plan', () => {
     expect(screen.getByTestId('call-plan-status')).toHaveTextContent('sent=false');
     expect(screen.getByText(/Plan approved — ready to dial/i)).toBeInTheDocument();
     expect(postSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders events considered and per-client driving events', async () => {
+    await runBrief();
+
+    const eventsPanel = screen.getByTestId('events-considered');
+    expect(eventsPanel).toHaveTextContent(/Events considered \(1\)/i);
+    expect(screen.getByTestId('event-evt-20260604-001')).toHaveTextContent(/Fed surprise 25bp hike/i);
+
+    const drivers = screen.getByTestId('driving-events-ATLAS');
+    expect(drivers).toHaveTextContent(/Fed surprise 25bp hike/i);
   });
 });
