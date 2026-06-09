@@ -169,7 +169,7 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 - [x] T050 [P] Update `docs\architecture.md` with the event store, `/mock/events` HTTP surface, SSE channel, and the synthesizer→specialist fan-out topology. (Principle X)
 - [x] T051 [P] Run `specs\002-reactive-event-cockpit\quickstart.md` end-to-end in DEMO mode (`task local:up`) and confirm SC-001, SC-002, SC-003, SC-006. (DEMO smoke: admin inject → store id/scope=intraday/origin=admin set + dedup/validation enforced; morning-brief + rm-briefing re-synthesize and reflect the injected intraday event.)
-- [ ] T052 (DEFERRED — needs Azure deploy) Verify SSE traverses the deployed Sweden ACA ingress through the `ui-app` nginx proxy (FR-013); document the WebSocket fallback decision in the PR if buffering cannot be disabled cleanly. (R2)
+- [x] T052 Verify SSE traverses the deployed Sweden ACA ingress through the `ui-app` nginx proxy (FR-013). VERIFIED on `https://ui-app.politefield-f4f3b782.swedencentral.azurecontainerapps.io`: stream returns `200` + `content-type: text/event-stream` + `cache-control: no-cache`, and `curl -N` receives the `event: ready` frame unbuffered through nginx. No WebSocket fallback needed. through the `ui-app` nginx proxy (FR-013); document the WebSocket fallback decision in the PR if buffering cannot be disabled cleanly. (R2)
 - [x] T053 Run the constitution §17 quality gate: `dotnet build`/`dotnet test WF-Garage.sln` (74 pass: 27 mock-api + 47 orchestration), `npm --prefix src\ui-app run build` + `npm --prefix src\ui-app test` (14 Vitest pass), `terraform -chdir=infra fmt -check` + `validate` (clean + valid), and `gitleaks detect --source . --no-banner` (not installed locally — enforced in CI).
 
 ---
