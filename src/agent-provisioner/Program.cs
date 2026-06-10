@@ -17,6 +17,7 @@
 //     - rm-daily-briefing : Commercial Banking RM Daily Briefing (PRIMARY)   -> FOUNDRY_MODEL
 //     - morning-brief     : Municipal-sales morning brief (secondary)        -> FOUNDRY_MODEL_MORNING
 //     - event-specialist  : Per-event fan-out assessment (high concurrency)  -> FOUNDRY_MODEL_SPECIALIST
+//     - markets-assistant : Grounded "AI Chat" assistant (interactive)       -> FOUNDRY_MODEL_CHAT
 //
 //   CONTRACT-ONLY (registered for traceability, never executed) — created tool-less on FOUNDRY_MODEL:
 //     - briefing-synthesizer : Shared synthesis contract the per-scene briefing agents fulfil (R9).
@@ -34,6 +35,7 @@ var model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini
 // event-specialist and the synthesizers never contend for the same TPM/RPM (fixes 429s).
 var morningModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_MORNING") ?? model;
 var specialistModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_SPECIALIST") ?? model;
+var chatModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_CHAT") ?? morningModel;
 
 if (string.IsNullOrWhiteSpace(endpoint))
 {
@@ -68,6 +70,12 @@ var agents = new[]
         "Assesses one market/news event's portfolio impact and resolves it to typed entity selectors with a signed priority contribution.",
         "event-specialist.md",
         specialistModel,
+        RuntimeManaged: true),
+    new AgentSpec(
+        "markets-assistant",
+        "Grounded Markets-Intelligence chat assistant that answers RM questions by calling the Commercial Banking mock systems-of-record and the event feed as tools.",
+        "markets-assistant.md",
+        chatModel,
         RuntimeManaged: true),
     new AgentSpec(
         "briefing-synthesizer",

@@ -32,6 +32,9 @@
     <Content Include="..\orchestration-api\Prompts\briefing-synthesizer.md"
              Link="Prompts\briefing-synthesizer.md"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\markets-assistant.md"
+             Link="Prompts\markets-assistant.md"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

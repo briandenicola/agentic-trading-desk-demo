@@ -15,10 +15,10 @@ const TABS = [
 ];
 
 const WORKSPACE = [
-  { label: 'Launch Pad', icon: <RocketLaunchOutlinedIcon fontSize="small" />, badge: false },
-  { label: 'Newsfeed / Alerts', icon: <NotificationsActiveOutlinedIcon fontSize="small" />, badge: true },
-  { label: 'AI Chat', icon: <ChatBubbleOutlineOutlinedIcon fontSize="small" />, badge: false },
-  { label: 'Control Panel', icon: <TuneOutlinedIcon fontSize="small" />, badge: false },
+  { label: 'Launch Pad', icon: <RocketLaunchOutlinedIcon fontSize="small" />, badge: false, to: undefined as string | undefined },
+  { label: 'Newsfeed / Alerts', icon: <NotificationsActiveOutlinedIcon fontSize="small" />, badge: true, to: undefined as string | undefined },
+  { label: 'AI Chat', icon: <ChatBubbleOutlineOutlinedIcon fontSize="small" />, badge: false, to: '/chat' },
+  { label: 'Control Panel', icon: <TuneOutlinedIcon fontSize="small" />, badge: false, to: undefined as string | undefined },
 ];
 
 /**
@@ -83,30 +83,55 @@ export default function CockpitNav() {
             spacing={2.5}
             sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'flex-start' }}
           >
-            {WORKSPACE.map((w) => (
-              <Stack key={w.label} spacing={0.25} sx={{ minWidth: 56, alignItems: 'center' }}>
-                <Box sx={{ position: 'relative', color: mint.textDim }}>
-                  {w.icon}
-                  {w.badge && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: -2,
-                        right: -2,
-                        width: 7,
-                        height: 7,
-                        borderRadius: '50%',
-                        bgcolor: mint.violetBright,
-                        boxShadow: `0 0 6px ${mint.violetBright}`,
-                      }}
-                    />
-                  )}
-                </Box>
-                <Typography sx={{ fontSize: '9px', color: mint.textDim, whiteSpace: 'nowrap' }}>
-                  {w.label}
-                </Typography>
-              </Stack>
-            ))}
+            {WORKSPACE.map((w) => {
+              const isActive = w.to && pathname.startsWith(w.to);
+              return (
+                <Stack
+                  key={w.label}
+                  spacing={0.25}
+                  {...(w.to ? { component: Link, to: w.to } : {})}
+                  sx={{
+                    minWidth: 56,
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    cursor: w.to ? 'pointer' : 'default',
+                    '&:hover .ws-icon': w.to ? { color: mint.violetBright } : {},
+                    '&:hover .ws-label': w.to ? { color: mint.text } : {},
+                  }}
+                >
+                  <Box
+                    className="ws-icon"
+                    sx={{ position: 'relative', color: isActive ? mint.violetBright : mint.textDim }}
+                  >
+                    {w.icon}
+                    {w.badge && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: -2,
+                          right: -2,
+                          width: 7,
+                          height: 7,
+                          borderRadius: '50%',
+                          bgcolor: mint.violetBright,
+                          boxShadow: `0 0 6px ${mint.violetBright}`,
+                        }}
+                      />
+                    )}
+                  </Box>
+                  <Typography
+                    className="ws-label"
+                    sx={{
+                      fontSize: '9px',
+                      color: isActive ? mint.text : mint.textDim,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {w.label}
+                  </Typography>
+                </Stack>
+              );
+            })}
           </Stack>
         </Box>
       </Box>

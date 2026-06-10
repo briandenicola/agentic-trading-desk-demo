@@ -57,6 +57,11 @@ builder.Services.AddScoped<RmBriefingComposer>();
 builder.Services.AddScoped<RmBriefingTools>();
 builder.Services.AddScoped<RmAgentRunner>();
 
+// --- Markets-Intelligence assistant ("AI Chat"): DEMO intent responder (offline) + LIVE Foundry
+// chat agent with the RM mock-api tools bound. Both grounded in the same systems-of-record. ---
+builder.Services.AddScoped<ChatResponder>();
+builder.Services.AddScoped<ChatAgentRunner>();
+
 // --- CORS for the React cockpit (tightened for deployment in Phase 8) ---
 var corsOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"];
 builder.Services.AddCors(options =>
@@ -212,6 +217,31 @@ app.MapGet("/api/customers", async (MockApiClient mockApi, CancellationToken ct)
         .ToList();
 
     return Results.Json(options);
+});
+
+// --- Grounded Markets-Intelligence assistant ("AI Chat"): DEMO intent responder or LIVE Foundry
+// chat agent, both grounded in the same mock systems-of-record. Mode-blind to the UI (Principle III). ---
+app.MapPost("/api/chat", async (
+    [FromBody] ChatRequest? request,
+    ModeOptions modeOpts,
+    ChatResponder responder,
+    ChatAgentRunner runner,
+    CancellationToken ct) =>
+{
+    if (request is null || request.Messages is null || request.Messages.Count == 0 ||
+        !request.Messages.Any(m => string.Equals(m.Role, "user", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(m.Content)))
+    {
+        return Results.Problem(
+            title: "Empty chat request",
+            detail: "Provide at least one user message in 'messages'.",
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    var reply = modeOpts.DemoMode
+        ? await responder.RespondAsync(request, ct)
+        : await runner.RunAsync(request, ct);
+
+    return Results.Json(reply, RmBriefingJson.Options);
 });
 
 app.MapPost("/api/events", async (

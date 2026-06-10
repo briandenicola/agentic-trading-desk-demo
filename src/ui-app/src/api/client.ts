@@ -325,3 +325,27 @@ export async function listCustomers(): Promise<CustomerOption[]> {
   const { data } = await apiClient.get<CustomerOption[]>('/customers');
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// Grounded Markets-Intelligence assistant ("AI Chat"). Stateless: the client replays
+// the conversation each turn. DEMO returns a deterministic intent answer; LIVE returns
+// a Foundry chat-agent answer grounded in the same systems-of-record (Principle III).
+// ---------------------------------------------------------------------------
+
+export interface ChatTurn {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatReply {
+  mode: 'DEMO' | 'LIVE';
+  message: string;
+  suggestions?: string[];
+  toolsUsed?: string[];
+}
+
+/** Send the conversation to the assistant and resolve the next assistant reply. */
+export async function sendChat(messages: ChatTurn[], rmId?: string): Promise<ChatReply> {
+  const { data } = await apiClient.post<ChatReply>('/chat', { messages, rmId });
+  return data;
+}
