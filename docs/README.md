@@ -4,10 +4,10 @@
 
 | Document | Path | Status |
 |----------|------|--------|
-| Product Requirements | `docs/prd.md` | TODO |
+| Product Requirements | `docs/prd.md` | ✅ Problem, personas, scope & success criteria |
 | Architecture Overview | `docs/architecture.md` | ✅ Agents, orchestration & traceability |
-| Getting Started | `docs/getting-started.md` | See README.md |
-| References | `docs/references.md` | TODO |
+| Getting Started | `docs/getting-started.md` | ✅ Local DEMO/LIVE setup, tests & deploy |
+| References | `docs/references.md` | ✅ Internal docs, contracts & external links |
 
 ## Architecture Decision Records
 
