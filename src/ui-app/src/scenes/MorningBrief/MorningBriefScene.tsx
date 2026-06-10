@@ -88,42 +88,118 @@ export default function MorningBriefScene() {
       {brief && <MarketStrip items={brief.marketStrip} />}
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="overline" color="text.secondary" sx={{ fontSize: '12px' }}>
-            Morning · 7:30 AM — Pre-market planning
-          </Typography>
-          <Typography variant="h3" sx={{ mt: 1, mb: 2, fontWeight: 500 }}>
+        <Box
+          sx={{
+            mb: 3,
+            p: { xs: 2.5, md: 3.5 },
+            borderRadius: 3,
+            border: `1px solid ${mint.border}`,
+            background: `radial-gradient(120% 140% at 0% 0%, ${mint.violet}1f, transparent 55%), linear-gradient(135deg, ${mint.paper}, ${mint.bgAlt})`,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              mb: 1.5,
+            }}
+          >
+            <Box
+              sx={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                bgcolor: mint.violetBright,
+                boxShadow: `0 0 10px ${mint.violetBright}`,
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '1.6px',
+                color: mint.violetBright,
+              }}
+            >
+              MORNING · 7:30 AM — PRE-MARKET PLANNING
+            </Typography>
+          </Box>
+
+          <Typography
+            variant="h3"
+            sx={{
+              mb: 2,
+              fontWeight: 700,
+              lineHeight: 1.1,
+              background: `linear-gradient(120deg, ${mint.text} 0%, ${mint.violetBright} 55%, ${mint.cyan} 100%)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             "What do I need to know this morning?"
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '800px' }}>
+          <Typography variant="body1" sx={{ color: mint.textDim, maxWidth: '800px', mb: 3 }}>
             Overnight, a surprise Fed move drove rate volatility. The assistant turns that into a
             market narrative, flags the clients most affected, and builds a ranked outreach plan —
             all editable before the VP starts dialing.
           </Typography>
-        </Box>
 
-        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span style={{ opacity: 0.5 }}>✦</span>
-            <span>What do I need to know this morning?</span>
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={handleRunBrief}
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : <PlayArrowRoundedIcon />}
-            sx={{ textTransform: 'none', fontWeight: 600 }}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+              p: 1.5,
+              borderRadius: 2.5,
+              border: `1px solid ${mint.border}`,
+              background: mint.paperHi,
+            }}
           >
-            {loading ? 'Running...' : 'Run morning brief'}
-          </Button>
-          {brief && (
-            <Chip
-              label={brief.mode}
-              size="small"
-              color={brief.mode === 'LIVE' ? 'success' : 'default'}
-              sx={{ fontWeight: 700 }}
-            />
-          )}
+            <Typography
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, color: mint.text, fontWeight: 600, flex: 1, minWidth: 220 }}
+            >
+              <Box component="span" sx={{ color: mint.violetBright, fontSize: 18 }}>
+                ✦
+              </Box>
+              <span>What do I need to know this morning?</span>
+            </Typography>
+            <Button
+              onClick={handleRunBrief}
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <PlayArrowRoundedIcon />}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 700,
+                px: 2.25,
+                color: '#fff',
+                borderRadius: 99,
+                background: `linear-gradient(135deg, ${mint.violet}, ${mint.magenta})`,
+                boxShadow: `0 8px 22px ${mint.violet}55`,
+                '&:hover': { filter: 'brightness(1.08)', background: `linear-gradient(135deg, ${mint.violet}, ${mint.magenta})` },
+                '&.Mui-disabled': { color: 'rgba(255,255,255,0.7)', background: `linear-gradient(135deg, ${mint.violet}99, ${mint.magenta}99)` },
+              }}
+            >
+              {loading ? 'Running...' : 'Run morning brief'}
+            </Button>
+            {brief && (
+              <Chip
+                label={brief.mode}
+                size="small"
+                sx={{
+                  fontWeight: 800,
+                  letterSpacing: '0.5px',
+                  color: brief.mode === 'LIVE' ? '#04101c' : mint.text,
+                  bgcolor: brief.mode === 'LIVE' ? mint.green : mint.borderSoft,
+                  border: brief.mode === 'LIVE' ? 'none' : `1px solid ${mint.border}`,
+                }}
+              />
+            )}
+          </Box>
         </Box>
 
         {error && (
