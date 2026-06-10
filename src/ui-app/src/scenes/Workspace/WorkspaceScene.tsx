@@ -9,25 +9,27 @@ import { mint } from '../../theme/theme';
 import { workspace } from './workspaceData';
 import LaunchPadSidebar from './LaunchPadSidebar';
 import NewsfeedColumn from './NewsfeedColumn';
-import CommandCenter from './CommandCenter';
+import WorkspaceCenter from './WorkspaceCenter';
 import RightRail from './RightRail';
-import PlaybooksBar from './PlaybooksBar';
 import LiveStatusPill from './LiveStatusPill';
 import ToastHost from './ToastHost';
+import { ChatDockProvider } from './ChatOverlay';
 import { WorkspaceLiveProvider, useWorkspaceLive } from './useWorkspaceLive';
 
 function UserProfile() {
-  const initials = workspace.user.name
+  const { brief } = useWorkspaceLive();
+  const name = brief?.rm.name ?? 'Relationship Manager';
+  const role = brief?.rm.title ?? brief?.rm.territory ?? 'Daily Briefing';
+  const initials = name
     .split(' ')
     .map((p) => p[0])
-    .join('');
+    .join('')
+    .slice(0, 2);
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, cursor: 'pointer' }}>
       <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 700, color: mint.text, lineHeight: 1.2 }}>
-          {workspace.user.name}
-        </Typography>
-        <Typography sx={{ fontSize: 11, color: mint.textDim, lineHeight: 1.2 }}>{workspace.user.role}</Typography>
+        <Typography sx={{ fontSize: 13, fontWeight: 700, color: mint.text, lineHeight: 1.2 }}>{name}</Typography>
+        <Typography sx={{ fontSize: 11, color: mint.textDim, lineHeight: 1.2 }}>{role}</Typography>
       </Box>
       <Box
         sx={{
@@ -73,9 +75,7 @@ function FooterStrip() {
             <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: mint.violetBright }}>
               {step.toUpperCase()}
             </Typography>
-            {i < workspace.processSteps.length - 1 && (
-              <Box sx={{ width: 16, height: 1, background: mint.border }} />
-            )}
+            {i < workspace.processSteps.length - 1 && <Box sx={{ width: 16, height: 1, background: mint.border }} />}
           </Box>
         ))}
       </Box>
@@ -111,17 +111,19 @@ function FooterStrip() {
 }
 
 /**
- * M.INT workspace shell — the primary product screen (assets/Designer Layout.png).
- * Composes the Launch Pad sidebar, the M.INT newsfeed, the AI command center with
- * its configurable panel grid, the matched-news rail, the playbooks bar and the
- * process footer. Front-end first: the command bar is wired to the real /api/chat,
- * and a live SSE subscription drives intraday highlighting across the shell.
+ * M.INT workspace shell — the primary product screen, now fully agent-driven.
+ * The RM Daily Briefing agent (RM-104) powers the center (HIGH PRIORITY hero +
+ * Events in Play + RM detail panels), the newsfeed and the prioritized-outreach
+ * rail. A floating chat dock overlays the page, and a live SSE subscription
+ * re-ranks everything in place whenever the News Desk posts a new event.
  */
 export default function WorkspaceScene() {
   return (
     <WorkspaceLiveProvider>
-      <WorkspaceShell />
-      <ToastHost />
+      <ChatDockProvider>
+        <WorkspaceShell />
+        <ToastHost />
+      </ChatDockProvider>
     </WorkspaceLiveProvider>
   );
 }
@@ -165,7 +167,7 @@ function WorkspaceShell() {
       {/* Live intraday alert banner (spans above the grid) */}
       <LiveAlertBanner alert={alert} onDismiss={dismissAlert} />
 
-      {/* Main 4-column grid */}
+      {/* Main grid: nav · newsfeed · agent center · prioritized outreach */}
       <Box
         sx={{
           display: 'grid',
@@ -173,26 +175,21 @@ function WorkspaceShell() {
           alignItems: 'start',
           gridTemplateColumns: {
             xs: '1fr',
-            lg: '220px 280px 1fr',
-            xl: '230px 300px 1fr 320px',
+            lg: '200px 300px 1fr',
+            xl: '210px 320px 1fr 340px',
           },
         }}
       >
         <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-          <LaunchPadSidebar activeNav="Home" />
+          <LaunchPadSidebar />
         </Box>
         <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
           <NewsfeedColumn />
         </Box>
-        <CommandCenter />
+        <WorkspaceCenter />
         <Box sx={{ display: { xs: 'none', xl: 'block' } }}>
           <RightRail />
         </Box>
-      </Box>
-
-      {/* Bottom bar */}
-      <Box sx={{ mt: 2 }}>
-        <PlaybooksBar />
       </Box>
 
       <FooterStrip />

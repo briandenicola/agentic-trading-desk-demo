@@ -1,199 +1,97 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import BoltRoundedIcon from '@mui/icons-material/BoltRounded';
-import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
+import FlagRoundedIcon from '@mui/icons-material/FlagRounded';
 import { mint } from '../../theme/theme';
-import { workspace, type ActivityItem, type AlertPriority, type MatchedNews } from './workspaceData';
-import { useWorkspaceLive, type LiveFeedItem } from './useWorkspaceLive';
+import type { PriorityCall } from '../../api/client';
+import { useWorkspaceLive } from './useWorkspaceLive';
+import { useChatDock } from './ChatOverlay';
 
-const SOURCE_COLOR: Record<MatchedNews['source'], string> = {
-  Bloomberg: mint.amber,
-  WSJ: mint.cyan,
-  Reuters: mint.violetBright,
-  CNBC: mint.green,
+const BAND_COLOR: Record<number, string> = {
+  1: mint.red,
+  2: '#ffb547',
+  3: mint.amber,
+  4: mint.green,
 };
 
-const TAG_COLOR: Record<MatchedNews['tagKind'], string> = {
-  impacts: mint.red,
-  holds: mint.green,
-  macro: mint.cyan,
-};
-
-const LIVE_PRIORITY_COLOR: Record<AlertPriority, string> = {
-  HIGH: mint.red,
-  MEDIUM: mint.amber,
-  LOW: mint.cyan,
-  DONE: mint.green,
-};
-
-const ACTIVITY_ICON: Record<ActivityItem['icon'], ReactNode> = {
-  chat: <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 16 }} />,
-  view: <VisibilityOutlinedIcon sx={{ fontSize: 16 }} />,
-  download: <DownloadRoundedIcon sx={{ fontSize: 16 }} />,
-};
-
-function LiveNewsRow({ item }: { item: LiveFeedItem }) {
-  const color = LIVE_PRIORITY_COLOR[item.priority];
+function OutreachRow({ call }: { call: PriorityCall }) {
+  const { openChat } = useChatDock();
+  const accent = BAND_COLOR[call.priority] ?? mint.green;
   return (
     <Box
+      onClick={() => openChat(`Brief me on ${call.customerName} (${call.customerId}) for my outreach call.`)}
+      role="button"
+      aria-label={`Open chat about ${call.customerName}`}
       sx={{
-        p: 1,
-        my: 0.75,
-        borderRadius: 1.5,
-        border: `1px solid ${color}66`,
-        background: `linear-gradient(160deg, ${color}1f, ${mint.paperHi})`,
-        '@keyframes mintRailFlash': {
-          '0%': { boxShadow: `0 0 0 0 ${color}00` },
-          '25%': { boxShadow: `0 0 0 3px ${color}55` },
-          '100%': { boxShadow: `0 0 0 0 ${color}00` },
-        },
-        animation: item.isNew ? 'mintRailFlash 1.5s ease-out 2' : 'none',
+        p: 1.25,
+        borderRadius: 2,
+        border: `1px solid ${mint.borderSoft}`,
+        background: mint.paperHi,
+        borderLeft: `3px solid ${accent}`,
+        cursor: 'pointer',
+        '&:hover': { borderColor: mint.border },
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+        <Typography sx={{ fontSize: 12.5, fontWeight: 700, color: mint.text }} noWrap>
+          {call.rank}. {call.customerName}
+        </Typography>
         <Chip
-          icon={<BoltRoundedIcon sx={{ fontSize: 12, color: '#04101c !important' }} />}
-          label="M.INT LIVE"
+          label={call.score}
           size="small"
-          sx={{ height: 18, fontSize: 9, fontWeight: 800, color: '#04101c', bgcolor: color, '& .MuiChip-label': { px: 0.5 } }}
+          sx={{ height: 18, fontSize: 9.5, fontWeight: 800, color: mint.text, bgcolor: mint.borderSoft }}
         />
-        <Typography sx={{ fontSize: 10, color: mint.textDim }}>{item.time}</Typography>
       </Box>
-      <Typography sx={{ fontSize: 12.5, fontWeight: 600, color: mint.text, lineHeight: 1.4 }}>
-        {item.headline}
+      {call.tags.length > 0 && (
+        <Typography sx={{ fontSize: 10.5, color: mint.textDim, mt: 0.25 }} noWrap>
+          {call.tags.map((t) => t.label).join(' · ')}
+        </Typography>
+      )}
+      <Typography sx={{ fontSize: 11.5, color: mint.textDim, mt: 0.5, lineHeight: 1.4 }}>
+        {call.suggestedAction}
       </Typography>
     </Box>
   );
 }
 
-function NewsRow({ item }: { item: MatchedNews }) {
-  return (
-    <Box sx={{ py: 1.25, borderBottom: `1px solid ${mint.borderSoft}` }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-        <Box
-          sx={{
-            px: 0.75,
-            py: 0.1,
-            borderRadius: 1,
-            fontSize: 9,
-            fontWeight: 800,
-            letterSpacing: '0.5px',
-            color: '#04101c',
-            bgcolor: SOURCE_COLOR[item.source],
-          }}
-        >
-          {item.source}
-        </Box>
-        <Typography sx={{ fontSize: 10, color: mint.textDim }}>{item.time}</Typography>
-      </Box>
-      <Typography sx={{ fontSize: 12.5, fontWeight: 600, color: mint.text, lineHeight: 1.4 }}>
-        {item.headline}
-      </Typography>
-      <Chip
-        label={item.tagLabel}
-        size="small"
-        sx={{
-          mt: 0.75,
-          height: 18,
-          fontSize: 9,
-          fontWeight: 700,
-          color: TAG_COLOR[item.tagKind],
-          bgcolor: `${TAG_COLOR[item.tagKind]}1f`,
-          border: `1px solid ${TAG_COLOR[item.tagKind]}55`,
-        }}
-      />
-    </Box>
-  );
-}
-
-/** Right rail: tabbed "News Matched to {client}" + a client activity log. */
+/** Right rail: the ranked outreach list (ranks 2+) plus the suggested first action. */
 export default function RightRail() {
-  const [tab, setTab] = useState<(typeof workspace.newsTabs)[number]>('All');
-  const { liveItems } = useWorkspaceLive();
-  const news = workspace.matchedNews.filter((n) => tab === 'All' || n.category === tab);
+  const { brief } = useWorkspaceLive();
+  if (!brief) return null;
+  const rest = brief.priorityCallList.slice(1);
 
   return (
     <Stack spacing={2}>
       <Box sx={{ p: 1.75, borderRadius: 3, border: `1px solid ${mint.border}`, background: mint.paper }}>
-        <Typography sx={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', color: mint.text, mb: 1 }}>
-          NEWS MATCHED TO {workspace.client.name.toUpperCase()}
-        </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
-          {workspace.newsTabs.map((t) => {
-            const active = t === tab;
-            return (
-              <Box
-                key={t}
-                onClick={() => setTab(t)}
-                sx={{
-                  px: 1,
-                  py: 0.35,
-                  borderRadius: 1.5,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  color: active ? mint.text : mint.textDim,
-                  background: active ? `${mint.violet}29` : 'transparent',
-                  border: `1px solid ${active ? mint.border : 'transparent'}`,
-                }}
-              >
-                {t}
-              </Box>
-            );
-          })}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.25 }}>
+          <PhoneInTalkRoundedIcon sx={{ fontSize: 16, color: mint.violetBright }} />
+          <Typography sx={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.6px', color: mint.text }}>
+            PRIORITIZED OUTREACH
+          </Typography>
         </Box>
-        {tab === 'All' && liveItems.map((item) => <LiveNewsRow key={item.id} item={item} />)}
-        {news.length > 0 ? (
-          news.map((n) => <NewsRow key={n.id} item={n} />)
-        ) : (
-          <Typography sx={{ fontSize: 12, color: mint.textDim, py: 2 }}>No matched news in this category.</Typography>
-        )}
-        <Typography sx={{ fontSize: 12, fontWeight: 600, color: mint.cyan, textAlign: 'center', cursor: 'pointer', mt: 1 }}>
-          View All Matched News
-        </Typography>
+        <Stack spacing={1}>
+          {rest.length === 0 ? (
+            <Typography sx={{ fontSize: 12, color: mint.textDim }}>No further calls ranked.</Typography>
+          ) : (
+            rest.map((c) => <OutreachRow key={c.customerId} call={c} />)
+          )}
+        </Stack>
       </Box>
 
-      <Box sx={{ p: 1.75, borderRadius: 3, border: `1px solid ${mint.border}`, background: mint.paper }}>
-        <Typography sx={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', color: mint.text, mb: 1 }}>
-          CLIENT ACTIVITY
-        </Typography>
-        <Stack spacing={1.25}>
-          {workspace.activity.map((a) => (
-            <Box key={a.id} sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-              <Box
-                sx={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 1.5,
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: mint.violetBright,
-                  border: `1px solid ${mint.border}`,
-                  background: mint.paperHi,
-                }}
-              >
-                {ACTIVITY_ICON[a.icon]}
-              </Box>
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontSize: 12.5, fontWeight: 600, color: mint.text }} noWrap>
-                  {a.title}
-                </Typography>
-                <Typography sx={{ fontSize: 11, color: mint.textDim }} noWrap>
-                  {a.subtitle}
-                </Typography>
-              </Box>
-              <Typography sx={{ fontSize: 10, color: mint.textDim, whiteSpace: 'nowrap' }}>{a.time}</Typography>
-            </Box>
-          ))}
-        </Stack>
-        <Typography sx={{ fontSize: 12, fontWeight: 600, color: mint.cyan, textAlign: 'center', cursor: 'pointer', mt: 1.25 }}>
-          View All Activity
-        </Typography>
+      <Box
+        sx={{
+          p: 1.75,
+          borderRadius: 3,
+          border: `1px solid ${mint.violet}59`,
+          background: `linear-gradient(135deg, ${mint.violet}24, ${mint.cyan}12)`,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
+          <FlagRoundedIcon sx={{ fontSize: 16, color: mint.violetBright }} />
+          <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.6px', color: mint.violetBright }}>
+            SUGGESTED FIRST ACTION
+          </Typography>
+        </Box>
+        <Typography sx={{ fontSize: 12.5, color: mint.text, lineHeight: 1.5 }}>{brief.suggestedFirstAction}</Typography>
       </Box>
     </Stack>
   );

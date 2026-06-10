@@ -4,6 +4,7 @@ import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { runMorningBrief, subscribeToEvents, type LiveAlert, type MorningBrief } from '../../api/client';
 import CockpitNav from '../../components/CockpitNav';
 import CockpitDashboardLayout from '../../components/CockpitDashboardLayout';
+import { ChatDockProvider } from '../Workspace/ChatOverlay';
 import { mint } from '../../theme/theme';
 
 /**
@@ -44,46 +45,48 @@ export default function CockpitScene() {
   }, [hasBrief]);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <CockpitNav />
+    <ChatDockProvider>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <CockpitNav />
 
-      <Container maxWidth={false} sx={{ py: 4, px: { xs: 2, md: 4 } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-          <Box>
-            <Typography variant="overline" color="text.secondary" sx={{ fontSize: '12px' }}>
-              Markets Intelligence · Morning Call
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#e8eef5' }}>
-              Cockpit Dashboard
-            </Typography>
+        <Container maxWidth={false} sx={{ py: 4, px: { xs: 2, md: 4 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+            <Box>
+              <Typography variant="overline" color="text.secondary" sx={{ fontSize: '12px' }}>
+                Markets Intelligence · Morning Call
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#e8eef5' }}>
+                Cockpit Dashboard
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              onClick={handleRun}
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <PlayArrowRoundedIcon />}
+              sx={{ fontWeight: 600 }}
+            >
+              {loading ? 'Running…' : hasBrief ? 'Re-run morning call' : 'Run morning call'}
+            </Button>
           </Box>
-          <Button
-            variant="contained"
-            onClick={handleRun}
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <PlayArrowRoundedIcon />}
-            sx={{ fontWeight: 600 }}
-          >
-            {loading ? 'Running…' : hasBrief ? 'Re-run morning call' : 'Run morning call'}
-          </Button>
-        </Box>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-        {brief ? (
-          <CockpitDashboardLayout brief={brief} liveAlert={liveAlert} />
-        ) : (
-          !loading && (
-            <Typography variant="body2" sx={{ color: mint.textDim }}>
-              Run the morning call to populate the Client, Ticker, and Overall views.
-            </Typography>
-          )
-        )}
-      </Container>
-    </Box>
+          {brief ? (
+            <CockpitDashboardLayout brief={brief} liveAlert={liveAlert} />
+          ) : (
+            !loading && (
+              <Typography variant="body2" sx={{ color: mint.textDim }}>
+                Run the morning call to populate the Client, Ticker, and Overall views.
+              </Typography>
+            )
+          )}
+        </Container>
+      </Box>
+    </ChatDockProvider>
   );
 }

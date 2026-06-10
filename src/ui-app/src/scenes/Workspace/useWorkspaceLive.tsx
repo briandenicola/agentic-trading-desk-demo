@@ -7,17 +7,22 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
+import { runRmBriefing, subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
 import { usePersistentState } from '../../hooks/usePersistentState';
 import type { AlertPriority } from './workspaceData';
 
 // ---------------------------------------------------------------------------
-// Workspace live wiring (002 US2). Holds a long-lived SSE subscription to the
-// reactive rm-briefing stream — the SAME pipeline the admin News Desk pushes
-// into — and turns each impactful intraday event into highlighting cues across
-// the shell: newsfeed/matched-news rows, a live banner, a toast stack, the LIVE
-// status pill, KPI "updated" pulses and the notifications badge.
+// Workspace data + live wiring. This is the single engine behind the main page:
+//   1. Auto-loads the real RM Daily Briefing (RM-104) on first visit and persists
+//      it, so navigating away and back does not re-run the agent.
+//   2. Holds a long-lived SSE subscription to the reactive rm-briefing stream — the
+//      SAME pipeline the admin News Desk pushes into — so every /admin post
+//      re-ranks the page in place and lights up the shell: newsfeed rows, a live
+//      banner, a toast stack, the LIVE pill, KPI pulses and the unread badge.
 // ---------------------------------------------------------------------------
+
+const RM_ID = 'RM-104';
+const RM_DATE = '2026-05-14';
 
 export interface LiveFeedItem {
   id: string;
@@ -36,6 +41,10 @@ export interface LiveToast {
 }
 
 interface WorkspaceLiveValue {
+  brief: RmBriefing | null;
+  briefLoading: boolean;
+  briefError: string | null;
+  reloadBrief: () => void;
   connected: boolean;
   liveItems: LiveFeedItem[];
   alert: LiveAlert | null;
@@ -60,7 +69,15 @@ function nowTime(): string {
   return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
+function isUsableBriefing(b: unknown): b is RmBriefing {
+  return !!b && Array.isArray((b as RmBriefing).priorityCallList);
+}
+
 export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
+  const [brief, setBrief] = usePersistentState<RmBriefing | null>('workspace/brief', null);
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefError, setBriefError] = useState<string | null>(null);
+
   const [liveItems, setLiveItems] = usePersistentState<LiveFeedItem[]>('workspace/live-items', []);
   const [unread, setUnread] = usePersistentState<number>('workspace/live-unread', 0);
   const [alert, setAlert] = useState<LiveAlert | null>(null);
@@ -71,6 +88,31 @@ export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
   const seenRef = useRef<Set<number>>(new Set());
   const baselineRef = useRef(false);
   const timersRef = useRef<number[]>([]);
+  const didAutoRun = useRef(false);
+
+  const loadBrief = useCallback(async () => {
+    setBriefLoading(true);
+    setBriefError(null);
+    try {
+      const result = await runRmBriefing({ payload: { rmId: RM_ID, date: RM_DATE } });
+      setBrief(result);
+    } catch (err) {
+      setBriefError(err instanceof Error ? err.message : 'Failed to load the daily briefing');
+    } finally {
+      setBriefLoading(false);
+    }
+  }, [setBrief]);
+
+  const reloadBrief = useCallback(() => {
+    void loadBrief();
+  }, [loadBrief]);
+
+  // Auto-run on first visit so the page renders real data without a manual click.
+  useEffect(() => {
+    if (didAutoRun.current || brief !== null) return;
+    didAutoRun.current = true;
+    void loadBrief();
+  }, [brief, loadBrief]);
 
   const dismissToast = useCallback((id: string) => {
     setToasts((t) => t.filter((x) => x.id !== id));
@@ -87,6 +129,11 @@ export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
           setConnected(true);
           if (seenRef.current.has(update.sequence)) return;
           seenRef.current.add(update.sequence);
+
+          // Always reconcile the page to the freshest re-synthesized briefing.
+          if (isUsableBriefing(update.briefing)) {
+            setBrief(update.briefing);
+          }
 
           // The first snapshot after (re)mounting is the current baseline — sync it
           // silently so navigating into the workspace doesn't fire a stale alert.
@@ -123,7 +170,7 @@ export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
         },
         onError: () => setConnected(false),
       },
-      { persona: 'RM-104' },
+      { persona: RM_ID },
     );
 
     const timers = timersRef.current;
@@ -132,9 +179,13 @@ export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
       timers.forEach((t) => window.clearTimeout(t));
       timersRef.current = [];
     };
-  }, [dismissToast, setLiveItems, setUnread]);
+  }, [dismissToast, setBrief, setLiveItems, setUnread]);
 
   const value: WorkspaceLiveValue = {
+    brief,
+    briefLoading,
+    briefError,
+    reloadBrief,
     connected,
     liveItems,
     alert,
