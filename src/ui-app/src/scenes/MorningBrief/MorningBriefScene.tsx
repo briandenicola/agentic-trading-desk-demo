@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Box,
@@ -6,7 +6,6 @@ import {
   Chip,
   CircularProgress,
   Container,
-  LinearProgress,
   Paper,
   Stack,
   Table,
@@ -22,8 +21,6 @@ import {
   type AffectedClient,
   type LiveAlert,
   type MorningBrief,
-  type OutreachItem,
-  type RankingRationale,
 } from '../../api/client';
 import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
@@ -34,32 +31,19 @@ import AiInsightPanel from '../../components/AiInsightPanel';
 import LiveAlertBanner from '../../components/LiveAlertBanner';
 import { mint } from '../../theme/theme';
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import GpsFixedOutlinedIcon from '@mui/icons-material/GpsFixedOutlined';
-import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-
-const rationaleScores = (rationale: RankingRationale) => [
-  { label: 'Wallet', value: rationale.walletScore },
-  { label: 'Engagement', value: rationale.engagementScore },
-  { label: 'Event relevance', value: rationale.eventRelevanceScore },
-  { label: 'Composite', value: rationale.compositeScore },
-];
-
-function formatScore(score: number): string {
-  return `${Math.round(score * 100)}%`;
-}
 
 export default function MorningBriefScene() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [brief, setBrief] = usePersistentState<MorningBrief | null>('morning-brief/brief', null);
-  const [expandedRationaleCid, setExpandedRationaleCid] = useState<string | null>(null);
   const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 
   const handleRunBrief = async () => {
     setLoading(true);
     setError(null);
-    setExpandedRationaleCid(null);
     try {
       const result = await loadPersistentOnce('morning-brief/brief', () =>
         runMorningBrief({
@@ -96,11 +80,7 @@ export default function MorningBriefScene() {
       },
     });
     return unsubscribe;
-  }, [hasBrief]);
-
-  const toggleRationale = (cid: string) => {
-    setExpandedRationaleCid((current) => (current === cid ? null : cid));
-  };
+  }, [hasBrief, setBrief]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -136,6 +116,14 @@ export default function MorningBriefScene() {
           >
             {loading ? 'Running...' : 'Run morning brief'}
           </Button>
+          {brief && (
+            <Chip
+              label={brief.mode}
+              size="small"
+              color={brief.mode === 'LIVE' ? 'success' : 'default'}
+              sx={{ fontWeight: 700 }}
+            />
+          )}
         </Box>
 
         {error && (
@@ -147,18 +135,14 @@ export default function MorningBriefScene() {
         {brief && (
           <Stack spacing={2}>
             <LiveAlertBanner alert={liveAlert} onDismiss={() => setLiveAlert(null)} />
+
             <AiInsightPanel title="Agent reasoning">
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
                 {brief.reasoning.map((step, idx) => (
                   <Box
                     component="li"
                     key={idx}
-                    sx={{
-                      display: 'flex',
-                      gap: 1.5,
-                      mb: 1.5,
-                      '&:last-child': { mb: 0 },
-                    }}
+                    sx={{ display: 'flex', gap: 1.5, mb: 1.5, '&:last-child': { mb: 0 } }}
                   >
                     <Typography
                       component="span"
@@ -178,248 +162,166 @@ export default function MorningBriefScene() {
               </Box>
             </AiInsightPanel>
 
-            <Paper sx={{ p: 3 }}>
-              <SectionTitle
-                icon={<NewspaperOutlinedIcon fontSize="inherit" />}
-                caption="— a narrative you can share with clients"
-              >
-                Macro event analysis
-              </SectionTitle>
-              <Typography variant="body2" sx={{ mt: 2, mb: 1.5 }}>
-                {brief.macroNarrative.summary}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: 'italic' }}>
-                <strong>Why it matters:</strong> {brief.macroNarrative.whyItMatters}
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {brief.macroNarrative.sources.map((src, idx) => (
-                  <Chip
-                    key={idx}
-                    label={src}
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      fontSize: '11px',
-                      borderColor: 'rgba(255,255,255,0.2)',
-                      bgcolor: 'rgba(255,255,255,0.03)',
-                    }}
-                  />
-                ))}
-              </Box>
-            </Paper>
-
-            {brief.eventsConsidered && brief.eventsConsidered.length > 0 && (
-              <Paper sx={{ p: 3 }} data-testid="events-considered">
-                <SectionTitle
-                  icon={<NewspaperOutlinedIcon fontSize="inherit" />}
-                  caption="— overnight & intraday signals weighed into client linkage"
-                >
-                  Events considered ({brief.eventsConsidered.length})
-                </SectionTitle>
-                <Stack spacing={1} sx={{ mt: 2 }}>
-                  {brief.eventsConsidered.map((ev) => (
-                    <Box
-                      key={ev.id}
-                      data-testid={`event-${ev.id}`}
-                      sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}
-                    >
+            {/* Two-column cockpit: macro analysis + details on the left, the outreach plan on the right. */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
+                gap: 2,
+                alignItems: 'start',
+              }}
+            >
+              {/* LEFT — Macro event analysis & details */}
+              <Stack spacing={2}>
+                <Paper sx={{ p: 3 }}>
+                  <SectionTitle
+                    icon={<NewspaperOutlinedIcon fontSize="inherit" />}
+                    caption="— a narrative you can share with clients"
+                  >
+                    Macro event analysis
+                  </SectionTitle>
+                  <Typography variant="body2" sx={{ mt: 2, mb: 1.5 }}>
+                    {brief.macroNarrative.summary}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: 'italic' }}>
+                    <strong>Why it matters:</strong> {brief.macroNarrative.whyItMatters}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {brief.macroNarrative.sources.map((src, idx) => (
                       <Chip
-                        label={ev.severity.toUpperCase()}
+                        key={idx}
+                        label={src}
                         size="small"
-                        color={ev.severity === 'high' ? 'error' : ev.severity === 'medium' ? 'warning' : 'default'}
-                        sx={{ fontSize: '10px', fontWeight: 700, height: 20 }}
+                        variant="outlined"
+                        sx={{
+                          fontSize: '11px',
+                          borderColor: 'rgba(255,255,255,0.2)',
+                          bgcolor: 'rgba(255,255,255,0.03)',
+                        }}
                       />
-                      <Typography variant="body2">{ev.headline}</Typography>
-                    </Box>
-                  ))}
-                </Stack>
-              </Paper>
-            )}
-
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-              <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
-                  <SectionTitle icon={<GpsFixedOutlinedIcon fontSize="inherit" />}>
-                    Most-affected clients
-                  </SectionTitle>
-                  <Typography variant="caption" color="text.secondary">
-                    Flagged by portfolio rate sensitivity
-                  </Typography>
-                </Box>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Client</TableCell>
-                      <TableCell>Exposure</TableCell>
-                      <TableCell>Concern</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {brief.mostAffectedClients.map((client: AffectedClient) => (
-                      <TableRow key={client.cid}>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {client.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {client.tier}
-                          </Typography>
-                          {client.drivingEvents && client.drivingEvents.length > 0 && (
-                            <Box data-testid={`driving-events-${client.cid}`} sx={{ mt: 0.5 }}>
-                              {client.drivingEvents.map((ev) => (
-                                <Typography
-                                  key={ev.eventId}
-                                  variant="caption"
-                                  sx={{ display: 'block', color: mint.violetBright }}
-                                >
-                                  ⚡ {ev.headline}
-                                </Typography>
-                              ))}
-                            </Box>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2">{client.exposure}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            label={client.concern.label}
-                            size="small"
-                            color={
-                              client.concern.kind === 'sell'
-                                ? 'error'
-                                : client.concern.kind === 'warm'
-                                  ? 'warning'
-                                  : 'info'
-                            }
-                            sx={{ fontSize: '11px' }}
-                          />
-                        </TableCell>
-                      </TableRow>
                     ))}
-                  </TableBody>
-                </Table>
-              </Paper>
+                  </Box>
+                </Paper>
 
-              <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
-                  <SectionTitle icon={<PhoneInTalkOutlinedIcon fontSize="inherit" />}>
-                    Outbound priority
-                  </SectionTitle>
-                  <Typography variant="caption" color="text.secondary">
-                    Wallet + engagement + today's events
-                  </Typography>
-                </Box>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ width: '40px' }}>#</TableCell>
-                      <TableCell>Client</TableCell>
-                      <TableCell>Suggested topic + talking points</TableCell>
-                      <TableCell>Rationale</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {brief.outreach.map((item: OutreachItem) => (
-                      <Fragment key={item.cid}>
-                        <TableRow>
-                          <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
-                            {item.rank}
-                          </TableCell>
+                {brief.eventsConsidered && brief.eventsConsidered.length > 0 && (
+                  <Paper sx={{ p: 3 }} data-testid="events-considered">
+                    <SectionTitle
+                      icon={<BoltOutlinedIcon fontSize="inherit" />}
+                      caption="— overnight & intraday signals weighed into client linkage"
+                    >
+                      Events considered ({brief.eventsConsidered.length})
+                    </SectionTitle>
+                    <Stack spacing={1.25} sx={{ mt: 2 }}>
+                      {brief.eventsConsidered.map((ev) => (
+                        <Box
+                          key={ev.id}
+                          data-testid={`event-${ev.id}`}
+                          sx={{
+                            p: 1.5,
+                            borderRadius: 2,
+                            border: `1px solid ${mint.borderSoft}`,
+                            bgcolor: 'rgba(255,255,255,0.02)',
+                            borderLeft: `3px solid ${
+                              ev.severity === 'high' ? mint.red : ev.severity === 'medium' ? mint.amber : mint.cyan
+                            }`,
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
+                            <Chip
+                              label={ev.severity.toUpperCase()}
+                              size="small"
+                              color={ev.severity === 'high' ? 'error' : ev.severity === 'medium' ? 'warning' : 'default'}
+                              sx={{ fontSize: '10px', fontWeight: 700, height: 20 }}
+                            />
+                            {ev.scope && (
+                              <Chip
+                                label={ev.scope}
+                                size="small"
+                                variant="outlined"
+                                sx={{ fontSize: '10px', height: 20, borderColor: mint.border }}
+                              />
+                            )}
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {ev.headline}
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" color="text.secondary">
+                            {ev.summary}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Paper>
+                )}
+
+                <Paper>
+                  <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
+                    <SectionTitle icon={<GpsFixedOutlinedIcon fontSize="inherit" />}>
+                      Most-affected clients
+                    </SectionTitle>
+                    <Typography variant="caption" color="text.secondary">
+                      Flagged by portfolio rate sensitivity
+                    </Typography>
+                  </Box>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Client</TableCell>
+                        <TableCell>Exposure</TableCell>
+                        <TableCell>Concern</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {brief.mostAffectedClients.map((client: AffectedClient) => (
+                        <TableRow key={client.cid}>
                           <TableCell>
                             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {item.name}
+                              {client.name}
                             </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {client.tier}
+                            </Typography>
+                            {client.drivingEvents && client.drivingEvents.length > 0 && (
+                              <Box data-testid={`driving-events-${client.cid}`} sx={{ mt: 0.5 }}>
+                                {client.drivingEvents.map((ev) => (
+                                  <Typography
+                                    key={ev.eventId}
+                                    variant="caption"
+                                    sx={{ display: 'block', color: mint.violetBright }}
+                                  >
+                                    ⚡ {ev.headline}
+                                  </Typography>
+                                ))}
+                              </Box>
+                            )}
                           </TableCell>
                           <TableCell>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                              {item.suggestedTopic}
-                            </Typography>
-                            <Box component="ul" sx={{ pl: 2, my: 0 }}>
-                              {item.talkingPoints.map((point, idx) => (
-                                <Typography
-                                  component="li"
-                                  key={idx}
-                                  variant="caption"
-                                  color="text.secondary"
-                                  sx={{ display: 'list-item', mb: 0.5 }}
-                                >
-                                  {point}
-                                </Typography>
-                              ))}
-                            </Box>
+                            <Typography variant="body2">{client.exposure}</Typography>
                           </TableCell>
                           <TableCell>
-                            <Button
-                              type="button"
+                            <Chip
+                              label={client.concern.label}
                               size="small"
-                              variant="outlined"
-                              onClick={() => toggleRationale(item.cid)}
-                              aria-expanded={expandedRationaleCid === item.cid}
-                              aria-controls={`rationale-${item.cid}`}
-                              sx={{ textTransform: 'none' }}
-                            >
-                              {expandedRationaleCid === item.cid ? 'Hide rationale' : 'Inspect rationale'}
-                            </Button>
+                              color={
+                                client.concern.kind === 'sell'
+                                  ? 'error'
+                                  : client.concern.kind === 'warm'
+                                    ? 'warning'
+                                    : 'info'
+                              }
+                              sx={{ fontSize: '11px' }}
+                            />
                           </TableCell>
                         </TableRow>
-                        {expandedRationaleCid === item.cid && (
-                          <TableRow>
-                            <TableCell colSpan={4} sx={{ py: 0, borderBottomColor: 'rgba(255,255,255,0.08)' }}>
-                              <Box
-                                id={`rationale-${item.cid}`}
-                                sx={{
-                                  my: 1,
-                                  p: 2,
-                                  borderRadius: 2,
-                                  border: '1px solid rgba(255,255,255,0.1)',
-                                  bgcolor: 'rgba(79,140,255,0.08)',
-                                }}
-                              >
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                  Ranking rationale for {item.name}
-                                </Typography>
-                                <Stack spacing={1} sx={{ mb: 1.5 }}>
-                                  {rationaleScores(item.rationale).map((score) => (
-                                    <Box key={score.label}>
-                                      <Box
-                                        sx={{
-                                          display: 'flex',
-                                          justifyContent: 'space-between',
-                                          mb: 0.5,
-                                        }}
-                                      >
-                                        <Typography variant="caption" color="text.secondary">
-                                          {score.label}
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                                          {formatScore(score.value)}
-                                        </Typography>
-                                      </Box>
-                                      <LinearProgress
-                                        variant="determinate"
-                                        value={Math.max(0, Math.min(100, score.value * 100))}
-                                        color={score.label === 'Composite' ? 'success' : 'primary'}
-                                        sx={{ height: 6, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.1)' }}
-                                      />
-                                    </Box>
-                                  ))}
-                                </Stack>
-                                <Typography variant="caption" color="text.secondary">
-                                  {item.rationale.explanation}
-                                </Typography>
-                              </Box>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-            </Box>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </Stack>
 
-            <CallPlan outreach={brief.outreach} asOf={brief.asOf} />
+              {/* RIGHT — Your outreach plan */}
+              <CallPlan outreach={brief.outreach} asOf={brief.asOf} />
+            </Box>
 
             {brief.notes && brief.notes.length > 0 && (
               <Alert severity="info" sx={{ fontSize: '13px' }}>
