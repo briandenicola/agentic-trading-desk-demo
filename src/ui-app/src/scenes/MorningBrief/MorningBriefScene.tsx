@@ -129,11 +129,12 @@ export default function MorningBriefScene() {
           </Box>
 
           <Typography
-            variant="h3"
+            variant="h4"
             sx={{
               mb: 2,
               fontWeight: 700,
-              lineHeight: 1.1,
+              lineHeight: 1.15,
+              fontSize: { xs: '1.5rem', md: '2rem' },
               background: `linear-gradient(120deg, ${mint.text} 0%, ${mint.violetBright} 55%, ${mint.cyan} 100%)`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

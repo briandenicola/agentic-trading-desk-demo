@@ -185,3 +185,63 @@ stateless — the client replays the conversation each turn.
 - **Model**: `FOUNDRY_MODEL_CHAT`, which defaults to the `gpt-4o-mini` morning deployment so chat never
   competes with the briefing synthesizers for quota. Both surfaces return the same `ChatReply` shape.
 
+## Frontend / UI (`src\ui-app`)
+
+React 19 + TypeScript + MUI v9, themed with the **M.INT** mint palette
+(`src\ui-app\src\theme\theme.ts`). The frontend is mode-blind (Principle III): every scene renders
+the same DTO whether it came from DEMO or LIVE. Routes: `/` (agent workspace), `/cockpit`,
+`/rm-briefing`, `/morning-brief`, `/admin` (News Desk), `/chat`.
+
+### Agent-driven main page (`/` — `scenes\Workspace`)
+
+The landing page is the **RM Daily Briefing** rendered live, not a static shell. On first visit it
+auto-runs `POST /api/agent/rm-briefing` for `RM-104` and composes:
+
+- **HIGH PRIORITY hero** — `priorityCallList[0]` with a seeded **Open Chat** action.
+- **Events in Play** — `eventsConsidered`.
+- **RM detail panels** — `kpis` + `portfolio`, `complaintsSnapshot`, `pipelineClosing`, `macroSnapshot`.
+- **Live newsfeed** (left) — live incoming events over the overnight baseline signals.
+- **Prioritized outreach** (right) — `priorityCallList[1..]` + `suggestedFirstAction`.
+
+`scenes\Workspace\useWorkspaceLive.tsx` is the single data+live engine: it owns the auto-load, holds
+the long-lived SSE subscription (`subscribeToEvents('rm-briefing', …, { persona:'RM-104' })`), and on
+every `briefing-update` re-ranks the page in place with highly visible cues — hero flash, the
+`LiveAlertBanner`, a toast stack, the LIVE pill, KPI pulses and the unread badge. The **same** stream
+is fed by the `/admin` News Desk, so an operator post lights up the main page (and the cockpit). The
+left rail links to Cockpit / News Desk / Morning Brief; the process strip + trust badges are a fixed
+footer bar that shares the bottom row with the floating chat pill.
+
+### Floating chat dock (`scenes\Workspace\ChatOverlay.tsx`)
+
+Chat is a floating overlay, not an inline panel. `ChatDockProvider` exposes `useChatDock()` with
+`openChat(seed?)`; a bottom-right launcher expands into an overlay wired to `POST /api/chat`
+(`MarkdownMessage` renders assistant replies as Markdown). Panels can pop it open seeded with context
+(e.g. the hero "Open Chat" pre-fills a question about the top call). The dock is mounted on the
+**main page and the Cockpit**.
+
+### Cross-navigation persistence (`hooks\usePersistentState.ts`)
+
+Auto-loading scenes (main page, RM briefing, morning brief) must survive navigating away and back
+without re-running the agent. Two pieces cooperate:
+
+- `usePersistentState(key, initial)` keeps each scene's result in a **module-level store** for the SPA
+  session, so a remount reads the prior value instead of the initial one.
+- `loadPersistentOnce(key, loader)` runs the fetch, writes the result **straight into that store**, and
+  **dedupes concurrent loads**. This keeps an in-flight request alive across unmount: if the user
+  leaves before it resolves, the result still lands in the store, so returning shows the loaded value
+  instead of kicking off a fresh run. A second call after resolution starts a new load (explicit
+  reload). `clearPersistentState()` (test seam) clears both the store and the in-flight registry.
+
+### Morning Brief (`scenes\MorningBrief`)
+
+A two-column cockpit mirroring the RM Daily Brief column look, under a themed M.INT hero (gradient
+title + action bar):
+
+- **Left — Macro Event Analysis & details**: the macro narrative ("why it matters" + sources), the
+  *Events considered* signal cards, and the *Most-affected clients* table (with per-client driving
+  events).
+- **Right — Your outreach plan** (`CallPlan.tsx`): numbered, editable client cards with a topic
+  eyebrow, a composite-score chip, structured talking-point editors, a personal-note field, and a
+  collapsible "Why this ranking?" rationale (wallet / engagement / event-relevance / composite bars +
+  explanation). The plan stays human-in-the-loop and demo-only — approval issues no outbound call.
+
