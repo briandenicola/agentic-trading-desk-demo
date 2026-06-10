@@ -41,6 +41,14 @@ public sealed class RmBriefingTools(MockApiClient mockApi)
     public Task<string> GetCustomerInteractionsAsync(string customerId, CancellationToken ct = default)
         => GetAsync($"/mock/cb/customers/{Encode(customerId)}/interactions", ct);
 
+    /// <summary>Current market/news events (overnight + intraday) for reactive ranking (002).</summary>
+    public Task<string> GetCurrentEventsAsync(string? scope = null, CancellationToken ct = default)
+        => GetAsync(string.IsNullOrWhiteSpace(scope) ? "/mock/events" : $"/mock/events?scope={Encode(scope)}", ct);
+
+    /// <summary>Events affecting one entity (kind: customer | sector) for per-call linkage (002).</summary>
+    public Task<string> GetEventsByEntityAsync(string value, string? kind = null, CancellationToken ct = default)
+        => GetAsync($"/mock/events/by-entity?value={Encode(value)}{(string.IsNullOrWhiteSpace(kind) ? "" : $"&kind={Encode(kind)}")}", ct);
+
     // ---------------------------------------------------------------- internals
 
     private async Task<string> GetAsync(string path, CancellationToken ct)

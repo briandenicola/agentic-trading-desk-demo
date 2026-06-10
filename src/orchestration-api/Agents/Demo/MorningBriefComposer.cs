@@ -18,7 +18,7 @@ namespace OrchestrationApi.Agents.Demo;
 /// the composer returns a degraded-but-structured brief carrying a <c>notes</c> entry
 /// rather than throwing.
 /// </summary>
-public sealed class MorningBriefComposer(MockApiClient mockApi)
+public sealed class MorningBriefComposer(MockApiClient mockApi, Tools.EventTools eventTools)
 {
     // How many flagged clients to surface (matches the storyboard's curated set).
     private const int TopAffected = 3;
@@ -41,6 +41,9 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
         }
 
         var asOf = market["asOf"]?.GetValue<string>() ?? $"{date ?? "2026-06-04"}T07:30:00-04:00";
+
+        // Reactive overlay (002): the current event set is surfaced and linked per affected client.
+        var events = await GetEventsAsync(notes, ct);
 
         var marketStrip = BuildMarketStrip(market);
         var reasoning = BuildReasoning();
@@ -77,6 +80,7 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
                 MostAffectedClients = [],
                 Outreach = [],
                 Notes = notes,
+                EventsConsidered = events,
             };
         }
 
@@ -88,6 +92,8 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
                 Tier = x.Client.Tier,
                 Exposure = ExposureLabel(x.Exposure.ExposureType),
                 Concern = ConcernFor(x.Exposure.ExposureType),
+                DrivingEvents = EventImpactResolver.ResolveForSecurity(
+                    x.Cid, ticker: null, issuer: null, sector: x.Exposure.Sector, events),
             })
             .ToList();
 
@@ -117,10 +123,29 @@ public sealed class MorningBriefComposer(MockApiClient mockApi)
             MostAffectedClients = mostAffected,
             Outreach = outreach,
             Notes = notes.Count > 0 ? notes : null,
+            EventsConsidered = events,
         };
     }
 
     // ---------------------------------------------------------------- helpers
+
+    private async Task<IReadOnlyList<MarketEvent>> GetEventsAsync(List<string> notes, CancellationToken ct)
+    {
+        try
+        {
+            var events = await eventTools.ListEventsAsync(ct: ct);
+            if (events.Count > 0)
+            {
+                notes.Add($"Reactive overlay: {events.Count} current event(s) considered for client linkage.");
+            }
+            return events;
+        }
+        catch (Exception)
+        {
+            notes.Add("Event store unavailable: the brief was composed without event linkage.");
+            return [];
+        }
+    }
 
     private async Task<JsonNode?> TryGetAsync(string path, List<string> notes, CancellationToken ct)
     {

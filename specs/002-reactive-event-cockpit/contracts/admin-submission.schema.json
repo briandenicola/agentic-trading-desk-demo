@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wf-garage/specs/002-reactive-event-cockpit/admin-submission.schema.json",
+  "title": "AdminNewsSubmission",
+  "description": "Operator-authored payload from the /admin route (US3, FR-014). On a successful POST it becomes an intraday Event (scope=intraday, origin=admin) and flows through the same ingestion + reactive SSE path as a real intraday event (FR-016). Client-side validation here mirrors the server re-validation (FR-015); nothing is ingested on failure. Validated with JsonSchema.Net draft-2020-12 (Decision #6).",
+  "type": "object",
+  "required": ["headline", "summary", "severity", "type", "affectedEntities"],
+  "additionalProperties": false,
+  "properties": {
+    "headline": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Required and non-empty (FR-015)."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "description": "Optional fictional source label; defaults to an admin label if omitted."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["macro_rate", "sector", "issuer_credit", "client_headline"]
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["positive", "negative", "neutral"]
+    },
+    "affectedEntities": {
+      "type": "object",
+      "description": "MUST contain at least one non-empty selector array (FR-015). Maps the event to the RM book (customerIds/sectors) and/or the trading book (tickers/sectors/issuers) per research R5.",
+      "additionalProperties": false,
+      "properties": {
+        "customerIds": { "type": "array", "items": { "type": "string" } },
+        "tickers": { "type": "array", "items": { "type": "string" } },
+        "sectors": { "type": "array", "items": { "type": "string" } },
+        "issuers": { "type": "array", "items": { "type": "string" } }
+      },
+      "anyOf": [
+        { "required": ["customerIds"], "properties": { "customerIds": { "minItems": 1 } } },
+        { "required": ["tickers"], "properties": { "tickers": { "minItems": 1 } } },
+        { "required": ["sectors"], "properties": { "sectors": { "minItems": 1 } } },
+        { "required": ["issuers"], "properties": { "issuers": { "minItems": 1 } } }
+      ]
+    },
+    "sceneTargeting": {
+      "type": "array",
+      "description": "Optional scene hints; absence => resolved by entity mapping (research R5).",
+      "items": {
+        "type": "string",
+        "enum": ["rm-briefing", "morning-brief"]
+      }
+    }
+  }
+}

@@ -43,6 +43,15 @@ const mockBrief: RmBriefing = {
       ],
       reasons: ['Two open complaints, one escalated.', 'Opportunity closing in 9 days.'],
       suggestedAction: 'Call the CFO to resolve the escalated complaint and confirm the closing terms.',
+      drivingEvents: [
+        {
+          eventId: 'evt-20260514-002',
+          headline: 'Bumper-harvest forecast sinks grain prices to a 3-year low',
+          entityRef: 'CB-10036',
+          contribution: 30,
+          rationale: 'High-severity sector event hits the Agriculture sector: downside risk to manage (+30 priority).',
+        },
+      ],
     },
     {
       rank: 2,
@@ -84,6 +93,18 @@ const mockBrief: RmBriefing = {
     { headline: 'Ag commodity prices firm', detail: 'Supports grain-sector borrowers in your book.' },
   ],
   suggestedFirstAction: 'Start with Prairie Grain Cooperative — escalated complaint plus a deal closing this week.',
+  eventsConsidered: [
+    {
+      id: 'evt-20260514-002',
+      type: 'sector',
+      headline: 'Bumper-harvest forecast sinks grain prices to a 3-year low',
+      summary: 'A fictional record harvest forecast pressured grain prices overnight.',
+      severity: 'high',
+      scope: 'overnight',
+      origin: 'seed',
+      direction: 'negative',
+    },
+  ],
 };
 
 function renderScene() {
@@ -144,5 +165,17 @@ describe('RmBriefingScene', () => {
     expect(
       screen.getByText(/Start with Prairie Grain Cooperative/i),
     ).toBeInTheDocument();
+  });
+
+  it('renders the events-considered list and per-call driving events', async () => {
+    await runBriefing();
+
+    const eventsPanel = screen.getByTestId('events-considered');
+    expect(eventsPanel).toHaveTextContent(/Events considered \(1\)/i);
+    expect(screen.getByTestId('event-evt-20260514-002')).toHaveTextContent(/Bumper-harvest forecast/i);
+
+    const drivers = screen.getByTestId('driving-events-CB-10036');
+    expect(drivers).toHaveTextContent(/DRIVING EVENTS/i);
+    expect(drivers).toHaveTextContent(/downside risk to manage/i);
   });
 });

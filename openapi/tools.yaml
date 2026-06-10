@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Client CV — Mock System-of-Record APIs (agent tools)
-  version: 0.2.0
+  version: 0.3.0
   description: >
     The mock data layer exposed as tools for the agents. Import this spec into
     Azure AI Foundry (as an OpenAPI tool) or wrap it as an MCP server. Swap the
@@ -330,3 +330,71 @@ paths:
       operationId: get_td_ready
       summary: Readiness probe for the Trading Desk dataset.
       responses: { "200": { description: Ready }, "503": { description: Not ready } }
+  /mock/events:
+    get:
+      operationId: list_events
+      summary: >
+        All current market/news events (002 reactive cockpit). Optionally filter
+        by scope. Backs multi-event briefing synthesis. All data is fictional.
+      parameters:
+        - name: scope
+          in: query
+          description: Filter by event scope.
+          schema: { type: string, enum: [overnight, intraday] }
+      responses: { "200": { description: OK } }
+    post:
+      operationId: ingest_event
+      summary: >
+        Ingest an intraday event (Admin inject / feed). Validates, dedupes by
+        headline+type, and server-sets id/ingestedAt/scope/origin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarketEvent' }
+      responses:
+        "201": { description: Event added }
+        "200": { description: Duplicate event ignored }
+        "400": { description: Validation error }
+  /mock/events/by-entity:
+    get:
+      operationId: get_events_by_entity
+      summary: Events affecting one portfolio entity (customer, ticker, sector, or issuer).
+      parameters:
+        - { name: value, in: query, required: true, schema: { type: string } }
+        - name: kind
+          in: query
+          description: Entity selector kind. Defaults to matching any selector.
+          schema: { type: string, enum: [customer, ticker, sector, issuer] }
+      responses: { "200": { description: OK }, "400": { description: Missing value } }
+  /mock/events/readyz:
+    get:
+      operationId: get_events_ready
+      summary: Readiness probe for the event dataset.
+      responses: { "200": { description: Ready }, "503": { description: Not ready } }
+components:
+  schemas:
+    AffectedEntities:
+      type: object
+      description: Typed selectors mapping an event to portfolio entities across both scenes.
+      properties:
+        customerIds: { type: array, items: { type: string }, description: CB customers (RM scene). }
+        tickers: { type: array, items: { type: string }, description: TD securityIds (Trading scene). }
+        sectors: { type: array, items: { type: string }, description: CB + TD sectors (both scenes). }
+        issuers: { type: array, items: { type: string }, description: TD issuers (Trading scene). }
+    MarketEvent:
+      type: object
+      required: [type, headline, summary, severity, affectedEntities]
+      properties:
+        id: { type: string, description: Server-set on ingest. }
+        type: { type: string, enum: [macro_rate, sector, issuer_credit, client_headline] }
+        headline: { type: string }
+        summary: { type: string }
+        source: { type: string }
+        severity: { type: string, enum: [low, medium, high] }
+        publishedAt: { type: string, format: date-time }
+        ingestedAt: { type: string, format: date-time, description: Server-set. }
+        scope: { type: string, enum: [overnight, intraday], description: Server-set on ingest. }
+        origin: { type: string, enum: [seed, admin, feed], description: Server-set on ingest. }
+        direction: { type: string, enum: [positive, negative, neutral] }
+        affectedEntities: { $ref: '#/components/schemas/AffectedEntities' }

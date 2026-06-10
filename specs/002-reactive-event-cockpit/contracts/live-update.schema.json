@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wf-garage/specs/002-reactive-event-cockpit/live-update.schema.json",
+  "title": "LiveUpdate",
+  "description": "The SSE 'briefing-update' envelope pushed to open cockpit briefings (FR-010/FR-011). Carries a consolidated alert plus the FULL re-synthesized scene DTO (reaction granularity, research R7). Validated with JsonSchema.Net draft-2020-12 (Decision #6).",
+  "type": "object",
+  "required": ["sequence", "scene", "alert", "briefing"],
+  "additionalProperties": false,
+  "properties": {
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic sequence; mirrored to the SSE 'id:' line for Last-Event-ID reconnect (research R4)."
+    },
+    "scene": {
+      "type": "string",
+      "enum": ["rm-briefing", "morning-brief"]
+    },
+    "alert": {
+      "$ref": "#/$defs/LiveAlert"
+    },
+    "briefing": {
+      "description": "The full re-synthesized scene DTO — RmBriefing for rm-briefing, MorningBrief for morning-brief. Shape is identical in DEMO and LIVE (Principle III). Validated against the existing scene contracts; event linkage fields are additive (data-model.md §3).",
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "LiveAlert": {
+      "type": "object",
+      "required": ["priority", "headline", "eventIds", "noImpact"],
+      "additionalProperties": false,
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["info", "notice", "urgent"],
+          "description": "Maps from event severity (low->info, medium->notice, high->urgent)."
+        },
+        "headline": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Consolidated banner text; for a coalesced burst it names all new events (research R3)."
+        },
+        "eventIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "The event(s) that triggered this update; a coalesced burst lists all."
+        },
+        "noImpact": {
+          "type": "boolean",
+          "description": "true => 'new event, no portfolio impact'; rankings unchanged (US2 AS3)."
+        }
+      }
+    }
+  }
+}

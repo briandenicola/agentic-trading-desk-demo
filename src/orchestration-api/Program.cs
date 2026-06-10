@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Text.Json.Nodes;
 using OrchestrationApi;
 using OrchestrationApi.Agents;
 using OrchestrationApi.Agents.Demo;
 using OrchestrationApi.Agents.Tools;
+using OrchestrationApi.Live;
 using OrchestrationApi.Models;
 using WF.Garage.Observability;
 
@@ -38,10 +40,27 @@ builder.Services.AddScoped<MorningBriefComposer>();
 builder.Services.AddScoped<MorningBriefTools>();
 builder.Services.AddScoped<AgentRunner>();
 
+// --- Reactive event tools (002): HTTP wrappers over the mock-api event store ---
+builder.Services.AddScoped<EventTools>();
+
+// --- Per-event multi-agent fan-out (002 US4): specialist assessments feed the LIVE
+// synthesizer. Construction is side-effect free; nothing touches Foundry in DEMO. ---
+builder.Services.AddScoped<OrchestrationApi.Agents.EventSynthesis.EventFanOut>();
+builder.Services.AddScoped<OrchestrationApi.Agents.EventSynthesis.FoundryEventSpecialist>();
+
+// --- Reactive SSE hub (002 US2): live event push to open briefings (FR-010..FR-013) ---
+builder.Services.AddSingleton<BriefingEventStream>();
+builder.Services.AddHostedService<EventStreamPollingService>();
+
 // --- RM Daily Briefing (PRIMARY scene): DEMO composer (offline) + LIVE tools/runner (Foundry) ---
 builder.Services.AddScoped<RmBriefingComposer>();
 builder.Services.AddScoped<RmBriefingTools>();
 builder.Services.AddScoped<RmAgentRunner>();
+
+// --- Markets-Intelligence assistant ("AI Chat"): DEMO intent responder (offline) + LIVE Foundry
+// chat agent with the RM mock-api tools bound. Both grounded in the same systems-of-record. ---
+builder.Services.AddScoped<ChatResponder>();
+builder.Services.AddScoped<ChatAgentRunner>();
 
 // --- CORS for the React cockpit (tightened for deployment in Phase 8) ---
 var corsOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"];
@@ -162,7 +181,211 @@ app.MapPost("/api/agent/rm-briefing", async (
     }
 });
 
+// --- Admin / feed ingest endpoints (002 US3): same ingestion + reactive path as a real
+// intraday event (FR-016). The browser reaches the mock-api event store ONLY through this
+// orchestration proxy (Principle II); the SSE poller then pushes the reaction to open briefings. ---
+app.MapGet("/api/events", async (EventTools eventTools, [FromQuery] string? scope, CancellationToken ct) =>
+{
+    var events = await eventTools.ListEventsAsync(scope, ct);
+    return Results.Json(events, RmBriefingJson.Options);
+});
+
+// Customer directory for the admin News Desk type-ahead (id + display name). Proxies the
+// internal mock-api over HTTP (Principle II / FR-002) — the browser never reaches mock-api
+// directly. Degrades to an empty list so the form still works if the lookup is unavailable.
+app.MapGet("/api/customers", async (MockApiClient mockApi, CancellationToken ct) =>
+{
+    JsonNode? node;
+    try
+    {
+        node = await mockApi.GetJsonAsync("/mock/cb/customers", ct);
+    }
+    catch
+    {
+        return Results.Json(Array.Empty<object>());
+    }
+
+    var options = (node as JsonArray ?? [])
+        .OfType<JsonObject>()
+        .Select(c => new
+        {
+            customerId = (string?)c["customerId"] ?? string.Empty,
+            name = (string?)c["dba"] ?? (string?)c["legalName"] ?? (string?)c["customerId"] ?? string.Empty
+        })
+        .Where(o => o.customerId.Length > 0)
+        .OrderBy(o => o.customerId, StringComparer.Ordinal)
+        .ToList();
+
+    return Results.Json(options);
+});
+
+// --- Grounded Markets-Intelligence assistant ("AI Chat"): DEMO intent responder or LIVE Foundry
+// chat agent, both grounded in the same mock systems-of-record. Mode-blind to the UI (Principle III). ---
+app.MapPost("/api/chat", async (
+    [FromBody] ChatRequest? request,
+    ModeOptions modeOpts,
+    ChatResponder responder,
+    ChatAgentRunner runner,
+    CancellationToken ct) =>
+{
+    if (request is null || request.Messages is null || request.Messages.Count == 0 ||
+        !request.Messages.Any(m => string.Equals(m.Role, "user", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(m.Content)))
+    {
+        return Results.Problem(
+            title: "Empty chat request",
+            detail: "Provide at least one user message in 'messages'.",
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    var reply = modeOpts.DemoMode
+        ? await responder.RespondAsync(request, ct)
+        : await runner.RunAsync(request, ct);
+
+    return Results.Json(reply, RmBriefingJson.Options);
+});
+
+app.MapPost("/api/events", async (
+    [FromBody] AdminNewsSubmission submission,
+    EventTools eventTools,
+    CancellationToken ct) =>
+{
+    var error = ValidateSubmission(submission);
+    if (error is not null)
+    {
+        return Results.Problem(
+            title: "Invalid news submission",
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    var marketEvent = new MarketEvent
+    {
+        Id = string.Empty, // server-set by the event store
+        Type = submission.Type!,
+        Headline = submission.Headline!,
+        Summary = submission.Summary!,
+        Source = string.IsNullOrWhiteSpace(submission.Source) ? "Admin desk (fictional)" : submission.Source,
+        Severity = submission.Severity!,
+        Direction = submission.Direction,
+        Origin = "admin",
+        AffectedEntities = submission.AffectedEntities ?? new AffectedEntities()
+    };
+
+    var result = await eventTools.IngestEventAsync(marketEvent, ct);
+    if (!result.Succeeded || result.Event is null)
+    {
+        return Results.Problem(
+            title: "Ingestion failed",
+            detail: "The event store rejected or could not accept the submission.",
+            statusCode: StatusCodes.Status502BadGateway);
+    }
+
+    return Results.Json(
+        result.Event,
+        RmBriefingJson.Options,
+        statusCode: result.Added ? StatusCodes.Status201Created : StatusCodes.Status200OK);
+});
+
+app.MapGet("/api/agent/rm-briefing/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    [FromQuery] string? rmId,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "rm-briefing", string.IsNullOrWhiteSpace(rmId) ? null : rmId, ct));
+
+app.MapGet("/api/agent/morning-brief/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "morning-brief", null, ct));
+
 app.Run();
+
+static string? ValidateSubmission(AdminNewsSubmission s)
+{
+    if (s is null) return "Submission body is required.";
+    if (string.IsNullOrWhiteSpace(s.Headline)) return "headline is required.";
+    if (string.IsNullOrWhiteSpace(s.Summary)) return "summary is required.";
+    if (!IsOneOf(s.Severity, "low", "medium", "high")) return "severity must be one of: low, medium, high.";
+    if (!IsOneOf(s.Type, "macro_rate", "sector", "issuer_credit", "client_headline"))
+        return "type must be one of: macro_rate, sector, issuer_credit, client_headline.";
+    var ae = s.AffectedEntities;
+    var hasSelector =
+        (ae?.CustomerIds?.Count ?? 0) > 0 ||
+        (ae?.Tickers?.Count ?? 0) > 0 ||
+        (ae?.Sectors?.Count ?? 0) > 0 ||
+        (ae?.Issuers?.Count ?? 0) > 0;
+    if (!hasSelector)
+        return "affectedEntities must contain at least one selector (customerIds, tickers, sectors, or issuers).";
+    return null;
+
+    static bool IsOneOf(string? value, params string[] allowed) =>
+        value is not null && allowed.Any(a => string.Equals(a, value, StringComparison.OrdinalIgnoreCase));
+}
+
+// --- SSE stream endpoints (002 US2): GET /api/agent/{scene}/stream (contracts/event-stream.sse.md) ---
+// A long-lived text/event-stream: emits `ready`, an initial snapshot, then `briefing-update`
+// frames as intraday events arrive, with `heartbeat` pings to hold the connection open. Every
+// update is a full re-synthesized DTO (R7) so reconnects reconcile from the latest snapshot (R4).
+static async Task StreamSceneAsync(
+    HttpContext ctx,
+    BriefingEventStream stream,
+    string scene,
+    string? persona,
+    CancellationToken ct)
+{
+    ctx.Response.Headers.CacheControl = "no-cache";
+    ctx.Response.Headers["Connection"] = "keep-alive";
+    ctx.Response.Headers["X-Accel-Buffering"] = "no"; // belt-and-braces against proxy buffering
+    ctx.Response.ContentType = "text/event-stream";
+    await ctx.Response.Body.FlushAsync(ct);
+
+    var sub = stream.Subscribe(scene, persona);
+    var reader = sub.Frames.Reader;
+    try
+    {
+        await ctx.Response.WriteAsync(stream.FormatReadyFrame(scene), ct);
+        var snapshot = await stream.BuildSnapshotFrameAsync(scene, persona, ct);
+        if (snapshot is not null)
+        {
+            await ctx.Response.WriteAsync(snapshot, ct);
+        }
+        await ctx.Response.Body.FlushAsync(ct);
+
+        while (!ct.IsCancellationRequested)
+        {
+            bool hasItem;
+            try
+            {
+                using var idle = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                idle.CancelAfter(TimeSpan.FromSeconds(15));
+                hasItem = await reader.WaitToReadAsync(idle.Token);
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                await ctx.Response.WriteAsync(BriefingEventStream.FormatHeartbeatFrame(), ct);
+                await ctx.Response.Body.FlushAsync(ct);
+                continue;
+            }
+
+            if (!hasItem) break;
+
+            while (reader.TryRead(out var frame))
+            {
+                await ctx.Response.WriteAsync(frame, ct);
+            }
+            await ctx.Response.Body.FlushAsync(ct);
+        }
+    }
+    catch (OperationCanceledException)
+    {
+        // Client disconnected — normal stream teardown.
+    }
+    finally
+    {
+        stream.Unsubscribe(sub.Id);
+    }
+}
 
 // Exposed for WebApplicationFactory-based tests (T012-T014).
 public partial class Program;

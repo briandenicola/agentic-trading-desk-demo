@@ -5,6 +5,8 @@ using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OrchestrationApi.Agents.Demo;
+using OrchestrationApi.Agents.EventSynthesis;
+using OrchestrationApi.Agents.Resilience;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Models;
 
@@ -18,6 +20,11 @@ namespace OrchestrationApi.Agents;
 /// <c>MAX_TOOL_HOPS</c>, then its JSON output is mapped to the same
 /// <see cref="MorningBrief"/> DTO the DEMO composer returns (Principle III / FR-010).
 ///
+/// In LIVE mode the agent acts as the <b>briefing synthesizer</b> (002 US4): before it runs,
+/// <see cref="EventFanOut"/> fans out one <see cref="FoundryEventSpecialist"/> assessment per
+/// current event (concurrently, traceably), and those assessments are fed into the synthesizer
+/// so the client linkage reflects every event (FR-018, SC-007).
+///
 /// IMPORTANT: nothing here runs — and no credential is acquired — unless
 /// <see cref="RunAsync"/> is invoked, which only happens in LIVE mode (the DEMO mode
 /// switch never reaches this class). Construction is side-effect free.
@@ -26,7 +33,14 @@ namespace OrchestrationApi.Agents;
 /// <see cref="CreateFoundryAgentAsync"/> so a prerelease (rc5) API change cannot affect
 /// the offline DEMO path.
 /// </summary>
-public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, ILogger<AgentRunner> logger)
+public sealed class AgentRunner(
+    IConfiguration config,
+    MorningBriefTools tools,
+    MorningBriefComposer composer,
+    EventTools eventTools,
+    EventFanOut fanOut,
+    FoundryEventSpecialist specialist,
+    ILogger<AgentRunner> logger)
 {
     /// <summary>
     /// Name of the single persistent Foundry agent. The agent-provisioner registers it once
@@ -43,7 +57,7 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
     {
         var endpoint = config["FOUNDRY_PROJECT_ENDPOINT"]
             ?? throw new InvalidOperationException("LIVE mode requires FOUNDRY_PROJECT_ENDPOINT.");
-        var model = config["FOUNDRY_MODEL"] ?? "gpt-5.4-mini";
+        var model = config["FOUNDRY_MODEL_MORNING"] ?? config["FOUNDRY_MODEL"] ?? "gpt-4o-mini";
         var maxHops = int.TryParse(config["MAX_TOOL_HOPS"], out var h) && h > 0 ? h : 8;
 
         var instructions = await LoadInstructionsAsync(ct);
@@ -55,8 +69,8 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to create the Foundry agent; returning a degraded brief.");
-            return Degraded(eventId, $"LIVE agent unavailable: {ex.Message}");
+            logger.LogError(ex, "Failed to create the Foundry agent; falling back to the deterministic brief.");
+            return await EnsurePopulatedAsync(Degraded(eventId, $"LIVE agent unavailable: {ex.Message}"), eventId, date, [], ct);
         }
 
         var userMessage =
@@ -71,9 +85,16 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
+        // Hoisted so the catch block can hand the authoritative event set to the safety net.
+        IReadOnlyList<MarketEvent> events = [];
         try
         {
-            var response = await agent.RunAsync(userMessage, cancellationToken: ct);
+            string synthMessage;
+            (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            var (maxAttempts, baseDelay) = FoundryRetry.SettingsFrom(config);
+            var response = await FoundryRetry.ExecuteAsync(
+                c => agent.RunAsync(synthMessage, cancellationToken: c),
+                maxAttempts, baseDelay, logger, $"morning-brief synthesizer ({eventId})", ct);
 
             var usage = response.Usage;
             if (usage is not null)
@@ -91,16 +112,105 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
             }
 
             var json = ExtractJsonObject(response.Text);
-            var brief = MapToBrief(json, eventId);
+            // EventsConsidered comes from the authoritative event store (the list the fan-out
+            // fetched), not the model output, so the LIVE brief carries the events it weighed even
+            // when the synthesizer omits them — matching the DEMO composer (FR-018, Principle III).
+            var brief = MapToBrief(json, eventId) with { EventsConsidered = events };
+            // Safety net: if the synthesizer dropped the substantive client content, reconstruct it
+            // deterministically so the cockpit is never empty (re-stamped LIVE, same JSON shape).
+            brief = await EnsurePopulatedAsync(brief, eventId, date, events, ct);
             runSpan?.SetStatus(ActivityStatusCode.Ok);
             return brief;
         }
         catch (Exception ex)
         {
             runSpan?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            logger.LogError(ex, "Foundry agent run failed; returning a degraded brief.");
-            return Degraded(eventId, $"LIVE agent run failed: {ex.Message}");
+            logger.LogError(ex, "Foundry agent run failed; falling back to the deterministic brief.");
+            return await EnsurePopulatedAsync(Degraded(eventId, $"LIVE agent run failed: {ex.Message}"), eventId, date, events, ct);
         }
+    }
+
+    // ---------------------------------------------------------------- deterministic safety net
+
+    /// <summary>
+    /// Deterministic safety net (FR-011 / Principle III): the LIVE synthesizer occasionally returns
+    /// no affected clients / outreach (small-model variance, amplified by a large event fan-out
+    /// blob). Rather than surface an empty brief, reconstruct it from the same systems-of-record
+    /// with <see cref="MorningBriefComposer"/> and re-stamp it <c>LIVE</c> so the JSON shape is
+    /// unchanged and the cockpit always shows a populated brief. If the brief already has clients
+    /// or outreach, it is returned untouched.
+    /// </summary>
+    private async Task<MorningBrief> EnsurePopulatedAsync(
+        MorningBrief brief, string eventId, string? date, IReadOnlyList<MarketEvent> events, CancellationToken ct)
+    {
+        if (brief.MostAffectedClients.Count > 0 || brief.Outreach.Count > 0)
+        {
+            return brief;
+        }
+
+        try
+        {
+            var deterministic = await composer.ComposeAsync(eventId, date, ct);
+            if (deterministic.MostAffectedClients.Count == 0 && deterministic.Outreach.Count == 0)
+            {
+                return brief; // genuinely nothing to surface — keep the agent's brief.
+            }
+
+            var notes = new List<string>(deterministic.Notes ?? [])
+            {
+                "LIVE synthesizer returned no affected clients; the brief was reconstructed deterministically from the systems-of-record (graceful degrade).",
+            };
+            return deterministic with
+            {
+                Mode = "LIVE",
+                EventsConsidered = events.Count > 0 ? events : deterministic.EventsConsidered,
+                Notes = notes,
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Deterministic safety-net composition failed; returning the LIVE agent's brief unchanged.");
+            return brief;
+        }
+    }
+
+    // ---------------------------------------------------------------- event fan-out (US4)
+
+    /// <summary>
+    /// LIVE synthesizer pre-step (002 US4): list the current events, fan out one specialist
+    /// assessment per event (concurrent + traceable), and append the assessments to the
+    /// synthesizer's user message so the client linkage reflects every event. Failures degrade to
+    /// the un-augmented message (FR-011) — the brief is still produced.
+    /// </summary>
+    private async Task<(string Message, IReadOnlyList<MarketEvent> Events)> ApplyEventFanOutAsync(string userMessage, Activity? runSpan, CancellationToken ct)
+    {
+        IReadOnlyList<MarketEvent> events = [];
+        IReadOnlyList<EventImpactAssessment> assessments = [];
+        try
+        {
+            events = await eventTools.ListEventsAsync(null, ct);
+            if (events.Count > 0)
+            {
+                var specialistAgent = await specialist.CreateAgentAsync(ct);
+                assessments = await fanOut.AssessAllAsync(
+                    "morning-brief", events, (e, c) => specialist.AssessAsync(specialistAgent, e, c), ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Event fan-out failed; synthesizing the morning brief without per-event assessments.");
+        }
+
+        runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
+        if (assessments.Count == 0)
+        {
+            return (userMessage, events);
+        }
+
+        return (userMessage +
+            "\n\nPER-EVENT IMPACT ASSESSMENTS (from specialist agents — fold each contribution into " +
+            "the affected clients' relevance, re-rank, and list every contributing event as a driver):\n" +
+            JsonSerializer.Serialize(assessments, MorningBriefJson.Options), events);
     }
 
     // ---------------------------------------------------------------- Foundry wiring (isolated)
@@ -189,6 +299,12 @@ public sealed class AgentRunner(IConfiguration config, MorningBriefTools tools, 
         AIFunctionFactory.Create(
             (CancellationToken ct) => InvokeToolAsync("get_axes", tools.GetAxesAsync, ct),
             "get_axes", "Live axes / IOIs from the trading book."),
+        AIFunctionFactory.Create(
+            (string scope, CancellationToken ct) => InvokeToolAsync("list_events", c => tools.GetCurrentEventsAsync(scope, c), ct, ("scope", scope)),
+            "list_events", "Current market/news events to weigh into client linkage. Pass an empty string for scope to get all (overnight + intraday)."),
+        AIFunctionFactory.Create(
+            (string value, string kind, CancellationToken ct) => InvokeToolAsync("get_events_by_entity", c => tools.GetEventsByEntityAsync(value, kind, c), ct, ("value", value), ("kind", kind)),
+            "get_events_by_entity", "Events affecting one entity (value = ticker/sector/issuer; kind = 'ticker'|'sector'|'issuer', empty for any)."),
     ];
 
     /// <summary>

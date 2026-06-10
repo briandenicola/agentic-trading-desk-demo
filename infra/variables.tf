@@ -46,6 +46,60 @@ variable "foundry_model_capacity" {
   default     = 100
 }
 
+# --- Morning-brief synthesizer model (separate deployment = separate quota pool) ---
+# The morning-brief agent runs on its own deployment so its token bursts never
+# contend with the RM-briefing synthesizer or the fanned-out event specialists.
+variable "foundry_morning_model" {
+  description = "Azure OpenAI model for the morning-brief synthesizer agent (separate quota pool from foundry_model)."
+  type        = string
+  default     = "gpt-4o-mini"
+}
+
+variable "foundry_morning_model_version" {
+  description = "Model version for the morning-brief synthesizer model."
+  type        = string
+  default     = "2024-07-18"
+}
+
+variable "foundry_morning_model_sku" {
+  description = "SKU for the morning-brief synthesizer model deployment."
+  type        = string
+  default     = "GlobalStandard"
+}
+
+variable "foundry_morning_model_capacity" {
+  description = "Capacity (TPM in thousands) for the morning-brief synthesizer model."
+  type        = number
+  default     = 50
+}
+
+# --- Event-specialist model (separate deployment = separate quota pool) ---
+# The fan-out fires N specialists concurrently per brief, so it gets its own
+# lightweight/fast model on a dedicated deployment to absorb the burst without 429s.
+variable "foundry_specialist_model" {
+  description = "Azure OpenAI model for the fanned-out event-specialist agent (separate quota pool; smallest/fastest is ideal for high-concurrency assessment)."
+  type        = string
+  default     = "gpt-5.4-nano"
+}
+
+variable "foundry_specialist_model_version" {
+  description = "Model version for the event-specialist model."
+  type        = string
+  default     = "2026-03-17"
+}
+
+variable "foundry_specialist_model_sku" {
+  description = "SKU for the event-specialist model deployment."
+  type        = string
+  default     = "GlobalStandard"
+}
+
+variable "foundry_specialist_model_capacity" {
+  description = "Capacity (TPM in thousands) for the event-specialist model. Higher than the synthesizers because the fan-out is the high-concurrency path."
+  type        = number
+  default     = 100
+}
+
 # Foundry provisioning toggle
 # When false, all Azure AI Foundry resources (AI account, model deployment,
 # project, connections, capability host, and Foundry-scoped role assignments)

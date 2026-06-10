@@ -41,6 +41,7 @@ export interface AffectedClient {
   tier: string;
   exposure: string;
   concern: { label: string; kind: 'sell' | 'warm' | 'info' };
+  drivingEvents?: EventLinkage[];
 }
 
 export interface RankingRationale {
@@ -60,6 +61,38 @@ export interface OutreachItem {
   rationale: RankingRationale;
 }
 
+// Reactive event cockpit (002). MarketEvent + per-item EventLinkage mirror the
+// orchestration DTOs; both are additive and present in DEMO and LIVE alike.
+export interface AffectedEntities {
+  customerIds?: string[];
+  tickers?: string[];
+  sectors?: string[];
+  issuers?: string[];
+}
+
+export interface MarketEvent {
+  id: string;
+  type: 'macro_rate' | 'sector' | 'issuer_credit' | 'client_headline';
+  headline: string;
+  summary: string;
+  source?: string;
+  severity: 'low' | 'medium' | 'high';
+  publishedAt?: string;
+  ingestedAt?: string;
+  scope?: 'overnight' | 'intraday';
+  origin?: 'seed' | 'admin' | 'feed';
+  direction?: 'positive' | 'negative' | 'neutral';
+  affectedEntities?: AffectedEntities;
+}
+
+export interface EventLinkage {
+  eventId: string;
+  headline: string;
+  entityRef: string;
+  contribution: number;
+  rationale: string;
+}
+
 export interface MorningBrief {
   mode: 'DEMO' | 'LIVE';
   asOf: string;
@@ -69,6 +102,7 @@ export interface MorningBrief {
   mostAffectedClients: AffectedClient[];
   outreach: OutreachItem[];
   notes?: string[];
+  eventsConsidered?: MarketEvent[];
 }
 
 // Implemented end-to-end in Phase 3 (T021). Defined here so the scaffold compiles.
@@ -110,7 +144,7 @@ export interface RmKpis {
   activeComplaints: number;
 }
 
-export type CallTagKind = 'escalated' | 'in-progress' | 'followup' | 'closing' | 'stuck';
+export type CallTagKind = 'escalated' | 'in-progress' | 'followup' | 'closing' | 'stuck' | 'event';
 
 export interface CallTag {
   label: string;
@@ -131,6 +165,7 @@ export interface PriorityCall {
   tags: CallTag[];
   reasons: string[];
   suggestedAction: string;
+  drivingEvents?: EventLinkage[];
 }
 
 export interface ComplaintSnapshot {
@@ -170,9 +205,147 @@ export interface RmBriefing {
   macroSnapshot: MacroBullet[];
   suggestedFirstAction: string;
   notes?: string[];
+  eventsConsidered?: MarketEvent[];
 }
 
 export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBriefing> {
   const { data } = await apiClient.post<RmBriefing>('/agent/rm-briefing', req);
+  return data;
+}
+
+// ---------------------------------------------------------------------------
+// Reactive live event stream (002 US2). The browser's native EventSource holds a
+// long-lived SSE connection to /api/agent/{scene}/stream and receives a full
+// re-synthesized DTO per update (reaction granularity, R7), so the page reconciles
+// from the latest snapshot on reconnect. Mirrors contracts/live-update.schema.json.
+// ---------------------------------------------------------------------------
+
+export type LiveScene = 'rm-briefing' | 'morning-brief';
+
+export interface LiveAlert {
+  priority: 'info' | 'notice' | 'urgent';
+  headline: string;
+  eventIds: string[];
+  noImpact: boolean;
+}
+
+export interface LiveUpdate<TBriefing = RmBriefing | MorningBrief> {
+  sequence: number;
+  scene: LiveScene;
+  alert: LiveAlert;
+  briefing: TBriefing;
+}
+
+export interface LiveSubscriptionHandlers<TBriefing> {
+  onUpdate: (update: LiveUpdate<TBriefing>) => void;
+  onReady?: (info: { sequence: number; scene: LiveScene }) => void;
+  onError?: (err: Event) => void;
+}
+
+/**
+ * Subscribe to the reactive SSE stream for a scene. Returns an unsubscribe function.
+ * EventSource auto-reconnects and replays `Last-Event-ID`; the server answers a
+ * reconnect with `ready` + a fresh snapshot, so no client-side delta tracking is needed.
+ */
+export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief>(
+  scene: LiveScene,
+  handlers: LiveSubscriptionHandlers<TBriefing>,
+  options?: { persona?: string },
+): () => void {
+  const base = apiClient.defaults.baseURL ?? '/api';
+  const query =
+    scene === 'rm-briefing' && options?.persona
+      ? `?rmId=${encodeURIComponent(options.persona)}`
+      : '';
+  const source = new EventSource(`${base}/agent/${scene}/stream${query}`);
+
+  source.addEventListener('briefing-update', (event) => {
+    try {
+      const update = JSON.parse((event as MessageEvent).data) as LiveUpdate<TBriefing>;
+      handlers.onUpdate(update);
+    } catch {
+      // Ignore malformed frames; the next full snapshot will reconcile state.
+    }
+  });
+
+  if (handlers.onReady) {
+    source.addEventListener('ready', (event) => {
+      try {
+        handlers.onReady!(JSON.parse((event as MessageEvent).data));
+      } catch {
+        /* non-fatal */
+      }
+    });
+  }
+
+  source.onerror = (err) => handlers.onError?.(err);
+
+  return () => source.close();
+}
+
+// ---------------------------------------------------------------------------
+// Admin news injection (002 US3). Posts through the orchestration proxy to the
+// SAME ingestion endpoint a real intraday event uses (FR-016), so an injected item
+// flows through the reactive SSE path and open briefings react within ~10s.
+// ---------------------------------------------------------------------------
+
+export interface AdminNewsSubmission {
+  headline: string;
+  summary: string;
+  source?: string;
+  severity: 'low' | 'medium' | 'high';
+  type: 'macro_rate' | 'sector' | 'issuer_credit' | 'client_headline';
+  direction?: 'positive' | 'negative' | 'neutral';
+  affectedEntities: AffectedEntities;
+  sceneTargeting?: LiveScene[];
+}
+
+/** Inject an operator-authored news item. Resolves to the stored intraday event. */
+export async function ingestNews(submission: AdminNewsSubmission): Promise<MarketEvent> {
+  const { data } = await apiClient.post<MarketEvent>('/events', submission);
+  return data;
+}
+
+/** List the current event store (overnight seeds + injected intraday events). */
+export async function listEvents(scope?: 'overnight' | 'intraday'): Promise<MarketEvent[]> {
+  const { data } = await apiClient.get<MarketEvent[]>('/events', {
+    params: scope ? { scope } : undefined,
+  });
+  return data;
+}
+
+/** A customer the admin can target in the News Desk affected-entities type-ahead. */
+export interface CustomerOption {
+  customerId: string;
+  name: string;
+}
+
+/** Customer directory for the admin News Desk type-ahead (id + display name). */
+export async function listCustomers(): Promise<CustomerOption[]> {
+  const { data } = await apiClient.get<CustomerOption[]>('/customers');
+  return data;
+}
+
+// ---------------------------------------------------------------------------
+// Grounded Markets-Intelligence assistant ("AI Chat"). Stateless: the client replays
+// the conversation each turn. DEMO returns a deterministic intent answer; LIVE returns
+// a Foundry chat-agent answer grounded in the same systems-of-record (Principle III).
+// ---------------------------------------------------------------------------
+
+export interface ChatTurn {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatReply {
+  mode: 'DEMO' | 'LIVE';
+  message: string;
+  suggestions?: string[];
+  toolsUsed?: string[];
+}
+
+/** Send the conversation to the assistant and resolve the next assistant reply. */
+export async function sendChat(messages: ChatTurn[], rmId?: string): Promise<ChatReply> {
+  const { data } = await apiClient.post<ChatReply>('/chat', { messages, rmId });
   return data;
 }

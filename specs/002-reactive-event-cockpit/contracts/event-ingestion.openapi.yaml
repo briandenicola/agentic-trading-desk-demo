@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Reactive Event Cockpit — Mock-API Event Store Operations
+  version: 0.1.0
+  description: >
+    Preview of the event-store operations to be ADDED to the repo-root `openapi/tools.yaml`
+    (constitution Principle VI). These are the HTTP surface (`/mock/events`) that the mock-api
+    `EventStore` exposes and that orchestration reaches ONLY over HTTP via `EventTools`
+    (Principle II — no in-process fixture reads). All data is fictional (Principle IV).
+    The corresponding tool wrappers live in `src/orchestration-api/Agents/Tools/EventTools.cs`.
+servers:
+  - url: http://localhost:8080
+    description: Local mock-api (Docker Compose)
+  - url: http://mock-api
+    description: Container Apps internal ingress
+paths:
+  /mock/events:
+    get:
+      operationId: list_events
+      summary: List all current events in the store (overnight seed + intraday injected).
+      description: Supports the briefing synthesis (FR-006) and the Admin event list (FR-017).
+      parameters:
+        - name: scope
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [overnight, intraday]
+          description: Optional filter; omit to return all.
+      responses:
+        "200":
+          description: The current event set.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+    post:
+      operationId: ingest_event
+      summary: Ingest a new intraday event (real feed OR Admin-injected) and acknowledge.
+      description: >
+        FR-003 / FR-016. Server sets `ingestedAt`, forces `scope=intraday`, and dedupes by event
+        identity (R11). A successful ingest triggers the reactive SSE path for affected open briefings.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventIngestRequest"
+      responses:
+        "201":
+          description: Event accepted and stored.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventAck"
+        "200":
+          description: Duplicate of an existing event — flagged, not double-counted (R11).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventAck"
+        "400":
+          description: Validation failure (missing headline/summary or no affected entity).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /mock/events/by-entity:
+    get:
+      operationId: get_events_by_entity
+      summary: Query events affecting a given portfolio entity (customer / ticker / sector / issuer).
+      description: FR-004 / FR-005. Lets agents map events to the open persona's book (R5).
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          schema: { type: string }
+          description: CB customer id (e.g. CB-10042).
+        - name: ticker
+          in: query
+          required: false
+          schema: { type: string }
+        - name: sector
+          in: query
+          required: false
+          schema: { type: string }
+        - name: issuer
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Events affecting the requested entity (any matching selector).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entity:
+                    type: object
+                    additionalProperties: { type: string }
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+components:
+  schemas:
+    Event:
+      type: object
+      required: [id, type, headline, summary, source, severity, publishedAt, ingestedAt, scope, origin, affectedEntities]
+      properties:
+        id: { type: string, example: evt-20260609-001 }
+        type:
+          type: string
+          enum: [macro_rate, sector, issuer_credit, client_headline]
+        headline: { type: string }
+        summary: { type: string }
+        source: { type: string }
+        severity:
+          type: string
+          enum: [low, medium, high]
+        publishedAt: { type: string, format: date-time }
+        ingestedAt: { type: string, format: date-time }
+        scope:
+          type: string
+          enum: [overnight, intraday]
+        origin:
+          type: string
+          enum: [seed, admin, feed]
+        direction:
+          type: string
+          enum: [positive, negative, neutral]
+        affectedEntities:
+          $ref: "#/components/schemas/AffectedEntities"
+    AffectedEntities:
+      type: object
+      description: At least one selector array MUST be non-empty (FR-005 / FR-015).
+      properties:
+        customerIds:
+          type: array
+          items: { type: string }
+        tickers:
+          type: array
+          items: { type: string }
+        sectors:
+          type: array
+          items: { type: string }
+        issuers:
+          type: array
+          items: { type: string }
+    EventIngestRequest:
+      type: object
+      required: [type, headline, summary, severity, affectedEntities]
+      properties:
+        type:
+          type: string
+          enum: [macro_rate, sector, issuer_credit, client_headline]
+        headline: { type: string, minLength: 1 }
+        summary: { type: string, minLength: 1 }
+        source: { type: string }
+        severity:
+          type: string
+          enum: [low, medium, high]
+        direction:
+          type: string
+          enum: [positive, negative, neutral]
+        affectedEntities:
+          $ref: "#/components/schemas/AffectedEntities"
+        sceneTargeting:
+          type: array
+          items:
+            type: string
+            enum: [rm-briefing, morning-brief]
+    EventAck:
+      type: object
+      required: [eventId, scope, accepted]
+      properties:
+        eventId: { type: string }
+        scope: { type: string, enum: [intraday] }
+        accepted: { type: boolean }
+        duplicate: { type: boolean, description: true when the ingest matched an existing event (R11). }
+    Problem:
+      type: object
+      description: RFC 7807-style structured error (constitution Principle VIII).
+      properties:
+        title: { type: string }
+        detail: { type: string }
+        status: { type: integer }

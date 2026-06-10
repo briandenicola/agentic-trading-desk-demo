@@ -116,9 +116,55 @@ All custom source/meter names are registered with OpenTelemetry in
 `src\orchestration-api\Program.cs` via `AddOpenTelemetry(ServiceName, additionalSources, additionalMeters)`.
 Delivered under `specs\_backlog\005-observability.md`.
 
-## Future: multi-agent fan-out / synthesis
+## Reactive event cockpit (002)
 
-The current design is a single agent with client-side tools. The intended evolution is a
-**multi-agent flow**: each data pull (market, news, clients, holdings, engagement, …) becomes its
-own Foundry agent that returns structured data to a central **synthesizer** agent that composes the
-brief. Tracked in `specs\_backlog\011-multi-agent-synthesis.md`.
+The cockpit reacts to overnight **and** intraday events. The event store lives in the mock-api;
+orchestration reaches it only over HTTP (Principle II / FR-004).
+
+- **Event store** (`src\mock-api\EventStore.cs`, `Endpoints\EventEndpoints.cs`): seeds overnight
+  events and accepts intraday ingests. On ingest it server-sets the id (`evt-yyyyMMdd-aNNN`), stamps
+  `scope=intraday` and `origin=admin` (for operator/feed submissions), validates
+  (headline/summary/severity/type/≥1 affected selector), and dedups by normalized headline+type.
+- **HTTP surface** (`/mock/events`): `GET /mock/events[?scope=]`, `GET /mock/events/by-entity?value=&kind=`,
+  `POST /mock/events`. Wrapped by `EventTools` in orchestration.
+- **Admin proxy** (`GET|POST /api/events` in `Program.cs`): the browser's **only** path to the store.
+  `POST` re-validates, maps the admin submission to a `MarketEvent` (`origin=admin`), and ingests it
+  through `EventTools` so an injected item follows the **same** ingestion + reactive path as a real
+  feed (FR-016). The `/admin` "News Desk" scene drives it.
+- **SSE channel** (`GET /api/agent/{scene}/stream`, `Live\BriefingEventStream.cs` +
+  `EventStreamPollingService.cs`): a long-lived `text/event-stream`. A background poller diffs the
+  store every `SSE_POLL_INTERVAL_MS`, coalesces bursts over `SSE_COALESCE_WINDOW_MS`, re-synthesizes
+  the briefing, and broadcasts ONE consolidated `briefing-update` (full re-synthesized DTO + a
+  `LiveAlert`) per (scene, persona). Reconnects get a snapshot frame; `heartbeat` frames hold the
+  connection open. The `ui-app` nginx config passes SSE through unbuffered (`X-Accel-Buffering: no`).
+
+## Multi-agent fan-out / synthesis (LIVE)
+
+LIVE briefing generation is a **per-event multi-agent fan-out** into a synthesizer (002 US4):
+
+```
+list current events ─► EventFanOut (bounded by EVENT_FANOUT_MAX_CONCURRENCY)
+                          ├─ event-specialist (event A) ⇄ get_events_by_entity tool
+                          ├─ event-specialist (event B) ⇄ …
+                          └─ event-specialist (event N) ⇄ …
+                                     │  EventImpactAssessment[] (typed selectors + signed contribution)
+                                     ▼
+                       briefing synthesizer (scene agent) ⇄ scene tools ─► unchanged DTO
+```
+
+- **`EventFanOut`** (`Agents\EventSynthesis\EventFanOut.cs`) runs one specialist per event
+  concurrently (capped by `EVENT_FANOUT_MAX_CONCURRENCY`, default 4), each inside an
+  `event_specialist.assess <id>` child span under a `briefing_synthesis.fanout` parent — giving the
+  **synthesizer → specialist → tool-call** trace graph (SC-007). A failing specialist is skipped, not
+  fatal (FR-011).
+- **`FoundryEventSpecialist`** (`event-specialist` agent, `Prompts\event-specialist.md`) assesses one
+  event and resolves it to typed `kind:value` selectors with a signed `contribution`; it has one tool
+  (`get_events_by_entity`) so each run shows a tool-call. Unusable model output degrades to a
+  deterministic fallback mirroring the DEMO `EventImpactResolver`.
+- **Synthesizer**: the per-scene agent (`rm-daily-briefing` / `morning-brief`) fulfils the synthesis
+  contract (`Prompts\briefing-synthesizer.md`) — it folds each assessment's contribution into the
+  affected items' scores, re-ranks, and lists every contributing event as a driver, emitting the
+  **unchanged** DTO. DEMO stays deterministic/offline with the identical shape (SC-004).
+- **Provisioning**: `agent-provisioner` idempotently registers `rm-daily-briefing`, `morning-brief`,
+  `event-specialist`, and `briefing-synthesizer` (GetAIAgentAsync-first, create only when absent).
+

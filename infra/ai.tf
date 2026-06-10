@@ -53,6 +53,56 @@ resource "azapi_resource" "model_deployment" {
   }
 }
 
+# Morning-brief synthesizer model deployment (separate quota pool).
+# Serialized after the primary deployment: the CognitiveServices control plane
+# rejects concurrent deployment creates on the same account with a 409.
+resource "azapi_resource" "model_deployment_morning" {
+  count     = var.enable_foundry ? 1 : 0
+  type      = "Microsoft.CognitiveServices/accounts/deployments@2025-10-01-preview"
+  name      = local.morning_model_deployment_name
+  parent_id = azapi_resource.ai_account[0].id
+
+  body = {
+    sku = {
+      name     = var.foundry_morning_model_sku
+      capacity = var.foundry_morning_model_capacity
+    }
+    properties = {
+      model = {
+        format  = "OpenAI"
+        name    = var.foundry_morning_model
+        version = var.foundry_morning_model_version
+      }
+    }
+  }
+
+  depends_on = [azapi_resource.model_deployment]
+}
+
+# Event-specialist model deployment (separate quota pool for the high-concurrency fan-out).
+resource "azapi_resource" "model_deployment_specialist" {
+  count     = var.enable_foundry ? 1 : 0
+  type      = "Microsoft.CognitiveServices/accounts/deployments@2025-10-01-preview"
+  name      = local.specialist_model_deployment_name
+  parent_id = azapi_resource.ai_account[0].id
+
+  body = {
+    sku = {
+      name     = var.foundry_specialist_model_sku
+      capacity = var.foundry_specialist_model_capacity
+    }
+    properties = {
+      model = {
+        format  = "OpenAI"
+        name    = var.foundry_specialist_model
+        version = var.foundry_specialist_model_version
+      }
+    }
+  }
+
+  depends_on = [azapi_resource.model_deployment_morning]
+}
+
 # Azure AI Foundry project with SystemAssigned identity
 resource "azapi_resource" "ai_project" {
   count                     = var.enable_foundry ? 1 : 0
@@ -73,7 +123,7 @@ resource "azapi_resource" "ai_project" {
     }
   }
 
-  depends_on = [azapi_resource.model_deployment]
+  depends_on = [azapi_resource.model_deployment, azapi_resource.model_deployment_morning, azapi_resource.model_deployment_specialist]
 }
 
 # Role assignment for project identity (needed before capability host)

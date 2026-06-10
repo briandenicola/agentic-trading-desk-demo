@@ -125,6 +125,16 @@ resource "azurerm_container_app" "orchestration_api" {
       }
 
       env {
+        name  = "FOUNDRY_MODEL_MORNING"
+        value = local.morning_model_deployment_name
+      }
+
+      env {
+        name  = "FOUNDRY_MODEL_SPECIALIST"
+        value = local.specialist_model_deployment_name
+      }
+
+      env {
         name  = "MAX_TOOL_HOPS"
         value = tostring(var.max_tool_hops)
       }
@@ -279,6 +289,16 @@ resource "azurerm_container_app_job" "agent_provisioner" {
       env {
         name  = "FOUNDRY_MODEL"
         value = local.model_deployment_name
+      }
+
+      env {
+        name  = "FOUNDRY_MODEL_MORNING"
+        value = local.morning_model_deployment_name
+      }
+
+      env {
+        name  = "FOUNDRY_MODEL_SPECIALIST"
+        value = local.specialist_model_deployment_name
       }
 
       env {

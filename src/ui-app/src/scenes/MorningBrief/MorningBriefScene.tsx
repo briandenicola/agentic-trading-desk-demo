@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -18,7 +18,9 @@ import {
 } from '@mui/material';
 import {
   runMorningBrief,
+  subscribeToEvents,
   type AffectedClient,
+  type LiveAlert,
   type MorningBrief,
   type OutreachItem,
   type RankingRationale,
@@ -26,6 +28,14 @@ import {
 import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
 import CockpitNav from '../../components/CockpitNav';
+import SectionTitle from '../../components/SectionTitle';
+import AiInsightPanel from '../../components/AiInsightPanel';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
+import { mint } from '../../theme/theme';
+import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
+import GpsFixedOutlinedIcon from '@mui/icons-material/GpsFixedOutlined';
+import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
+import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 
 const rationaleScores = (rationale: RankingRationale) => [
   { label: 'Wallet', value: rationale.walletScore },
@@ -43,6 +53,7 @@ export default function MorningBriefScene() {
   const [error, setError] = useState<string | null>(null);
   const [brief, setBrief] = useState<MorningBrief | null>(null);
   const [expandedRationaleCid, setExpandedRationaleCid] = useState<string | null>(null);
+  const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 
   const handleRunBrief = async () => {
     setLoading(true);
@@ -59,6 +70,20 @@ export default function MorningBriefScene() {
       setLoading(false);
     }
   };
+
+  // Reactive live push (002 US2): hold an SSE subscription while a brief is on screen so intraday
+  // events re-rank the plan in place and raise a live alert banner (FR-010/FR-011).
+  const hasBrief = brief !== null;
+  useEffect(() => {
+    if (!hasBrief) return;
+    const unsubscribe = subscribeToEvents<MorningBrief>('morning-brief', {
+      onUpdate: (update) => {
+        setBrief(update.briefing);
+        setLiveAlert(update.alert);
+      },
+    });
+    return unsubscribe;
+  }, [hasBrief]);
 
   const toggleRationale = (cid: string) => {
     setExpandedRationaleCid((current) => (current === cid ? null : cid));
@@ -93,8 +118,8 @@ export default function MorningBriefScene() {
             variant="contained"
             onClick={handleRunBrief}
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : <span>▶</span>}
-            sx={{ textTransform: 'none', fontWeight: 500 }}
+            startIcon={loading ? <CircularProgress size={16} /> : <PlayArrowRoundedIcon />}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
           >
             {loading ? 'Running...' : 'Run morning brief'}
           </Button>
@@ -108,10 +133,8 @@ export default function MorningBriefScene() {
 
         {brief && (
           <Stack spacing={2}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-                ✦ Agent reasoning
-              </Typography>
+            <LiveAlertBanner alert={liveAlert} onDismiss={() => setLiveAlert(null)} />
+            <AiInsightPanel title="Agent reasoning">
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
                 {brief.reasoning.map((step, idx) => (
                   <Box
@@ -140,16 +163,16 @@ export default function MorningBriefScene() {
                   </Box>
                 ))}
               </Box>
-            </Paper>
+            </AiInsightPanel>
 
             <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-                📰 Macro event analysis{' '}
-                <Typography component="span" variant="body2" color="text.secondary">
-                  — a narrative you can share with clients
-                </Typography>
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1.5 }}>
+              <SectionTitle
+                icon={<NewspaperOutlinedIcon fontSize="inherit" />}
+                caption="— a narrative you can share with clients"
+              >
+                Macro event analysis
+              </SectionTitle>
+              <Typography variant="body2" sx={{ mt: 2, mb: 1.5 }}>
                 {brief.macroNarrative.summary}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: 'italic' }}>
@@ -172,12 +195,40 @@ export default function MorningBriefScene() {
               </Box>
             </Paper>
 
+            {brief.eventsConsidered && brief.eventsConsidered.length > 0 && (
+              <Paper sx={{ p: 3 }} data-testid="events-considered">
+                <SectionTitle
+                  icon={<NewspaperOutlinedIcon fontSize="inherit" />}
+                  caption="— overnight & intraday signals weighed into client linkage"
+                >
+                  Events considered ({brief.eventsConsidered.length})
+                </SectionTitle>
+                <Stack spacing={1} sx={{ mt: 2 }}>
+                  {brief.eventsConsidered.map((ev) => (
+                    <Box
+                      key={ev.id}
+                      data-testid={`event-${ev.id}`}
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}
+                    >
+                      <Chip
+                        label={ev.severity.toUpperCase()}
+                        size="small"
+                        color={ev.severity === 'high' ? 'error' : ev.severity === 'medium' ? 'warning' : 'default'}
+                        sx={{ fontSize: '10px', fontWeight: 700, height: 20 }}
+                      />
+                      <Typography variant="body2">{ev.headline}</Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </Paper>
+            )}
+
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                    🎯 Most-affected clients
-                  </Typography>
+                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
+                  <SectionTitle icon={<GpsFixedOutlinedIcon fontSize="inherit" />}>
+                    Most-affected clients
+                  </SectionTitle>
                   <Typography variant="caption" color="text.secondary">
                     Flagged by portfolio rate sensitivity
                   </Typography>
@@ -200,6 +251,19 @@ export default function MorningBriefScene() {
                           <Typography variant="caption" color="text.secondary">
                             {client.tier}
                           </Typography>
+                          {client.drivingEvents && client.drivingEvents.length > 0 && (
+                            <Box data-testid={`driving-events-${client.cid}`} sx={{ mt: 0.5 }}>
+                              {client.drivingEvents.map((ev) => (
+                                <Typography
+                                  key={ev.eventId}
+                                  variant="caption"
+                                  sx={{ display: 'block', color: mint.violetBright }}
+                                >
+                                  ⚡ {ev.headline}
+                                </Typography>
+                              ))}
+                            </Box>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">{client.exposure}</Typography>
@@ -225,10 +289,10 @@ export default function MorningBriefScene() {
               </Paper>
 
               <Paper sx={{ height: '100%' }}>
-                <Box sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                    📞 Outbound priority
-                  </Typography>
+                <Box sx={{ p: 2, borderBottom: `1px solid ${mint.border}` }}>
+                  <SectionTitle icon={<PhoneInTalkOutlinedIcon fontSize="inherit" />}>
+                    Outbound priority
+                  </SectionTitle>
                   <Typography variant="caption" color="text.secondary">
                     Wallet + engagement + today's events
                   </Typography>
