@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import { runRmBriefing, subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
-import { usePersistentState } from '../../hooks/usePersistentState';
+import { usePersistentState, loadPersistentOnce } from '../../hooks/usePersistentState';
 import type { AlertPriority } from './workspaceData';
 
 // ---------------------------------------------------------------------------
@@ -94,7 +94,9 @@ export function WorkspaceLiveProvider({ children }: { children: ReactNode }) {
     setBriefLoading(true);
     setBriefError(null);
     try {
-      const result = await runRmBriefing({ payload: { rmId: RM_ID, date: RM_DATE } });
+      const result = await loadPersistentOnce('workspace/brief', () =>
+        runRmBriefing({ payload: { rmId: RM_ID, date: RM_DATE } }),
+      );
       setBrief(result);
     } catch (err) {
       setBriefError(err instanceof Error ? err.message : 'Failed to load the daily briefing');

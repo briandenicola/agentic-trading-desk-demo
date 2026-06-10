@@ -22,7 +22,7 @@ import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { runRmBriefing, subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
-import { usePersistentState } from '../../hooks/usePersistentState';
+import { usePersistentState, loadPersistentOnce } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
@@ -52,7 +52,9 @@ export default function RmBriefingScene() {
     setLoading(true);
     setError(null);
     try {
-      const result = await runRmBriefing({ payload: { rmId: 'RM-104', date: '2026-05-14' } });
+      const result = await loadPersistentOnce('rm-briefing/brief', () =>
+        runRmBriefing({ payload: { rmId: 'RM-104', date: '2026-05-14' } }),
+      );
       setBrief(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to run RM daily briefing');

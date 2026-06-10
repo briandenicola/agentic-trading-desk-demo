@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react';
  * (cleared on full page reload), which is exactly the "navigate away and back" persistence requested.
  */
 const store = new Map<string, unknown>();
+const inflight = new Map<string, Promise<unknown>>();
 
 export function usePersistentState<T>(
   key: string,
@@ -36,7 +37,32 @@ export function usePersistentState<T>(
   return [value, set];
 }
 
+/**
+ * Run `loader` once for a key and write the result straight into the persistent store, deduping
+ * concurrent callers. This keeps an in-flight fetch alive across navigation: if the scene unmounts
+ * before the request resolves, the result still lands in the store, so remounting reads the loaded
+ * value instead of kicking off a fresh run. A second call after resolution starts a new load (used
+ * for explicit reloads).
+ */
+export function loadPersistentOnce<T>(key: string, loader: () => Promise<T>): Promise<T> {
+  const existing = inflight.get(key);
+  if (existing) return existing as Promise<T>;
+  const p = loader()
+    .then((value) => {
+      store.set(key, value);
+      inflight.delete(key);
+      return value;
+    })
+    .catch((err) => {
+      inflight.delete(key);
+      throw err;
+    });
+  inflight.set(key, p);
+  return p;
+}
+
 /** Test seam: drop all persisted scene state so cases don't leak across renders. */
 export function clearPersistentState(): void {
   store.clear();
+  inflight.clear();
 }

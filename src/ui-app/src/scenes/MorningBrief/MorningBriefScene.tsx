@@ -27,7 +27,7 @@ import {
 } from '../../api/client';
 import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
-import { usePersistentState } from '../../hooks/usePersistentState';
+import { usePersistentState, loadPersistentOnce } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
@@ -61,9 +61,11 @@ export default function MorningBriefScene() {
     setError(null);
     setExpandedRationaleCid(null);
     try {
-      const result = await runMorningBrief({
-        payload: { eventId: 'fed_surprise_hike', date: '2026-06-04' },
-      });
+      const result = await loadPersistentOnce('morning-brief/brief', () =>
+        runMorningBrief({
+          payload: { eventId: 'fed_surprise_hike', date: '2026-06-04' },
+        }),
+      );
       setBrief(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to run morning brief');
