@@ -8,6 +8,13 @@ resource "azurerm_key_vault" "main" {
   purge_protection_enabled   = false
   rbac_authorization_enabled = true
   tags                       = local.common_tags
+
+  # Secure posture: public network access is disabled. Container Apps resolve
+  # secret references via the managed identity over the Azure trusted-services
+  # path, so runtime is unaffected. NOTE: this also means `terraform apply` for
+  # KV secrets must run from inside the VNet (or with the vault temporarily
+  # opened); routine infra changes are applied via `az` against the running apps.
+  public_network_access_enabled = false
 }
 
 # Grant current deployment identity access to create secrets
