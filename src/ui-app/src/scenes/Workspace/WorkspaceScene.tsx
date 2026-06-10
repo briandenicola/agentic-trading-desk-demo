@@ -4,6 +4,7 @@ import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import GavelRoundedIcon from '@mui/icons-material/GavelRounded';
 import MintBrand from '../../components/MintBrand';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import { mint } from '../../theme/theme';
 import { workspace } from './workspaceData';
 import LaunchPadSidebar from './LaunchPadSidebar';
@@ -11,6 +12,9 @@ import NewsfeedColumn from './NewsfeedColumn';
 import CommandCenter from './CommandCenter';
 import RightRail from './RightRail';
 import PlaybooksBar from './PlaybooksBar';
+import LiveStatusPill from './LiveStatusPill';
+import ToastHost from './ToastHost';
+import { WorkspaceLiveProvider, useWorkspaceLive } from './useWorkspaceLive';
 
 function UserProfile() {
   const initials = workspace.user.name
@@ -110,9 +114,20 @@ function FooterStrip() {
  * M.INT workspace shell — the primary product screen (assets/Designer Layout.png).
  * Composes the Launch Pad sidebar, the M.INT newsfeed, the AI command center with
  * its configurable panel grid, the matched-news rail, the playbooks bar and the
- * process footer. Front-end first: the command bar is wired to the real /api/chat.
+ * process footer. Front-end first: the command bar is wired to the real /api/chat,
+ * and a live SSE subscription drives intraday highlighting across the shell.
  */
 export default function WorkspaceScene() {
+  return (
+    <WorkspaceLiveProvider>
+      <WorkspaceShell />
+      <ToastHost />
+    </WorkspaceLiveProvider>
+  );
+}
+
+function WorkspaceShell() {
+  const { alert, dismissAlert } = useWorkspaceLive();
   return (
     <Box sx={{ minHeight: '100vh', background: mint.bg, color: mint.text, p: { xs: 1.5, md: 2.5 } }}>
       {/* Header */}
@@ -141,8 +156,14 @@ export default function WorkspaceScene() {
             </Typography>
           </Box>
         </Stack>
-        <UserProfile />
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          <LiveStatusPill />
+          <UserProfile />
+        </Stack>
       </Box>
+
+      {/* Live intraday alert banner (spans above the grid) */}
+      <LiveAlertBanner alert={alert} onDismiss={dismissAlert} />
 
       {/* Main 4-column grid */}
       <Box

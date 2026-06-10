@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+import BoltRoundedIcon from '@mui/icons-material/BoltRounded';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -8,6 +9,7 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { mint } from '../../theme/theme';
 import { workspace, type AlertPriority, type FeedItem } from './workspaceData';
+import { useWorkspaceLive, type LiveFeedItem } from './useWorkspaceLive';
 
 const FEED_ICON: Record<FeedItem['icon'], ReactNode> = {
   chat: <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 18 }} />,
@@ -58,8 +60,47 @@ function FeedCard({ item }: { item: FeedItem }) {
   );
 }
 
+function LiveFeedCard({ item }: { item: LiveFeedItem }) {
+  const color = PRIORITY[item.priority].color;
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: 2,
+        border: `1px solid ${color}66`,
+        background: `linear-gradient(160deg, ${color}1f, ${mint.paperHi})`,
+        borderLeft: `3px solid ${color}`,
+        cursor: 'pointer',
+        '@keyframes mintFeedFlash': {
+          '0%': { boxShadow: `0 0 0 0 ${color}00` },
+          '25%': { boxShadow: `0 0 0 3px ${color}55` },
+          '100%': { boxShadow: `0 0 0 0 ${color}00` },
+        },
+        animation: item.isNew ? 'mintFeedFlash 1.5s ease-out 2' : 'none',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color }}>
+          <Chip
+            icon={<BoltRoundedIcon sx={{ fontSize: 12, color: '#04101c !important' }} />}
+            label={`LIVE · ${item.priority}`}
+            size="small"
+            sx={{ height: 17, fontSize: 9, fontWeight: 800, color: '#04101c', bgcolor: color, '& .MuiChip-label': { px: 0.5 } }}
+          />
+        </Box>
+        <Typography sx={{ fontSize: 10, color: mint.textDim }}>{item.time}</Typography>
+      </Box>
+      <Typography sx={{ fontSize: 13, fontWeight: 700, color: mint.text, lineHeight: 1.4 }}>{item.headline}</Typography>
+      <Typography sx={{ fontSize: 11.5, color: mint.textDim, mt: 0.25 }}>
+        M.INT matched {item.eventCount} new event{item.eventCount === 1 ? '' : 's'} to your book
+      </Typography>
+    </Box>
+  );
+}
+
 /** Center-left "M.INT Newsfeed" alert column. */
 export default function NewsfeedColumn() {
+  const { liveItems } = useWorkspaceLive();
   return (
     <Stack
       spacing={1.5}
@@ -75,6 +116,9 @@ export default function NewsfeedColumn() {
         </Box>
       </Box>
       <Stack spacing={1.25}>
+        {liveItems.map((item) => (
+          <LiveFeedCard key={item.id} item={item} />
+        ))}
         {workspace.feed.map((item) => (
           <FeedCard key={item.id} item={item} />
         ))}

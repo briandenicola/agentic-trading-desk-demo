@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Box, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
+import { Badge, Box, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import DashboardCustomizeRoundedIcon from '@mui/icons-material/DashboardCustomizeRounded';
@@ -10,6 +10,7 @@ import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { sendChat, type ChatTurn } from '../../api/client';
 import { usePersistentState } from '../../hooks/usePersistentState';
+import { useWorkspaceLive } from './useWorkspaceLive';
 import { mint } from '../../theme/theme';
 import { workspace } from './workspaceData';
 import {
@@ -91,6 +92,7 @@ export default function CommandCenter() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const { unread, clearUnread } = useWorkspaceLive();
   const idRef = useRef<number | null>(null);
   if (idRef.current === null) {
     idRef.current = messages.reduce((m, x) => Math.max(m, x.id), 0) + 1;
@@ -151,9 +153,20 @@ export default function CommandCenter() {
           <ToolbarButton label="Customize layout">
             <DashboardCustomizeRoundedIcon fontSize="small" />
           </ToolbarButton>
-          <ToolbarButton label="Notifications">
-            <NotificationsNoneRoundedIcon fontSize="small" />
-          </ToolbarButton>
+          <IconButton
+            size="small"
+            aria-label="Notifications"
+            onClick={clearUnread}
+            sx={{ color: unread > 0 ? mint.text : mint.textDim, '&:hover': { color: mint.text } }}
+          >
+            <Badge
+              badgeContent={unread}
+              max={9}
+              sx={{ '& .MuiBadge-badge': { fontSize: 9, height: 15, minWidth: 15, bgcolor: mint.red, color: '#04101c', fontWeight: 800 } }}
+            >
+              <NotificationsNoneRoundedIcon fontSize="small" />
+            </Badge>
+          </IconButton>
           <ToolbarButton label="Settings">
             <SettingsRoundedIcon fontSize="small" />
           </ToolbarButton>

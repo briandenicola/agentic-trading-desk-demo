@@ -1,7 +1,9 @@
-import { Box, LinearProgress, Stack, Typography } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { Box, Chip, LinearProgress, Stack, Typography } from '@mui/material';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import { mint } from '../../theme/theme';
 import { workspace } from './workspaceData';
+import { useWorkspaceLive } from './useWorkspaceLive';
 import { ExposureDonut, Sparkline, WorkspacePanel, relevanceColor, riskColor } from './WorkspaceViz';
 
 const ViewAll = ({ label = 'View Full Breakdown' }: { label?: string }) => (
@@ -12,6 +14,46 @@ const ViewAll = ({ label = 'View Full Breakdown' }: { label?: string }) => (
 
 const ytdColor = (v: number) => (v >= 0 ? mint.green : mint.red);
 
+/**
+ * Transient "Updated" chip shown in a panel header for a few seconds after an
+ * intraday event re-synthesizes the workspace (KPI-delta highlighting cue).
+ */
+function UpdatedBadge() {
+  const { pulse } = useWorkspaceLive();
+  const [show, setShow] = useState(false);
+  const seenFirst = useRef(false);
+
+  useEffect(() => {
+    if (!seenFirst.current) {
+      seenFirst.current = true;
+      return;
+    }
+    setShow(true);
+    const t = window.setTimeout(() => setShow(false), 5000);
+    return () => window.clearTimeout(t);
+  }, [pulse]);
+
+  if (!show) return null;
+  return (
+    <Chip
+      label="● Updated"
+      size="small"
+      sx={{
+        height: 18,
+        fontSize: 9,
+        fontWeight: 800,
+        color: '#04101c',
+        bgcolor: mint.green,
+        '@keyframes mintBadgePulse': {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.45 },
+        },
+        animation: 'mintBadgePulse 1.1s ease-in-out 3',
+      }}
+    />
+  );
+}
+
 export function ClientOverviewPanel() {
   const c = workspace.client;
   const rows: [string, string][] = [
@@ -21,7 +63,7 @@ export function ClientOverviewPanel() {
     ['Objective', c.objective],
   ];
   return (
-    <WorkspacePanel title="Client Overview" testId="ws-client-overview">
+    <WorkspacePanel title="Client Overview" action={<UpdatedBadge />} testId="ws-client-overview">
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
         <Box
           sx={{
@@ -135,7 +177,7 @@ export function TopHoldingsPanel() {
 export function RiskAnalyticsPanel() {
   const r = workspace.risk;
   return (
-    <WorkspacePanel title="Risk Analytics" testId="ws-risk">
+    <WorkspacePanel title="Risk Analytics" action={<UpdatedBadge />} testId="ws-risk">
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.25 }}>
         <Box>
           <Typography sx={{ fontSize: 30, fontWeight: 800, color: mint.amber, lineHeight: 1 }}>{r.score}</Typography>
