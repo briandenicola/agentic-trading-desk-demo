@@ -114,7 +114,6 @@ async function runBrief() {
   } as AxiosResponse<MorningBrief>);
 
   renderScene();
-  fireEvent.click(screen.getByRole('button', { name: /run morning brief/i }));
   await screen.findByTestId('call-plan-status');
 
   return postSpy;

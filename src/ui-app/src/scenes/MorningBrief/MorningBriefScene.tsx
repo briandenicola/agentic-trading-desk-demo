@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Box,
@@ -71,6 +71,16 @@ export default function MorningBriefScene() {
       setLoading(false);
     }
   };
+
+  // Auto-run on first visit so the page renders real data without a manual click.
+  // The brief is persisted, so navigating back won't re-trigger the agent.
+  const didAutoRun = useRef(false);
+  useEffect(() => {
+    if (didAutoRun.current || brief !== null || loading) return;
+    didAutoRun.current = true;
+    void handleRunBrief();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Reactive live push (002 US2): hold an SSE subscription while a brief is on screen so intraday
   // events re-rank the plan in place and raise a live alert banner (FR-010/FR-011).

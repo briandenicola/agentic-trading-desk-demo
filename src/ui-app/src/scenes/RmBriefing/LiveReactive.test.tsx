@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosResponse } from 'axios';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -127,7 +127,6 @@ describe('RmBriefingScene live re-rank', () => {
     } as AxiosResponse<RmBriefing>);
 
     renderScene();
-    fireEvent.click(screen.getByRole('button', { name: /run daily briefing/i }));
     await screen.findByTestId('rm-briefing');
 
     expect(screen.getByTestId('priority-call-CB-10012')).toBeInTheDocument();

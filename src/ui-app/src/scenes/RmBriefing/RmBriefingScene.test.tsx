@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosResponse } from 'axios';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -125,7 +125,6 @@ async function runBriefing() {
   } as AxiosResponse<RmBriefing>);
 
   renderScene();
-  fireEvent.click(screen.getByRole('button', { name: /run daily briefing/i }));
   await screen.findByTestId('rm-briefing');
 
   return postSpy;
