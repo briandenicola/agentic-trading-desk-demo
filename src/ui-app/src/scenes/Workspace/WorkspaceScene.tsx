@@ -56,12 +56,17 @@ function FooterStrip() {
   return (
     <Box
       sx={{
-        mt: 1,
+        position: 'fixed',
+        bottom: 24,
+        left: { xs: 16, md: 24 },
+        right: { xs: 16, sm: 196 },
+        zIndex: 1200,
         px: 2.5,
-        py: 1.75,
+        py: 1.5,
         borderRadius: 3,
         border: `1px solid ${mint.border}`,
         background: mint.paper,
+        boxShadow: `0 8px 28px rgba(0,0,0,0.45)`,
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
@@ -131,7 +136,7 @@ export default function WorkspaceScene() {
 function WorkspaceShell() {
   const { alert, dismissAlert } = useWorkspaceLive();
   return (
-    <Box sx={{ minHeight: '100vh', background: mint.bg, color: mint.text, p: { xs: 1.5, md: 2.5 } }}>
+    <Box sx={{ minHeight: '100vh', background: mint.bg, color: mint.text, p: { xs: 1.5, md: 2.5 }, pb: { xs: '120px', md: '120px' } }}>
       {/* Header */}
       <Box
         sx={{
