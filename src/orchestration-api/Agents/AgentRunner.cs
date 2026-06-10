@@ -36,6 +36,7 @@ namespace OrchestrationApi.Agents;
 public sealed class AgentRunner(
     IConfiguration config,
     MorningBriefTools tools,
+    MorningBriefComposer composer,
     EventTools eventTools,
     EventFanOut fanOut,
     FoundryEventSpecialist specialist,
@@ -68,8 +69,8 @@ public sealed class AgentRunner(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to create the Foundry agent; returning a degraded brief.");
-            return Degraded(eventId, $"LIVE agent unavailable: {ex.Message}");
+            logger.LogError(ex, "Failed to create the Foundry agent; falling back to the deterministic brief.");
+            return await EnsurePopulatedAsync(Degraded(eventId, $"LIVE agent unavailable: {ex.Message}"), eventId, date, [], ct);
         }
 
         var userMessage =
@@ -84,9 +85,12 @@ public sealed class AgentRunner(
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
+        // Hoisted so the catch block can hand the authoritative event set to the safety net.
+        IReadOnlyList<MarketEvent> events = [];
         try
         {
-            var (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            string synthMessage;
+            (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
             var (maxAttempts, baseDelay) = FoundryRetry.SettingsFrom(config);
             var response = await FoundryRetry.ExecuteAsync(
                 c => agent.RunAsync(synthMessage, cancellationToken: c),
@@ -112,14 +116,61 @@ public sealed class AgentRunner(
             // fetched), not the model output, so the LIVE brief carries the events it weighed even
             // when the synthesizer omits them — matching the DEMO composer (FR-018, Principle III).
             var brief = MapToBrief(json, eventId) with { EventsConsidered = events };
+            // Safety net: if the synthesizer dropped the substantive client content, reconstruct it
+            // deterministically so the cockpit is never empty (re-stamped LIVE, same JSON shape).
+            brief = await EnsurePopulatedAsync(brief, eventId, date, events, ct);
             runSpan?.SetStatus(ActivityStatusCode.Ok);
             return brief;
         }
         catch (Exception ex)
         {
             runSpan?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            logger.LogError(ex, "Foundry agent run failed; returning a degraded brief.");
-            return Degraded(eventId, $"LIVE agent run failed: {ex.Message}");
+            logger.LogError(ex, "Foundry agent run failed; falling back to the deterministic brief.");
+            return await EnsurePopulatedAsync(Degraded(eventId, $"LIVE agent run failed: {ex.Message}"), eventId, date, events, ct);
+        }
+    }
+
+    // ---------------------------------------------------------------- deterministic safety net
+
+    /// <summary>
+    /// Deterministic safety net (FR-011 / Principle III): the LIVE synthesizer occasionally returns
+    /// no affected clients / outreach (small-model variance, amplified by a large event fan-out
+    /// blob). Rather than surface an empty brief, reconstruct it from the same systems-of-record
+    /// with <see cref="MorningBriefComposer"/> and re-stamp it <c>LIVE</c> so the JSON shape is
+    /// unchanged and the cockpit always shows a populated brief. If the brief already has clients
+    /// or outreach, it is returned untouched.
+    /// </summary>
+    private async Task<MorningBrief> EnsurePopulatedAsync(
+        MorningBrief brief, string eventId, string? date, IReadOnlyList<MarketEvent> events, CancellationToken ct)
+    {
+        if (brief.MostAffectedClients.Count > 0 || brief.Outreach.Count > 0)
+        {
+            return brief;
+        }
+
+        try
+        {
+            var deterministic = await composer.ComposeAsync(eventId, date, ct);
+            if (deterministic.MostAffectedClients.Count == 0 && deterministic.Outreach.Count == 0)
+            {
+                return brief; // genuinely nothing to surface — keep the agent's brief.
+            }
+
+            var notes = new List<string>(deterministic.Notes ?? [])
+            {
+                "LIVE synthesizer returned no affected clients; the brief was reconstructed deterministically from the systems-of-record (graceful degrade).",
+            };
+            return deterministic with
+            {
+                Mode = "LIVE",
+                EventsConsidered = events.Count > 0 ? events : deterministic.EventsConsidered,
+                Notes = notes,
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Deterministic safety-net composition failed; returning the LIVE agent's brief unchanged.");
+            return brief;
         }
     }
 

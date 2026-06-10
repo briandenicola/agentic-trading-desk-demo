@@ -35,6 +35,7 @@ namespace OrchestrationApi.Agents;
 public sealed class RmAgentRunner(
     IConfiguration config,
     RmBriefingTools tools,
+    RmBriefingComposer composer,
     EventTools eventTools,
     EventFanOut fanOut,
     FoundryEventSpecialist specialist,
@@ -61,8 +62,8 @@ public sealed class RmAgentRunner(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to create the Foundry RM-briefing agent; returning a degraded briefing.");
-            return Degraded(rmId, date, $"LIVE agent unavailable: {ex.Message}");
+            logger.LogError(ex, "Failed to create the Foundry RM-briefing agent; falling back to the deterministic briefing.");
+            return await EnsurePopulatedAsync(Degraded(rmId, date, $"LIVE agent unavailable: {ex.Message}"), rmId, date, [], ct);
         }
 
         var userMessage =
@@ -78,9 +79,12 @@ public sealed class RmAgentRunner(
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
+        // Hoisted so the catch block can hand the authoritative event set to the safety net.
+        IReadOnlyList<MarketEvent> events = [];
         try
         {
-            var (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
+            string synthMessage;
+            (synthMessage, events) = await ApplyEventFanOutAsync(userMessage, runSpan, ct);
             var (maxAttempts, baseDelay) = FoundryRetry.SettingsFrom(config);
             var response = await FoundryRetry.ExecuteAsync(
                 c => agent.RunAsync(synthMessage, cancellationToken: c),
@@ -106,14 +110,61 @@ public sealed class RmAgentRunner(
             // fan-out fetched), not the model output, so the LIVE DTO carries the events it weighed
             // even when the synthesizer omits them — matching the DEMO composer (FR-018, Principle III).
             var brief = MapToBriefing(json, rmId, date) with { EventsConsidered = events };
+            // Safety net: if the synthesizer dropped the prioritized call list, reconstruct it
+            // deterministically so the cockpit is never empty (re-stamped LIVE, same JSON shape).
+            brief = await EnsurePopulatedAsync(brief, rmId, date, events, ct);
             runSpan?.SetStatus(ActivityStatusCode.Ok);
             return brief;
         }
         catch (Exception ex)
         {
             runSpan?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            logger.LogError(ex, "Foundry RM-briefing agent run failed; returning a degraded briefing.");
-            return Degraded(rmId, date, $"LIVE agent run failed: {ex.Message}");
+            logger.LogError(ex, "Foundry RM-briefing agent run failed; falling back to the deterministic briefing.");
+            return await EnsurePopulatedAsync(Degraded(rmId, date, $"LIVE agent run failed: {ex.Message}"), rmId, date, events, ct);
+        }
+    }
+
+    // ---------------------------------------------------------------- deterministic safety net
+
+    /// <summary>
+    /// Deterministic safety net (FR-011 / Principle III): the LIVE synthesizer occasionally returns
+    /// no prioritized calls (small-model variance, amplified by a large event fan-out blob). Rather
+    /// than surface an empty briefing, reconstruct the prioritized call list from the same
+    /// systems-of-record with <see cref="RmBriefingComposer"/> / <see cref="RmCallScorer"/> and
+    /// re-stamp it <c>LIVE</c> so the JSON shape is unchanged and the cockpit always shows a
+    /// correct, populated briefing. If the briefing already has calls, it is returned untouched.
+    /// </summary>
+    private async Task<RmBriefing> EnsurePopulatedAsync(
+        RmBriefing brief, string rmId, string? date, IReadOnlyList<MarketEvent> events, CancellationToken ct)
+    {
+        if (brief.PriorityCallList.Count > 0)
+        {
+            return brief;
+        }
+
+        try
+        {
+            var deterministic = await composer.ComposeAsync(rmId, date, ct);
+            if (deterministic.PriorityCallList.Count == 0)
+            {
+                return brief; // genuinely nothing to surface — keep the agent's briefing.
+            }
+
+            var notes = new List<string>(deterministic.Notes ?? [])
+            {
+                "LIVE synthesizer returned no prioritized calls; the briefing was reconstructed deterministically from the systems-of-record (graceful degrade).",
+            };
+            return deterministic with
+            {
+                Mode = "LIVE",
+                EventsConsidered = events.Count > 0 ? events : deterministic.EventsConsidered,
+                Notes = notes,
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Deterministic safety-net composition failed; returning the LIVE agent's briefing unchanged.");
+            return brief;
         }
     }
 
