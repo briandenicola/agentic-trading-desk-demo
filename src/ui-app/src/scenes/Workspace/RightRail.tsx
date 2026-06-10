@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Box, Chip, Stack, Typography } from '@mui/material';
+import BoltRoundedIcon from '@mui/icons-material/BoltRounded';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 import { mint } from '../../theme/theme';
-import { workspace, type ActivityItem, type MatchedNews } from './workspaceData';
+import { workspace, type ActivityItem, type AlertPriority, type MatchedNews } from './workspaceData';
+import { useWorkspaceLive, type LiveFeedItem } from './useWorkspaceLive';
 
 const SOURCE_COLOR: Record<MatchedNews['source'], string> = {
   Bloomberg: mint.amber,
@@ -20,11 +22,52 @@ const TAG_COLOR: Record<MatchedNews['tagKind'], string> = {
   macro: mint.cyan,
 };
 
+const LIVE_PRIORITY_COLOR: Record<AlertPriority, string> = {
+  HIGH: mint.red,
+  MEDIUM: mint.amber,
+  LOW: mint.cyan,
+  DONE: mint.green,
+};
+
 const ACTIVITY_ICON: Record<ActivityItem['icon'], ReactNode> = {
   chat: <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 16 }} />,
   view: <VisibilityOutlinedIcon sx={{ fontSize: 16 }} />,
   download: <DownloadRoundedIcon sx={{ fontSize: 16 }} />,
 };
+
+function LiveNewsRow({ item }: { item: LiveFeedItem }) {
+  const color = LIVE_PRIORITY_COLOR[item.priority];
+  return (
+    <Box
+      sx={{
+        p: 1,
+        my: 0.75,
+        borderRadius: 1.5,
+        border: `1px solid ${color}66`,
+        background: `linear-gradient(160deg, ${color}1f, ${mint.paperHi})`,
+        '@keyframes mintRailFlash': {
+          '0%': { boxShadow: `0 0 0 0 ${color}00` },
+          '25%': { boxShadow: `0 0 0 3px ${color}55` },
+          '100%': { boxShadow: `0 0 0 0 ${color}00` },
+        },
+        animation: item.isNew ? 'mintRailFlash 1.5s ease-out 2' : 'none',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+        <Chip
+          icon={<BoltRoundedIcon sx={{ fontSize: 12, color: '#04101c !important' }} />}
+          label="M.INT LIVE"
+          size="small"
+          sx={{ height: 18, fontSize: 9, fontWeight: 800, color: '#04101c', bgcolor: color, '& .MuiChip-label': { px: 0.5 } }}
+        />
+        <Typography sx={{ fontSize: 10, color: mint.textDim }}>{item.time}</Typography>
+      </Box>
+      <Typography sx={{ fontSize: 12.5, fontWeight: 600, color: mint.text, lineHeight: 1.4 }}>
+        {item.headline}
+      </Typography>
+    </Box>
+  );
+}
 
 function NewsRow({ item }: { item: MatchedNews }) {
   return (
@@ -69,6 +112,7 @@ function NewsRow({ item }: { item: MatchedNews }) {
 /** Right rail: tabbed "News Matched to {client}" + a client activity log. */
 export default function RightRail() {
   const [tab, setTab] = useState<(typeof workspace.newsTabs)[number]>('All');
+  const { liveItems } = useWorkspaceLive();
   const news = workspace.matchedNews.filter((n) => tab === 'All' || n.category === tab);
 
   return (
@@ -101,6 +145,7 @@ export default function RightRail() {
             );
           })}
         </Box>
+        {tab === 'All' && liveItems.map((item) => <LiveNewsRow key={item.id} item={item} />)}
         {news.length > 0 ? (
           news.map((n) => <NewsRow key={n.id} item={n} />)
         ) : (
