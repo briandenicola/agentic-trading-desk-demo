@@ -27,6 +27,7 @@ import {
 } from '../../api/client';
 import CallPlan from './CallPlan';
 import MarketStrip from './MarketStrip';
+import { usePersistentState } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
@@ -51,7 +52,7 @@ function formatScore(score: number): string {
 export default function MorningBriefScene() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [brief, setBrief] = useState<MorningBrief | null>(null);
+  const [brief, setBrief] = usePersistentState<MorningBrief | null>('morning-brief/brief', null);
   const [expandedRationaleCid, setExpandedRationaleCid] = useState<string | null>(null);
   const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 

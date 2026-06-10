@@ -13,6 +13,7 @@ import {
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { sendChat, type ChatReply, type ChatTurn } from '../../api/client';
+import { usePersistentState } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
 import { mint } from '../../theme/theme';
 
@@ -86,21 +87,32 @@ interface DisplayMessage extends ChatTurn {
 }
 
 export default function ChatScene() {
-  const [messages, setMessages] = useState<DisplayMessage[]>([
+  const [messages, setMessages] = usePersistentState<DisplayMessage[]>('chat/messages', [
     { id: 0, role: 'assistant', content: GREETING },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<ChatReply['mode'] | null>(null);
-  const [suggestions, setSuggestions] = useState<string[]>(DEFAULT_SUGGESTIONS);
+  const [mode, setMode] = usePersistentState<ChatReply['mode'] | null>('chat/mode', null);
+  const [suggestions, setSuggestions] = usePersistentState<string[]>(
+    'chat/suggestions',
+    DEFAULT_SUGGESTIONS,
+  );
 
   const endRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     endRef.current?.scrollIntoView?.({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const idRef = useRef(1);
-  const nextId = () => idRef.current++;
+  // Seed the id counter past any restored messages so new turns never collide on a remount.
+  const idRef = useRef<number | null>(null);
+  if (idRef.current === null) {
+    idRef.current = messages.reduce((max, m) => Math.max(max, m.id), 0) + 1;
+  }
+  const nextId = () => {
+    const id = idRef.current ?? 1;
+    idRef.current = id + 1;
+    return id;
+  };
 
   const send = async (text: string) => {
     const trimmed = text.trim();

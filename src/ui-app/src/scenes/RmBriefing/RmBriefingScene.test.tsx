@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { apiClient, type RmBriefing } from '../../api/client';
 import { theme } from '../../theme/theme';
 import RmBriefingScene from './RmBriefingScene';
+import { clearPersistentState } from '../../hooks/usePersistentState';
 
 const mockBrief: RmBriefing = {
   mode: 'DEMO',
@@ -132,6 +133,7 @@ async function runBriefing() {
 
 afterEach(() => {
   cleanup();
+  clearPersistentState();
   vi.restoreAllMocks();
 });
 

@@ -26,6 +26,7 @@ vi.mock('../../api/client', async (importOriginal) => {
 
 import { apiClient } from '../../api/client';
 import RmBriefingScene from './RmBriefingScene';
+import { clearPersistentState } from '../../hooks/usePersistentState';
 
 function baseBrief(topCustomerId: string, topName: string): RmBriefing {
   return {
@@ -74,6 +75,7 @@ function renderScene() {
 
 afterEach(() => {
   cleanup();
+  clearPersistentState();
   vi.restoreAllMocks();
   hoisted.handlers = null;
 });

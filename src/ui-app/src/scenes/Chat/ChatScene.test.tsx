@@ -17,6 +17,7 @@ vi.mock('../../api/client', async (importOriginal) => {
 });
 
 import ChatScene from './ChatScene';
+import { clearPersistentState } from '../../hooks/usePersistentState';
 
 function renderScene() {
   return render(
@@ -31,6 +32,7 @@ function renderScene() {
 
 afterEach(() => {
   cleanup();
+  clearPersistentState();
   hoisted.sendChat.mockReset();
 });
 

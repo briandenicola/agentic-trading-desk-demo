@@ -22,6 +22,7 @@ import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { runRmBriefing, subscribeToEvents, type LiveAlert, type RmBriefing } from '../../api/client';
+import { usePersistentState } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
 import SectionTitle from '../../components/SectionTitle';
 import AiInsightPanel from '../../components/AiInsightPanel';
@@ -44,7 +45,7 @@ const statusColor = (status: string): 'error' | 'warning' | 'success' | 'default
 export default function RmBriefingScene() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [brief, setBrief] = useState<RmBriefing | null>(null);
+  const [brief, setBrief] = usePersistentState<RmBriefing | null>('rm-briefing/brief', null);
   const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
 
   const handleRun = async () => {

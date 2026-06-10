@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { apiClient, type MorningBrief } from '../../api/client';
 import { theme } from '../../theme/theme';
 import MorningBriefScene from './MorningBriefScene';
+import { clearPersistentState } from '../../hooks/usePersistentState';
 
 const mockBrief: MorningBrief = {
   mode: 'DEMO',
@@ -121,6 +122,7 @@ async function runBrief() {
 
 afterEach(() => {
   cleanup();
+  clearPersistentState();
   vi.restoreAllMocks();
 });
 
