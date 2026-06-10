@@ -134,6 +134,13 @@ resource "azurerm_container_app" "orchestration_api" {
         value = local.specialist_model_deployment_name
       }
 
+      # AI Chat (markets-assistant) deliberately reuses the morning gpt-4o-mini
+      # deployment so it never competes with the briefing synthesizers for quota.
+      env {
+        name  = "FOUNDRY_MODEL_CHAT"
+        value = local.morning_model_deployment_name
+      }
+
       env {
         name  = "MAX_TOOL_HOPS"
         value = tostring(var.max_tool_hops)
@@ -299,6 +306,13 @@ resource "azurerm_container_app_job" "agent_provisioner" {
       env {
         name  = "FOUNDRY_MODEL_SPECIALIST"
         value = local.specialist_model_deployment_name
+      }
+
+      # AI Chat (markets-assistant) deliberately reuses the morning gpt-4o-mini
+      # deployment so it never competes with the briefing synthesizers for quota.
+      env {
+        name  = "FOUNDRY_MODEL_CHAT"
+        value = local.morning_model_deployment_name
       }
 
       env {
