@@ -15,6 +15,7 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 | `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
 | `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
 | `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
+| `/chat` | **AI Chat** | Grounded Markets-Intelligence assistant — multi-turn Q&A over the same systems-of-record (who to call, a customer, the market, complaints, pipeline) |
 | `/admin` | **News Desk** | Operator UI to inject intraday news the agents react to |
 
 ## Stack
@@ -47,7 +48,7 @@ broadcasts one consolidated re-synthesized briefing per scene over SSE when even
 ### Orchestrator vs. agent
 
 - **Orchestrator** (the per-scene runners, the tool functions, `MAX_TOOL_HOPS`, the event fan-out, JSON→DTO mapping) runs **inside the `orchestration-api` Container App**.
-- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Four are registered: `rm-daily-briefing`, `morning-brief` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), and `briefing-synthesizer` (the shared synthesis contract).
+- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Five are registered: `rm-daily-briefing`, `morning-brief` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), `markets-assistant` (the grounded AI Chat agent), and `briefing-synthesizer` (the shared synthesis contract).
 - **Tool execution** happens back in the Container App: the agent only *decides* which tool to call; the C# function runs locally and fetches data from `mock-api` over HTTP.
 
 In LIVE mode each briefing is a **per-event multi-agent fan-out into a synthesizer** (002 US4): the
@@ -92,9 +93,12 @@ deployment (separate quota pool)** so the high-concurrency fan-out never compete
 | `rm-daily-briefing` (primary synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
 | `morning-brief` (synthesizer) | `gpt-4o-mini` | `FOUNDRY_MODEL_MORNING` |
 | `event-specialist` (per-event fan-out) | `gpt-5.4-nano` | `FOUNDRY_MODEL_SPECIALIST` |
+| `markets-assistant` (AI Chat) | `gpt-4o-mini` | `FOUNDRY_MODEL_CHAT` |
 | `briefing-synthesizer` (shared contract) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
 
-`FOUNDRY_MODEL_MORNING` / `FOUNDRY_MODEL_SPECIALIST` fall back to `FOUNDRY_MODEL` if unset. The
+`FOUNDRY_MODEL_MORNING` / `FOUNDRY_MODEL_SPECIALIST` fall back to `FOUNDRY_MODEL` if unset;
+`FOUNDRY_MODEL_CHAT` falls back to `FOUNDRY_MODEL_MORNING` (the gpt-4o-mini pool), so AI Chat never
+competes with the briefing synthesizers for quota. The
 provisioner is authoritative about the model: it recreates each agent on its target deployment, so a
 model change actually takes effect (a stored agent binds its deployment at run time). If the
 provisioner has not run, the runners self-create the scene agent so LIVE still works. Both LIVE runners
@@ -151,10 +155,10 @@ gitleaks detect --source . --no-banner
 ## Layout
 
 ```
-src\ui-app\              React cockpit (RM, Trading, Cockpit, News Desk) + nginx reverse proxy
-src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, DEMO/LIVE runners + event fan-out
+src\ui-app\              React cockpit (RM, Trading, Cockpit, AI Chat, News Desk) + nginx reverse proxy
+src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, /api/chat, DEMO/LIVE runners + event fan-out
 src\mock-api\            fictional system-of-record endpoints + reactive event store (/mock/events)
-src\agent-provisioner\   idempotent Foundry agent registration job (4 agents)
+src\agent-provisioner\   idempotent Foundry agent registration job (5 agents)
 src\shared\Observability\ Serilog, OTEL, correlation id, JSON errors
 infra\                   Terraform for ACA, ACR, Key Vault, Foundry
 tasks\                   Taskfile includes for local, build, and cloud workflows
