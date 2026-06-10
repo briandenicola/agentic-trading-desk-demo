@@ -15,6 +15,7 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { sendChat, type ChatReply, type ChatTurn } from '../../api/client';
 import { usePersistentState } from '../../hooks/usePersistentState';
 import CockpitNav from '../../components/CockpitNav';
+import MarkdownMessage from '../../components/MarkdownMessage';
 import { mint } from '../../theme/theme';
 
 const RM_CONTEXT = 'RM-104';
@@ -28,59 +29,6 @@ const DEFAULT_SUGGESTIONS = [
   'Tell me about CB-10036',
   'Any active complaints?',
 ];
-
-/** Split a line on **bold** markers and render the bold spans. */
-function renderInline(text: string): React.ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return (
-        <Box component="strong" key={i} sx={{ color: mint.text, fontWeight: 700 }}>
-          {part.slice(2, -2)}
-        </Box>
-      );
-    }
-    return <span key={i}>{part}</span>;
-  });
-}
-
-/** Minimal markdown-ish renderer: paragraphs + `- ` bullet groups + **bold**. */
-function MessageBody({ content }: { content: string }) {
-  const lines = content.split('\n');
-  const blocks: React.ReactNode[] = [];
-  let bullets: string[] = [];
-
-  const flush = () => {
-    if (bullets.length === 0) return;
-    const items = bullets;
-    blocks.push(
-      <Box component="ul" key={`ul-${blocks.length}`} sx={{ my: 0.5, pl: 2.5 }}>
-        {items.map((b, i) => (
-          <Box component="li" key={i} sx={{ mb: 0.25 }}>
-            {renderInline(b)}
-          </Box>
-        ))}
-      </Box>,
-    );
-    bullets = [];
-  };
-
-  lines.forEach((raw, idx) => {
-    const line = raw.replace(/^\s+/, '');
-    if (line.startsWith('- ')) {
-      bullets.push(line.slice(2));
-      return;
-    }
-    flush();
-    if (line.trim().length === 0) return;
-    blocks.push(
-      <Typography key={`p-${idx}`} variant="body2" sx={{ mb: 0.5, lineHeight: 1.55 }}>
-        {renderInline(line)}
-      </Typography>,
-    );
-  });
-  flush();
-  return <>{blocks}</>;
-}
 
 interface DisplayMessage extends ChatTurn {
   id: number;
@@ -197,7 +145,7 @@ export default function ChatScene() {
                       {m.content}
                     </Typography>
                   ) : (
-                    <MessageBody content={m.content} />
+                    <MarkdownMessage content={m.content} fontSize={14} />
                   )}
                 </Box>
               ))}

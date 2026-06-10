@@ -12,6 +12,7 @@ import { sendChat, type ChatTurn } from '../../api/client';
 import { usePersistentState } from '../../hooks/usePersistentState';
 import { useWorkspaceLive } from './useWorkspaceLive';
 import { mint } from '../../theme/theme';
+import MarkdownMessage from '../../components/MarkdownMessage';
 import { workspace } from './workspaceData';
 import {
   AxesOfferingsPanel,
@@ -72,7 +73,11 @@ function Bubble({ msg }: { msg: Msg }) {
           background: isUser ? `linear-gradient(135deg, ${mint.violet}, #5b8cff)` : mint.paperHi,
         }}
       >
-        <Typography sx={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{msg.content}</Typography>
+        {isUser ? (
+          <Typography sx={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{msg.content}</Typography>
+        ) : (
+          <MarkdownMessage content={msg.content} fontSize={13} />
+        )}
         <Typography sx={{ fontSize: 9, color: isUser ? 'rgba(255,255,255,0.7)' : mint.textDim, mt: 0.5, textAlign: 'right' }}>
           {workspace.conversation.time}
         </Typography>
