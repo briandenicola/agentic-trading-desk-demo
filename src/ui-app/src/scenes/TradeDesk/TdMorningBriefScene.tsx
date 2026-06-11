@@ -1,6 +1,7 @@
 import { Alert, Box, Chip, CircularProgress, Container, Paper, Stack, Typography } from '@mui/material';
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
 import TdNav from '../../components/TdNav';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import SectionTitle from '../../components/SectionTitle';
 import { mint } from '../../theme/theme';
 import TdCallCard from './TdCallCard';
@@ -13,13 +14,14 @@ import { useTdBriefing } from './useTdBriefing';
  * plan. Shares the persisted brief with the trading desk via the same store key.
  */
 export default function TdMorningBriefScene() {
-  const { brief, loading, error } = useTdBriefing('td-desk/brief');
+  const { brief, loading, error, liveAlert, dismissAlert } = useTdBriefing('td-desk/brief');
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <TdNav />
 
       <Container maxWidth="xl" sx={{ py: 4 }}>
+        <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
         <Box sx={{ mb: 3 }}>
           <Typography variant="overline" color="text.secondary" sx={{ fontSize: 12 }}>
             Morning brief · Institutional Sales &amp; Trading

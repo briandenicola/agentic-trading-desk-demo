@@ -224,6 +224,18 @@ public sealed class BriefingEventStream
                 .ToHashSet(StringComparer.Ordinal);
             return (brief, ids);
         }
+        else if (scene == "td-briefing")
+        {
+            var salespersonId = string.IsNullOrWhiteSpace(persona) ? TdBriefingComposer.DefaultSalespersonId : persona!;
+            var brief = _mode.DemoMode
+                ? await sp.GetRequiredService<TdBriefingComposer>().ComposeAsync(salespersonId, null, ct)
+                : await sp.GetRequiredService<TdAgentRunner>().RunAsync(salespersonId, null, ct);
+            var ids = brief.PriorityCallList
+                .SelectMany(c => c.DrivingEvents)
+                .Select(d => d.EventId)
+                .ToHashSet(StringComparer.Ordinal);
+            return (brief, ids);
+        }
         else
         {
             var brief = _mode.DemoMode

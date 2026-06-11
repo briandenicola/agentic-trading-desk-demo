@@ -341,6 +341,13 @@ app.MapGet("/api/agent/morning-brief/stream", (
     CancellationToken ct) =>
         StreamSceneAsync(ctx, stream, "morning-brief", null, ct));
 
+app.MapGet("/api/agent/td-briefing/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    [FromQuery] string? salespersonId,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "td-briefing", string.IsNullOrWhiteSpace(salespersonId) ? null : salespersonId, ct));
+
 app.Run();
 
 static string? ValidateSubmission(AdminNewsSubmission s)

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Box, Container, Grid, Paper, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/material';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import { ingestNews, listEvents, type AdminNewsSubmission, type MarketEvent } from '../../api/client';
@@ -9,6 +10,28 @@ import AiInsightPanel from '../../components/AiInsightPanel';
 import { mint } from '../../theme/theme';
 import NewsForm from './NewsForm';
 import EventList from './EventList';
+
+/**
+ * The marquee Institutional Sales & Trading event: an overnight AI-capex upgrade that hits the
+ * AI compute basket Theo's funds hold. Injecting it re-ranks the trading-desk call list live
+ * (Hyperion + Tradewinds jump to the top) — the "highly visible update from /admin" the desk
+ * asked for. Routed through the same ingestion path as a real feed (FR-016).
+ */
+const TD_MARQUEE_INJECT: AdminNewsSubmission = {
+  headline: 'AI-capex upgrade: hyperscaler datacenter spend revised sharply higher',
+  summary:
+    'Overnight prints lift FY26 hyperscaler capex guidance, fuelling the AI compute basket. ' +
+    'Quartzite Semiconductors and Nimbus Cloud Holdings lead; desks are reloading the names.',
+  source: 'Trading Desk — Morning Wire',
+  severity: 'high',
+  type: 'sector',
+  direction: 'positive',
+  affectedEntities: {
+    tickers: ['SEC-3003', 'SEC-3002'],
+    issuers: ['Quartzite Semiconductors', 'Nimbus Cloud Holdings'],
+    sectors: ['Technology'],
+  },
+};
 
 /**
  * Admin cockpit (002 US3). Operators inject intraday news items that flow through the SAME
@@ -49,6 +72,8 @@ export default function AdminScene() {
     }
   };
 
+  const handleMarqueeInject = () => handleSubmit(TD_MARQUEE_INJECT);
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <CockpitNav />
@@ -79,6 +104,27 @@ export default function AdminScene() {
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 7 }}>
+            <Paper sx={{ p: 3, mb: 3, borderLeft: `3px solid ${mint.cyan}` }}>
+              <SectionTitle icon={<BoltOutlinedIcon />} color="cyan" caption="trading desk · one-click">
+                Marquee Re-Rank
+              </SectionTitle>
+              <Typography variant="body2" sx={{ color: '#cdd6e6', mt: 1.5 }}>
+                Inject the overnight <Box component="span" sx={{ color: mint.cyan }}>AI-capex upgrade</Box> that
+                hits the AI compute basket. Open trading-desk briefings re-rank within ~10s —
+                Hyperion &amp; Tradewinds jump to the top of the call list.
+              </Typography>
+              <Button
+                onClick={handleMarqueeInject}
+                disabled={submitting}
+                variant="contained"
+                startIcon={<BoltOutlinedIcon />}
+                data-testid="admin-marquee-inject"
+                sx={{ mt: 2, fontWeight: 600 }}
+              >
+                {submitting ? 'Injecting…' : 'Inject AI-capex breaking print'}
+              </Button>
+            </Paper>
+
             <Paper sx={{ p: 3 }}>
               <SectionTitle icon={<CampaignOutlinedIcon />} caption="compose & inject">
                 Inject News Item

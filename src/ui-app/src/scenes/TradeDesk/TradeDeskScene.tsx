@@ -14,6 +14,7 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import { Link } from 'react-router-dom';
 import TdNav from '../../components/TdNav';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import SectionTitle from '../../components/SectionTitle';
 import { mint } from '../../theme/theme';
 import TdCallCard from './TdCallCard';
@@ -21,13 +22,14 @@ import { AgentReasoning, AxeBoard, EventsConsidered, MacroThemes, MarketStrip } 
 import { useTdBriefing } from './useTdBriefing';
 
 export default function TradeDeskScene() {
-  const { brief, loading, error, reload } = useTdBriefing('td-desk/brief');
+  const { brief, loading, error, reload, liveAlert, dismissAlert } = useTdBriefing('td-desk/brief');
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <TdNav />
 
       <Container maxWidth="xl" sx={{ py: 4 }}>
+        <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
         <Box sx={{ mb: 3 }}>
           <Typography variant="overline" color="text.secondary" sx={{ fontSize: 12 }}>
             Morning · Institutional Sales &amp; Trading

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { runTdBriefing, type TdBriefing } from '../../api/client';
+import { runTdBriefing, subscribeToEvents, type LiveAlert, type TdBriefing } from '../../api/client';
 import { loadPersistentOnce, usePersistentState } from '../../hooks/usePersistentState';
 
 // Demo persona + snapshot date for the Institutional Sales & Trading flow.
@@ -10,12 +10,15 @@ export const TD_DATE = '2026-05-22';
  * Loads the Trading Desk morning briefing once per SPA session and persists it under
  * `key`, so navigating away and back does not re-run the agent. Both TD scenes share
  * the same persisted brief by passing the same key. Exposes a `reload` for an explicit
- * refresh (e.g. after a News Desk inject re-ranks the call list).
+ * refresh and, once a brief is on screen, holds a reactive SSE subscription so a News
+ * Desk inject re-ranks the call list live (the "highly visible updates from /admin"
+ * the desk asked for). Each push replaces the brief in place and surfaces a `liveAlert`.
  */
 export function useTdBriefing(key: string) {
   const [brief, setBrief] = usePersistentState<TdBriefing | null>(key, null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
   const didAutoRun = useRef(false);
 
   const load = useCallback(
@@ -48,5 +51,25 @@ export function useTdBriefing(key: string) {
     void load(false);
   }, [brief, load]);
 
-  return { brief, loading, error, reload };
+  // Reactive live push: once a brief is on screen, subscribe to the TD event stream. Each
+  // re-synthesized DTO is applied in place and its alert surfaced so the re-rank is visible.
+  const hasBrief = brief !== null;
+  useEffect(() => {
+    if (!hasBrief) return;
+    const unsubscribe = subscribeToEvents<TdBriefing>(
+      'td-briefing',
+      {
+        onUpdate: (update) => {
+          setBrief(update.briefing);
+          setLiveAlert(update.alert);
+        },
+      },
+      { persona: TD_SALESPERSON },
+    );
+    return unsubscribe;
+  }, [hasBrief, setBrief]);
+
+  const dismissAlert = useCallback(() => setLiveAlert(null), []);
+
+  return { brief, loading, error, reload, liveAlert, dismissAlert };
 }

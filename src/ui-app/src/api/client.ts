@@ -220,7 +220,7 @@ export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBrie
 // from the latest snapshot on reconnect. Mirrors contracts/live-update.schema.json.
 // ---------------------------------------------------------------------------
 
-export type LiveScene = 'rm-briefing' | 'morning-brief';
+export type LiveScene = 'rm-briefing' | 'morning-brief' | 'td-briefing';
 
 export interface LiveAlert {
   priority: 'info' | 'notice' | 'urgent';
@@ -229,7 +229,7 @@ export interface LiveAlert {
   noImpact: boolean;
 }
 
-export interface LiveUpdate<TBriefing = RmBriefing | MorningBrief> {
+export interface LiveUpdate<TBriefing = RmBriefing | MorningBrief | TdBriefing> {
   sequence: number;
   scene: LiveScene;
   alert: LiveAlert;
@@ -247,16 +247,17 @@ export interface LiveSubscriptionHandlers<TBriefing> {
  * EventSource auto-reconnects and replays `Last-Event-ID`; the server answers a
  * reconnect with `ready` + a fresh snapshot, so no client-side delta tracking is needed.
  */
-export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief>(
+export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief | TdBriefing>(
   scene: LiveScene,
   handlers: LiveSubscriptionHandlers<TBriefing>,
   options?: { persona?: string },
 ): () => void {
   const base = apiClient.defaults.baseURL ?? '/api';
-  const query =
-    scene === 'rm-briefing' && options?.persona
-      ? `?rmId=${encodeURIComponent(options.persona)}`
-      : '';
+  let query = '';
+  if (options?.persona) {
+    if (scene === 'rm-briefing') query = `?rmId=${encodeURIComponent(options.persona)}`;
+    else if (scene === 'td-briefing') query = `?salespersonId=${encodeURIComponent(options.persona)}`;
+  }
   const source = new EventSource(`${base}/agent/${scene}/stream${query}`);
 
   source.addEventListener('briefing-update', (event) => {
