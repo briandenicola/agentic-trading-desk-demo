@@ -14,7 +14,7 @@ interface NavLink {
 }
 
 const LINKS: NavLink[] = [
-  { label: 'Home', to: '/', icon: <HomeOutlinedIcon fontSize="small" /> },
+  { label: 'Home', to: '/cb', icon: <HomeOutlinedIcon fontSize="small" /> },
   { label: 'Cockpit', to: '/cockpit', icon: <DashboardOutlinedIcon fontSize="small" /> },
   { label: 'News Desk', to: '/admin', icon: <NewspaperOutlinedIcon fontSize="small" /> },
   { label: 'Morning Brief', to: '/morning-brief', icon: <WbSunnyOutlinedIcon fontSize="small" /> },
@@ -29,7 +29,7 @@ export default function LaunchPadSidebar() {
         WORKSPACE
       </Typography>
       {LINKS.map((item) => {
-        const active = item.to === '/' ? pathname === '/' : pathname.startsWith(item.to);
+        const active = item.to === '/cb' ? pathname === '/cb' : pathname.startsWith(item.to);
         return (
           <Box key={item.label} component={Link} to={item.to} sx={{ textDecoration: 'none' }}>
             <Box

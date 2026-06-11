@@ -349,3 +349,119 @@ export async function sendChat(messages: ChatTurn[], rmId?: string): Promise<Cha
   const { data } = await apiClient.post<ChatReply>('/chat', { messages, rmId });
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// Institutional Sales & Trading — "Morning Planning & Prioritized Outreach" for a
+// coverage salesperson (Theo Wexler). Mirrors the orchestration-api TdBriefing DTO;
+// DEMO and LIVE return the same shape (Principle III), grounded in /mock/td/*.
+// ---------------------------------------------------------------------------
+
+export interface TdBriefingRequest {
+  payload?: {
+    salespersonId?: string;
+    date?: string;
+  };
+}
+
+export interface SalespersonIdentity {
+  salespersonId: string;
+  name: string;
+  desk?: string;
+  coverage?: string;
+  clientCount: number;
+}
+
+export interface MacroThemeBullet {
+  theme: string;
+  detail: string;
+}
+
+export interface TdEventConsidered {
+  id: string;
+  kind: string; // news | research
+  headline: string;
+  summary?: string;
+  sector?: string;
+  sentiment?: string; // Positive | Negative | Mixed | Neutral
+  relatedSecurityId?: string;
+  macroTheme?: string;
+  timestamp?: string;
+}
+
+export interface InventoryAxe {
+  securityId: string;
+  securityName: string;
+  assetClass?: string;
+  sector?: string;
+  inventorySize: number; // +long / -short
+  axeSide: string; // buy | sell | two-way
+  bidPrice?: number;
+  offerPrice?: number;
+  desk?: string;
+  matchedClients: string[];
+}
+
+export interface WhyNowDriver {
+  kind: string; // news | research | rfq | inquiry | holding | axe | crm
+  label: string;
+  detail?: string;
+  securityId?: string;
+  refId?: string;
+}
+
+export interface TradeIdea {
+  securityId: string;
+  securityName: string;
+  side: string; // client-side: Buy | Sell
+  rationale?: string;
+  level?: string;
+}
+
+export interface TdCallRationale {
+  newsRelevance: number;
+  openRfqWeight: number;
+  inquiryWeight: number;
+  inventoryAxeMatch: number;
+  urgency: number;
+  compositeScore: number;
+  explanation: string;
+}
+
+export interface TdPriorityCall {
+  rank: number;
+  priority: number; // 1..4 colour band (red→green)
+  clientId: string;
+  clientName: string;
+  clientType?: string;
+  region?: string;
+  preferredAssetClass?: string;
+  score: number;
+  rationale: TdCallRationale;
+  whyNow: WhyNowDriver[];
+  talkingPoints: string[];
+  tradeIdeas: TradeIdea[];
+  personalNote?: string;
+  suggestedAction: string;
+  drivingEvents?: EventLinkage[];
+}
+
+export interface TdBriefing {
+  mode: 'DEMO' | 'LIVE';
+  asOf: string;
+  greeting: string;
+  salesperson: SalespersonIdentity;
+  marketStrip: MarketStripItem[];
+  macroThemes: MacroThemeBullet[];
+  reasoning: ReasoningStep[];
+  priorityCallList: TdPriorityCall[];
+  inventoryAxes: InventoryAxe[];
+  suggestedFirstAction: string;
+  notes?: string[];
+  eventsConsidered?: TdEventConsidered[];
+  liveEvents?: MarketEvent[];
+}
+
+export async function runTdBriefing(req: TdBriefingRequest = {}): Promise<TdBriefing> {
+  const { data } = await apiClient.post<TdBriefing>('/agent/td-briefing', req);
+  return data;
+}

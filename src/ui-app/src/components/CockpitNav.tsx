@@ -8,7 +8,7 @@ import MintBrand from './MintBrand';
 import { mint } from '../theme/theme';
 
 const TABS = [
-  { label: 'RM Daily Briefing', to: '/' },
+  { label: 'RM Daily Briefing', to: '/cb' },
   { label: 'Cockpit', to: '/cockpit' },
   { label: 'Trading Morning Brief', to: '/morning-brief' },
   { label: 'News Desk', to: '/admin' },
@@ -35,7 +35,7 @@ export default function CockpitNav() {
       ? '/cockpit'
       : pathname.startsWith('/admin')
         ? '/admin'
-        : '/';
+        : '/cb';
 
   return (
     <AppBar
