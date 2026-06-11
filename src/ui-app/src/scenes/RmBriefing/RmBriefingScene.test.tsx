@@ -141,9 +141,11 @@ describe('RmBriefingScene', () => {
     const postSpy = await runBriefing();
 
     expect(postSpy).toHaveBeenCalledTimes(1);
-    expect(postSpy).toHaveBeenCalledWith('/agent/rm-briefing', {
-      payload: { rmId: 'RM-104', date: '2026-05-14' },
-    });
+    expect(postSpy).toHaveBeenCalledWith(
+      '/agent/rm-briefing',
+      { payload: { rmId: 'RM-104', date: '2026-05-14' } },
+      expect.objectContaining({ timeout: expect.any(Number) }),
+    );
 
     expect(screen.getByRole('heading', { name: /good morning, marcus/i })).toBeInTheDocument();
     expect(screen.getAllByText(/14 customers/i).length).toBeGreaterThan(0);

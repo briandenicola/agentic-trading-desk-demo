@@ -9,6 +9,11 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// LIVE Foundry agent runs (briefings, chat) compose multiple tool calls and a
+// model completion, so they routinely exceed the default 30s. Use a longer
+// per-request budget for those endpoints; quick CRUD calls keep the 30s default.
+const AGENT_TIMEOUT_MS = 120_000;
+
 export interface MorningBriefRequest {
   payload?: {
     eventId?: string;
@@ -107,7 +112,9 @@ export interface MorningBrief {
 
 // Implemented end-to-end in Phase 3 (T021). Defined here so the scaffold compiles.
 export async function runMorningBrief(req: MorningBriefRequest = {}): Promise<MorningBrief> {
-  const { data } = await apiClient.post<MorningBrief>('/agent/morning-brief', req);
+  const { data } = await apiClient.post<MorningBrief>('/agent/morning-brief', req, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
   return data;
 }
 
@@ -209,7 +216,9 @@ export interface RmBriefing {
 }
 
 export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBriefing> {
-  const { data } = await apiClient.post<RmBriefing>('/agent/rm-briefing', req);
+  const { data } = await apiClient.post<RmBriefing>('/agent/rm-briefing', req, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
   return data;
 }
 
@@ -347,7 +356,9 @@ export interface ChatReply {
 
 /** Send the conversation to the assistant and resolve the next assistant reply. */
 export async function sendChat(messages: ChatTurn[], rmId?: string): Promise<ChatReply> {
-  const { data } = await apiClient.post<ChatReply>('/chat', { messages, rmId });
+  const { data } = await apiClient.post<ChatReply>('/chat', { messages, rmId }, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
   return data;
 }
 
@@ -463,6 +474,8 @@ export interface TdBriefing {
 }
 
 export async function runTdBriefing(req: TdBriefingRequest = {}): Promise<TdBriefing> {
-  const { data } = await apiClient.post<TdBriefing>('/agent/td-briefing', req);
+  const { data } = await apiClient.post<TdBriefing>('/agent/td-briefing', req, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
   return data;
 }

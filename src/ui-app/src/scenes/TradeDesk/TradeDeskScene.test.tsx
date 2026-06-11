@@ -140,9 +140,11 @@ describe('TradeDeskScene', () => {
     renderScene();
 
     await screen.findByTestId('td-briefing');
-    expect(postSpy).toHaveBeenCalledWith('/agent/td-briefing', {
-      payload: { salespersonId: 'Theo Wexler', date: '2026-05-22' },
-    });
+    expect(postSpy).toHaveBeenCalledWith(
+      '/agent/td-briefing',
+      { payload: { salespersonId: 'Theo Wexler', date: '2026-05-22' } },
+      expect.objectContaining({ timeout: expect.any(Number) }),
+    );
 
     expect(screen.getByText('Good morning, Theo')).toBeInTheDocument();
     expect(screen.getByTestId('td-call-CL-2006')).toBeInTheDocument();
