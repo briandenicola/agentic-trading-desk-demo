@@ -57,6 +57,11 @@ builder.Services.AddScoped<RmBriefingComposer>();
 builder.Services.AddScoped<RmBriefingTools>();
 builder.Services.AddScoped<RmAgentRunner>();
 
+// --- Trading Desk morning briefing (Institutional Sales & Trading): DEMO composer (offline);
+// LIVE Foundry runner wired in a later phase. Same TdBriefing shape in both modes (Principle III). ---
+builder.Services.AddScoped<TdBriefingComposer>();
+builder.Services.AddScoped<TdBriefingTools>();
+
 // --- Markets-Intelligence assistant ("AI Chat"): DEMO intent responder (offline) + LIVE Foundry
 // chat agent with the RM mock-api tools bound. Both grounded in the same systems-of-record. ---
 builder.Services.AddScoped<ChatResponder>();
@@ -178,6 +183,35 @@ app.MapPost("/api/agent/rm-briefing", async (
             detail: $"Could not resolve rmId '{ex.RmId}'. Provide a known relationship-manager id (e.g. RM-104).",
             statusCode: StatusCodes.Status400BadRequest,
             extensions: new Dictionary<string, object?> { ["rmId"] = ex.RmId });
+    }
+});
+
+// --- Trading Desk scene endpoint: POST /api/agent/td-briefing (Institutional Sales & Trading) ---
+// Same TdBriefing shape in both modes (Principle III). DEMO → deterministic composer; the LIVE
+// Foundry runner is wired in a later phase (DEMO composer is used until then). The composer
+// degrades to a structured briefing on upstream failure (FR-011), so the response is always JSON.
+app.MapPost("/api/agent/td-briefing", async (
+    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TdBriefingRequest? request,
+    TdBriefingComposer composer,
+    CancellationToken ct) =>
+{
+    var salespersonId = string.IsNullOrWhiteSpace(request?.Payload?.SalespersonId)
+        ? TdBriefingComposer.DefaultSalespersonId
+        : request!.Payload!.SalespersonId!;
+    var date = request?.Payload?.Date;
+
+    try
+    {
+        var brief = await composer.ComposeAsync(salespersonId, date, ct);
+        return Results.Json(brief, TdBriefingJson.Options);
+    }
+    catch (UnknownSalespersonException ex)
+    {
+        return Results.Problem(
+            title: "Unknown coverage salesperson",
+            detail: $"Could not resolve salesperson '{ex.SalespersonId}'. Provide a known coverage salesperson (e.g. 'Theo Wexler').",
+            statusCode: StatusCodes.Status400BadRequest,
+            extensions: new Dictionary<string, object?> { ["salespersonId"] = ex.SalespersonId });
     }
 });
 

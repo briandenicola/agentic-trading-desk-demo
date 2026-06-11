@@ -66,13 +66,60 @@ public static class EventImpactResolver
         return Order(linkages);
     }
 
+    /// <summary>
+    /// Resolve drivers for a TD client, matched by the securities/issuers/sectors the client
+    /// touches (holdings, trades, RFQs, inquiries). An event links to the client when it names
+    /// one of those securities (tickers), issuers, or sectors. One linkage per matching event.
+    /// </summary>
+    public static IReadOnlyList<EventLinkage> ResolveForClient(
+        string clientId,
+        IReadOnlySet<string> securityIds,
+        IReadOnlySet<string> issuers,
+        IReadOnlySet<string> sectors,
+        IReadOnlyList<MarketEvent> events)
+    {
+        var linkages = new List<EventLinkage>();
+        foreach (var e in events)
+        {
+            var a = e.AffectedEntities;
+            var hitSecs = a.Tickers?.Where(securityIds.Contains).ToList() ?? new List<string>();
+            var hitIssuers = a.Issuers?.Where(issuers.Contains).ToList() ?? new List<string>();
+            var matchedSector = a.Sectors?.FirstOrDefault(sectors.Contains);
+            var directHits = hitSecs.Count + hitIssuers.Count;
+            if (directHits == 0 && matchedSector is null) continue;
+
+            // A named security or issuer in the client's book is a direct hit; a broad
+            // sector-only match is a soft read-through, so it carries far less weight. Direct
+            // hits also scale with concentration — a fund touching several of the named names
+            // (e.g. both Quartzite and Nimbus) reacts harder than one grazing a single name.
+            // This is what lets a breaking print lift the most-exposed funds above their peers.
+            string matchReason;
+            double weight;
+            if (directHits > 0)
+            {
+                var named = hitSecs.Concat(hitIssuers).First();
+                matchReason = directHits > 1
+                    ? $"hits {directHits} names in this client's book (incl. {named})"
+                    : $"hits {named}, which this client trades";
+                weight = 1.0 + 0.5 * (directHits - 1);
+            }
+            else
+            {
+                matchReason = $"hits the {matchedSector} sector this client is active in";
+                weight = 0.3;
+            }
+            linkages.Add(BuildLinkage(e, clientId, matchReason, weight));
+        }
+        return Order(linkages);
+    }
+
     /// <summary>Net (sum) of the linkage contributions — the score delta applied on top of the base score (R6).</summary>
     public static int NetContribution(IEnumerable<EventLinkage> linkages)
         => (int)Math.Round(linkages.Sum(l => l.Contribution), MidpointRounding.AwayFromZero);
 
-    private static EventLinkage BuildLinkage(MarketEvent e, string entityRef, string matchReason)
+    private static EventLinkage BuildLinkage(MarketEvent e, string entityRef, string matchReason, double weight = 1.0)
     {
-        var magnitude = SeverityMagnitude(e.Severity);
+        var magnitude = SeverityMagnitude(e.Severity) * weight;
         var direction = (e.Direction ?? "neutral").ToLowerInvariant();
         var contribution = direction switch
         {
