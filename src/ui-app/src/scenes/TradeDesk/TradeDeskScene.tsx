@@ -4,7 +4,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Typography,
@@ -13,29 +12,35 @@ import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import { Link } from 'react-router-dom';
-import TdNav from '../../components/TdNav';
+import CommandCenterShell from '../../components/CommandCenterShell';
 import LiveAlertBanner from '../../components/LiveAlertBanner';
 import SectionTitle from '../../components/SectionTitle';
 import { mint } from '../../theme/theme';
 import TdCallCard from './TdCallCard';
 import { AgentReasoning, AxeBoard, EventsConsidered, MacroThemes, MarketStrip } from './TdPanels';
 import { useTdBriefing } from './useTdBriefing';
+import { deriveKpis, deriveTicker } from './tdShellData';
 
 export default function TradeDeskScene() {
   const { brief, loading, error, reload, liveAlert, dismissAlert } = useTdBriefing('td-desk/brief');
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <TdNav />
-
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+    <CommandCenterShell
+      mode={brief?.mode ?? 'DEMO'}
+      asOf={brief?.asOf}
+      kpis={brief ? deriveKpis(brief) : []}
+      marketChips={brief?.marketStrip ?? []}
+      tickerItems={brief ? deriveTicker(brief, liveAlert) : []}
+      priorityCount={brief?.priorityCallList.length}
+    >
+      <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5, maxWidth: 1480, mx: 'auto' }}>
         <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="overline" color="text.secondary" sx={{ fontSize: 12 }}>
+        <Box sx={{ mb: 2.5 }}>
+          <Typography variant="overline" color="text.secondary">
             Morning · Institutional Sales &amp; Trading
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-            <Typography variant="h3" sx={{ fontWeight: 500 }}>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, flexWrap: 'wrap', mt: 0.5 }}>
+            <Typography variant="h3">
               {brief ? brief.greeting : 'Trading Desk Morning Plan'}
             </Typography>
             {brief && (
@@ -48,22 +53,22 @@ export default function TradeDeskScene() {
             )}
           </Box>
           {brief ? (
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 880, mt: 1 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 880, mt: 0.75 }}>
               {brief.salesperson.name}
               {brief.salesperson.desk ? ` · ${brief.salesperson.desk}` : ''}
               {brief.salesperson.coverage ? ` · ${brief.salesperson.coverage}` : ''} — {brief.salesperson.clientCount}{' '}
               clients covered. Ranked by overnight research, open RFQs, client inquiries and our inventory axes.
             </Typography>
           ) : (
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 880, mt: 1 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 880, mt: 0.75 }}>
               The desk assistant weighs overnight news &amp; research, open RFQs, client inquiries and our
               inventory axes against each client&apos;s book — then builds a ranked, explainable call list.
             </Typography>
           )}
         </Box>
 
-        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-          <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <span style={{ opacity: 0.5 }}>✦</span>
             <span>Who do I need to call first this morning?</span>
           </Typography>
@@ -120,13 +125,13 @@ export default function TradeDeskScene() {
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: 1.5,
-                    backgroundImage: `linear-gradient(135deg, ${mint.violet}24, ${mint.cyan}12)`,
-                    borderColor: `${mint.violet}59`,
+                    backgroundImage: `linear-gradient(135deg, ${mint.blue}24, ${mint.cyan}12)`,
+                    borderColor: `${mint.blue}59`,
                   }}
                 >
-                  <PhoneInTalkOutlinedIcon sx={{ color: mint.violetBright, mt: 0.25 }} />
+                  <PhoneInTalkOutlinedIcon sx={{ color: mint.blueBright, mt: 0.25 }} />
                   <Box>
-                    <Typography variant="overline" sx={{ color: mint.violetBright, display: 'block', lineHeight: 1.6 }}>
+                    <Typography variant="overline" sx={{ color: mint.blueBright, display: 'block', lineHeight: 1.6 }}>
                       Suggested first action
                     </Typography>
                     <Typography variant="body2">{brief.suggestedFirstAction}</Typography>
@@ -167,7 +172,7 @@ export default function TradeDeskScene() {
             Institutional Sales &amp; Trading · fictional data.
           </Typography>
         </Box>
-      </Container>
-    </Box>
+      </Box>
+    </CommandCenterShell>
   );
 }

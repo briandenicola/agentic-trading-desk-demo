@@ -22,7 +22,7 @@ export default function MintBrand({ size = 'md' }: MintBrandProps) {
             fontSize: logoSize,
             fontWeight: 800,
             letterSpacing: '-1px',
-            backgroundImage: `linear-gradient(135deg, ${mint.magenta} 0%, ${mint.violetBright} 50%, ${mint.violet} 100%)`,
+            backgroundImage: `linear-gradient(135deg, ${mint.blue} 0%, ${mint.cyan} 100%)`,
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
             color: 'transparent',

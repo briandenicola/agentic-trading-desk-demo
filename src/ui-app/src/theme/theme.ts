@@ -2,28 +2,40 @@ import { createTheme, alpha } from '@mui/material/styles';
 
 /**
  * M.INT — Markets Intelligence design language.
- * Dark navy "intelligence terminal" aesthetic: violet + cyan accents, glowing
- * gradient surfaces, color-coded financial data. Mirrors assets/Designer Layout.png.
+ * Dark "Fixed Income Credit command-center" aesthetic (mirrors assets/mint-v4.html):
+ * deep navy surfaces, a blue→cyan brand gradient, a violet AI accent, dense
+ * terminal typography with tabular numerals and color-coded financial data.
  */
 
-// Brand palette
+// Brand palette — tuned to the mint-v4 command-center mockup.
+// NOTE: `violet`/`violetBright`/`magenta` are kept as keys for backwards
+// compatibility but now resolve to the command-center blue/purple so existing
+// components pick up the new look without per-file edits.
 export const mint = {
-  violet: '#7c5cff',
-  violetBright: '#a855f7',
-  magenta: '#c026d3',
+  blue: '#3b82f6',
+  blueBright: '#60a5fa',
   cyan: '#22d3ee',
   cyanDeep: '#0ea5b7',
-  green: '#34d399',
-  red: '#fb5a6a',
-  amber: '#fbbf24',
-  bg: '#070b16',
-  bgAlt: '#0a0f1f',
-  paper: '#0e1424',
-  paperHi: '#131a2e',
-  border: 'rgba(124,92,255,0.16)',
+  green: '#10b981',
+  red: '#ef4444',
+  amber: '#f59e0b',
+  gold: '#eab308',
+  purple: '#8b5cf6',
+  // Back-compat aliases (primary accent → blue, AI accent → purple).
+  violet: '#3b82f6',
+  violetBright: '#60a5fa',
+  magenta: '#8b5cf6',
+  bg: '#0a0f1e',
+  bgAlt: '#0d1428',
+  paper: '#111827',
+  paperHi: '#1a2640',
+  border: 'rgba(59,130,246,0.18)',
+  borderHard: 'rgba(30,50,90,0.6)',
+  borderAccent: 'rgba(59,130,246,0.3)',
   borderSoft: 'rgba(255,255,255,0.07)',
-  text: '#e8edf7',
-  textDim: '#8593ad',
+  text: '#f0f4ff',
+  textDim: '#94a3b8',
+  textFaint: '#64748b',
 } as const;
 
 const fontStack =
@@ -32,7 +44,7 @@ const fontStack =
 export const theme = createTheme({
   palette: {
     mode: 'dark',
-    primary: { main: mint.violet, light: mint.violetBright, contrastText: '#ffffff' },
+    primary: { main: mint.blue, light: mint.blueBright, contrastText: '#ffffff' },
     secondary: { main: mint.cyan, dark: mint.cyanDeep, contrastText: '#04222b' },
     success: { main: mint.green },
     warning: { main: mint.amber },
@@ -42,14 +54,18 @@ export const theme = createTheme({
     text: { primary: mint.text, secondary: mint.textDim },
     divider: mint.borderSoft,
   },
-  shape: { borderRadius: 12 },
+  shape: { borderRadius: 8 },
   typography: {
     fontFamily: fontStack,
-    h3: { fontWeight: 700, letterSpacing: '-0.5px' },
-    h4: { fontWeight: 700, letterSpacing: '-0.4px' },
-    h6: { fontWeight: 700, letterSpacing: '0.2px' },
+    h3: { fontWeight: 800, letterSpacing: '-0.6px', fontSize: '1.85rem' },
+    h4: { fontWeight: 800, letterSpacing: '-0.4px', fontSize: '1.45rem' },
+    h5: { fontWeight: 700, letterSpacing: '-0.3px', fontSize: '1.2rem' },
+    h6: { fontWeight: 700, letterSpacing: '0.2px', fontSize: '1rem' },
     subtitle1: { fontWeight: 600 },
-    overline: { letterSpacing: '1.6px', fontWeight: 700, fontSize: '11px' },
+    body1: { fontSize: '0.875rem' },
+    body2: { fontSize: '0.8125rem' },
+    caption: { fontSize: '0.6875rem' },
+    overline: { letterSpacing: '1.4px', fontWeight: 700, fontSize: '10px' },
     button: { textTransform: 'none', fontWeight: 600 },
   },
   components: {
@@ -58,16 +74,17 @@ export const theme = createTheme({
         body: {
           backgroundColor: mint.bg,
           backgroundImage: [
-            `radial-gradient(1200px 600px at 12% -10%, ${alpha(mint.violet, 0.16)}, transparent 60%)`,
-            `radial-gradient(1000px 500px at 100% 0%, ${alpha(mint.cyan, 0.1)}, transparent 55%)`,
+            `radial-gradient(1200px 600px at 12% -10%, ${alpha(mint.blue, 0.14)}, transparent 60%)`,
+            `radial-gradient(1000px 500px at 100% 0%, ${alpha(mint.cyan, 0.09)}, transparent 55%)`,
             `linear-gradient(180deg, ${mint.bg} 0%, ${mint.bgAlt} 100%)`,
           ].join(','),
           backgroundAttachment: 'fixed',
+          fontVariantNumeric: 'tabular-nums',
           WebkitFontSmoothing: 'antialiased',
         },
-        '*::-webkit-scrollbar': { width: 10, height: 10 },
+        '*::-webkit-scrollbar': { width: 9, height: 9 },
         '*::-webkit-scrollbar-thumb': {
-          background: alpha(mint.violet, 0.4),
+          background: alpha(mint.blue, 0.4),
           borderRadius: 8,
         },
         '*::-webkit-scrollbar-track': { background: 'transparent' },
@@ -78,9 +95,9 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: mint.paper,
-          backgroundImage: `linear-gradient(180deg, ${alpha('#ffffff', 0.025)}, transparent 60%)`,
+          backgroundImage: `linear-gradient(180deg, ${alpha('#ffffff', 0.02)}, transparent 60%)`,
           border: `1px solid ${mint.border}`,
-          borderRadius: 14,
+          borderRadius: 10,
           backdropFilter: 'blur(2px)',
         },
       },
@@ -118,14 +135,15 @@ export const theme = createTheme({
     },
     MuiTableCell: {
       styleOverrides: {
-        root: { borderBottomColor: mint.borderSoft },
+        root: { borderBottomColor: mint.borderSoft, padding: '8px 12px', fontVariantNumeric: 'tabular-nums' },
         head: {
           color: mint.textDim,
           textTransform: 'uppercase',
           letterSpacing: '0.7px',
-          fontSize: '11px',
+          fontSize: '10px',
           fontWeight: 700,
-          borderBottom: `1px solid ${mint.border}`,
+          padding: '6px 12px',
+          borderBottom: `1px solid ${mint.borderAccent}`,
         },
       },
     },
