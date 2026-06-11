@@ -39,6 +39,7 @@ that keeps reacting as new events arrive during the day.
 | Persona | Need |
 |---|---|
 | **Commercial Banking RM** (primary) | A prioritized daily call list with the reason each client matters (complaints, stuck opportunities, overdue follow-ups, today's events). |
+| **Institutional Sales & Trading (Trading Desk)** | A prioritized client call list for a coverage salesperson over a book of hedge funds — driven by overnight news/research, open RFQs, client inquiries, and inventory axes matched to each client's holdings — with trade ideas and talking points that re-rank live as events break. |
 | **Municipal Sales VP / Trader** | A cross-asset morning brief with a market narrative, most-affected clients, and ranked outreach + talking points. |
 | **Sales-desk operator** | A News Desk to inject intraday news the agents react to, simulating an event breaking mid-day. |
 
@@ -47,6 +48,7 @@ that keeps reacting as new events arrive during the day.
 | Route | Scene | Output | Purpose |
 |---|---|---|---|
 | `/`, `/rm-briefing` | **RM Daily Briefing** (PRIMARY) | `RmBriefing` | RM briefing + prioritized call list with KPIs. |
+| `/desk`, `/desk/morning-brief` | **Trading Desk** (demo focus) | `TdBriefing` | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/axe driven), trade ideas + talking points; re-ranks live over SSE. |
 | `/morning-brief` | **Trading Morning Brief** | `MorningBrief` | Municipal-sales morning brief + ranked outreach + editable plan. |
 | `/cockpit` | **Cockpit** | — | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with a live alert banner. |
 | `/chat` | **AI Chat** | `ChatReply` | Grounded Markets-Intelligence assistant — multi-turn Q&A over the same systems-of-record. |

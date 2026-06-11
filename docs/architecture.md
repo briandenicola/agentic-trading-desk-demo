@@ -12,7 +12,7 @@
 | **RM Daily Briefing** (PRIMARY — "Morning Planning & Prioritized Outreach") | `POST /api/agent/rm-briefing` | `RmBriefing` | Commercial Banking RM — `/mock/cb/*` (customers, RMs, opportunities, complaints, interactions) |
 | **Morning Brief** (municipal cross-asset) | `POST /api/agent/morning-brief` | `MorningBrief` | `/mock/{tableau,dynamics,trading,calendar,marketdata,news,coalition}/*` |
 | **AI Chat** (grounded Markets-Intelligence assistant) | `POST /api/chat` | `ChatReply` | Same RM systems-of-record — `/mock/cb/*` + the reactive event store |
-| **Trading cockpit** (Capital Markets) | (UI/tools) | — | Trading Desk — `/mock/td/*` (clients, securities, trades, rfqs, crm, holdings, inventory, inquiries, news, research, narrative-themes) |
+| **Trading Desk** (Institutional Sales & Trading — "Morning Planning & Prioritized Outreach") | `POST /api/agent/td-briefing` | `TdBriefing` | Trading Desk — `/mock/td/*` (clients, securities, trades, rfqs, crm, holdings, inventory, inquiries, news, research, narrative-themes) |
 
 The course-correction datasets (`/mock/cb/*`, `/mock/td/*`) come from real client sample
 data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original tools.
@@ -20,7 +20,7 @@ data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original t
 ## Three-layer flow
 
 ```
-src\ui-app\ ─ POST /api/agent/{rm-briefing,morning-brief} ─► src\orchestration-api\
+src\ui-app\ ─ POST /api/agent/{rm-briefing,td-briefing,morning-brief} ─► src\orchestration-api\
                                                      │
                             DEMO: deterministic C# composer (offline)
                             LIVE: Foundry agent + client-side tool loop
@@ -61,10 +61,10 @@ Each scene's agent is **persistent** in Foundry — registered once, reused on e
   persistent agent(s) on the **new Foundry surface** (versioned "prompt" agents), with
   instructions from the matching `Prompts\*.md` and model `FOUNDRY_MODEL`. It runs as a
   Container Apps **Job** in FULL mode (`task cloud:provision`).
-- **`AgentRunner`** (morning brief) and **`RmAgentRunner`** (RM daily briefing) look the agent up
-  **by name** via `AIProjectClient.GetAIAgentAsync(name, tools)` and reuse it, attaching the
-  mock-api tools for client-side execution. If the agent is not found (provisioner has not run yet)
-  they fall back to `CreateAIAgentAsync(name, model, instructions, …)` so LIVE still works.
+- **`AgentRunner`** (morning brief), **`RmAgentRunner`** (RM daily briefing) and **`TdAgentRunner`**
+  (trading desk) look the agent up **by name** via `AIProjectClient.GetAIAgentAsync(name, tools)` and
+  reuse it, attaching the mock-api tools for client-side execution. If the agent is not found (provisioner
+  has not run yet) they fall back to `CreateAIAgentAsync(name, model, instructions, …)` so LIVE still works.
 
 Both runners use **only** the new-Foundry surface — the same one the reference
 `online-banking-demo` uses. The earlier classic Assistants (`/assistants`) path was removed in the
@@ -78,6 +78,9 @@ surface and all runs/threads appear under one agent per scene in the Foundry por
 - **RM daily briefing** (`RmBriefingTools`): `get_rm_book`, `get_open_opportunities`,
   `get_active_complaints`, `get_due_followups`, `get_customer`, `get_customer_opportunities`,
   `get_customer_interactions`.
+- **Trading Desk** (`TdBriefingTools`): `get_clients`, `get_client_activity`, `get_client_holdings`,
+  `get_security_interest`, `get_inventory`, `get_news`, `get_research`, `get_rfqs`, `get_inquiries`,
+  `get_crm`, `get_narrative_themes`, `list_events`.
 
 All are wrappers over `openapi\tools.yaml` endpoints. They never throw; failures return a
 structured `{"error": …}` object so the loop degrades gracefully (FR-011).
@@ -167,8 +170,38 @@ list current events ─► EventFanOut (bounded by EVENT_FANOUT_MAX_CONCURRENCY)
   affected items' scores, re-ranks, and lists every contributing event as a driver, emitting the
   **unchanged** DTO. DEMO stays deterministic/offline with the identical shape (SC-004).
 - **Provisioning**: `agent-provisioner` idempotently registers `rm-daily-briefing`, `morning-brief`,
-  `event-specialist`, `markets-assistant` (the AI Chat agent), and `briefing-synthesizer`
-  (GetAIAgentAsync-first, create only when absent).
+  `trading-desk-morning`, `event-specialist`, `markets-assistant` (the AI Chat agent), and
+  `briefing-synthesizer` (GetAIAgentAsync-first, create only when absent).
+
+## Institutional Sales & Trading (Trading Desk)
+
+The **Trading Desk** scene is the institutional analog of the RM Daily Briefing, targeting a
+coverage salesperson on a dealer desk who covers a book of hedge funds (demo persona **Theo
+Wexler**, covering Hyperion Capital, Tradewinds Partners, Halcyon Multistrat and Forge Hill
+Partners). It answers *"which clients do I call this morning, and what do I put in front of
+them?"* — a **prioritized client call list** driven by overnight news/research, open RFQs, client
+inquiries and the desk's inventory **axes** matched against each client's holdings. The DEMO and
+LIVE paths return the identical `TdBriefing` shape (Principle III / FR-010); all data is fictional
+(`/mock/td/*`).
+
+- **DEMO** (`Agents\Demo\TdBriefingComposer.cs` + `EventImpactResolver`): a deterministic,
+  offline composer. Per client it caps and sums component scores (news+research ≤100, RFQ ≤60,
+  inquiry ≤60, axe ≤60, CRM tiers), ranks by composite score (then raw score, exposure, id), and
+  assigns priority bands by **rank** (1-2 → P1, 3-4 → P2, 5-6 → P3, else P4). News/research is matched
+  to a client by security **or issuer** (equity news bridges to the same issuer's bonds), never by
+  broad sector alone. The market strip's direction comes from related-news **sentiment**. Output is
+  byte-stable.
+- **LIVE** (`Agents\TdAgentRunner.cs`, agent `trading-desk-morning`, `Prompts\trading-desk-morning.md`):
+  the persistent Foundry synthesizer binds `TdBriefingTools`, runs the per-event specialist fan-out
+  (so the ranking reflects every live event), maps + normalizes the model output (force LIVE, re-rank
+  by score, priority by rank), and **degrades to the DEMO composer** when the synthesizer returns no
+  calls or Foundry is unavailable (FR-011). Model deployment: `FOUNDRY_MODEL_TRADING` (defaults to
+  `FOUNDRY_MODEL`).
+- **Reactive re-rank** (`GET /api/agent/td-briefing/stream`): the SSE hub re-synthesizes the
+  `TdBriefing` on each new event and pushes a full snapshot + `LiveAlert`. The marquee demo event is an
+  **AI-capex breaking print** (tickers `SEC-3003`/`SEC-3002`, issuers Quartzite/Nimbus, sector
+  Technology); injecting it from the `/admin` News Desk (a one-click preset) jumps Hyperion & Tradewinds
+  to the top of the call list within ~10s, with the driving events highlighted on each call card.
 
 ## Grounded chat assistant (AI Chat)
 
@@ -189,8 +222,26 @@ stateless — the client replays the conversation each turn.
 
 React 19 + TypeScript + MUI v9, themed with the **M.INT** mint palette
 (`src\ui-app\src\theme\theme.ts`). The frontend is mode-blind (Principle III): every scene renders
-the same DTO whether it came from DEMO or LIVE. Routes: `/` (agent workspace), `/cockpit`,
-`/rm-briefing`, `/morning-brief`, `/admin` (News Desk), `/chat`.
+the same DTO whether it came from DEMO or LIVE. Routes: `/` (landing — workspace chooser),
+`/desk` + `/desk/morning-brief` (Trading Desk — the demo focus), `/cb` (Commercial Banking RM
+workspace), `/cockpit`, `/rm-briefing`, `/morning-brief`, `/admin` (News Desk), `/chat`.
+
+### Trading Desk scenes (`scenes\TradeDesk`)
+
+`/` is a landing chooser between **Institutional Sales & Trading** (`/desk`) and **Commercial
+Banking RM** (`/cb`). The trading-desk scenes share one data+live engine, `useTdBriefing`: it
+auto-runs `POST /api/agent/td-briefing` once per session, persists the brief (survives navigation),
+and once a brief is on screen holds an SSE subscription (`subscribeToEvents('td-briefing', …)`) that
+applies each re-synthesized DTO in place and surfaces a `LiveAlertBanner`.
+
+- **`/desk` (`TradeDeskScene`)** — hero greeting + salesperson summary + mode chip, the market strip,
+  agent reasoning, and a two-column grid: prioritized call list + suggested first action (left), and
+  the inventory axe board + macro themes + events considered (right). Each `TdCallCard` shows the
+  priority band, composite score, why-now drivers, trade ideas, talking points, and a "⚡ RE-RANKED BY
+  LIVE EVENTS" callout when `drivingEvents` are present.
+- **`/desk/morning-brief` (`TdMorningBriefScene`)** — the same `TdBriefing` in a two-column
+  morning-brief layout (macro/market context, reasoning, axes, events on the left; the outreach plan
+  on the right), sharing the persisted brief via the same store key.
 
 ### Agent-driven main page (`/` — `scenes\Workspace`)
 
