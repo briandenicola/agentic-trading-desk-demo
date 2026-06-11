@@ -16,6 +16,7 @@
 //   calls the systems-of-record and emits an empty briefing (the LIVE-empty regression).
 //     - rm-daily-briefing : Commercial Banking RM Daily Briefing (PRIMARY)   -> FOUNDRY_MODEL
 //     - morning-brief     : Municipal-sales morning brief (secondary)        -> FOUNDRY_MODEL_MORNING
+//     - trading-desk-morning : Institutional Sales & Trading morning brief    -> FOUNDRY_MODEL_TRADING
 //     - event-specialist  : Per-event fan-out assessment (high concurrency)  -> FOUNDRY_MODEL_SPECIALIST
 //     - markets-assistant : Grounded "AI Chat" assistant (interactive)       -> FOUNDRY_MODEL_CHAT
 //
@@ -36,6 +37,8 @@ var model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL") ?? "gpt-5.4-mini
 var morningModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_MORNING") ?? model;
 var specialistModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_SPECIALIST") ?? model;
 var chatModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_CHAT") ?? morningModel;
+// The trading-desk synthesizer rides the same deployment as the RM briefing unless overridden.
+var tradingModel = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_TRADING") ?? model;
 
 if (string.IsNullOrWhiteSpace(endpoint))
 {
@@ -60,6 +63,12 @@ var agents = new[]
         "Synthesizes the municipal-sales morning brief by calling the mock systems-of-record as tools.",
         "morning-brief.md",
         morningModel,
+        RuntimeManaged: true),
+    new AgentSpec(
+        "trading-desk-morning",
+        "Produces the institutional sales & trading morning briefing and prioritized client call list by calling the trading-desk mock systems-of-record as tools.",
+        "trading-desk-morning.md",
+        tradingModel,
         RuntimeManaged: true),
     // 002 US4 — per-event multi-agent fan-out. The event-specialist is run once per current
     // event by the LIVE runners (so it is runtime-managed and tool-bearing); the

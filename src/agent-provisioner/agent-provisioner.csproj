@@ -23,6 +23,9 @@
     <Content Include="..\orchestration-api\Prompts\morning-brief.md"
              Link="Prompts\morning-brief.md"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\trading-desk-morning.md"
+             Link="Prompts\trading-desk-morning.md"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\orchestration-api\Prompts\rm-daily-briefing.md"
              Link="Prompts\rm-daily-briefing.md"
              CopyToOutputDirectory="PreserveNewest" />

@@ -57,10 +57,13 @@ builder.Services.AddScoped<RmBriefingComposer>();
 builder.Services.AddScoped<RmBriefingTools>();
 builder.Services.AddScoped<RmAgentRunner>();
 
-// --- Trading Desk morning briefing (Institutional Sales & Trading): DEMO composer (offline);
-// LIVE Foundry runner wired in a later phase. Same TdBriefing shape in both modes (Principle III). ---
+// --- Trading Desk morning briefing (Institutional Sales & Trading): DEMO composer (offline) +
+// LIVE tools/runner (Foundry). The LIVE path (TdAgentRunner) only constructs Foundry clients and
+// DefaultAzureCredential when invoked — never in DEMO. Same TdBriefing shape in both modes
+// (Principle III). ---
 builder.Services.AddScoped<TdBriefingComposer>();
 builder.Services.AddScoped<TdBriefingTools>();
+builder.Services.AddScoped<TdAgentRunner>();
 
 // --- Markets-Intelligence assistant ("AI Chat"): DEMO intent responder (offline) + LIVE Foundry
 // chat agent with the RM mock-api tools bound. Both grounded in the same systems-of-record. ---
@@ -187,12 +190,14 @@ app.MapPost("/api/agent/rm-briefing", async (
 });
 
 // --- Trading Desk scene endpoint: POST /api/agent/td-briefing (Institutional Sales & Trading) ---
-// Same TdBriefing shape in both modes (Principle III). DEMO → deterministic composer; the LIVE
-// Foundry runner is wired in a later phase (DEMO composer is used until then). The composer
-// degrades to a structured briefing on upstream failure (FR-011), so the response is always JSON.
+// Same TdBriefing shape in both modes (Principle III). DEMO → deterministic composer;
+// LIVE → Foundry agent (TdAgentRunner). The composer/runner degrade to a structured briefing
+// on upstream failure (FR-011), so the response is always JSON.
 app.MapPost("/api/agent/td-briefing", async (
     [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TdBriefingRequest? request,
+    ModeOptions modeOpts,
     TdBriefingComposer composer,
+    TdAgentRunner runner,
     CancellationToken ct) =>
 {
     var salespersonId = string.IsNullOrWhiteSpace(request?.Payload?.SalespersonId)
@@ -202,7 +207,10 @@ app.MapPost("/api/agent/td-briefing", async (
 
     try
     {
-        var brief = await composer.ComposeAsync(salespersonId, date, ct);
+        var brief = modeOpts.DemoMode
+            ? await composer.ComposeAsync(salespersonId, date, ct)
+            : await runner.RunAsync(salespersonId, date, ct);
+
         return Results.Json(brief, TdBriefingJson.Options);
     }
     catch (UnknownSalespersonException ex)
