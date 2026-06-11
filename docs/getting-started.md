@@ -77,6 +77,9 @@ npm --prefix src\ui-app run dev
 # RM Daily Briefing
 curl.exe -X POST http://localhost:5100/api/agent/rm-briefing -H "Content-Type: application/json" -d '{"payload":{"rmId":"RM-104","date":"2026-05-14"}}'
 
+# Trading Desk (Institutional Sales & Trading)
+curl.exe -X POST http://localhost:5100/api/agent/td-briefing -H "Content-Type: application/json" -d '{"salespersonId":"Theo Wexler","date":"2026-05-22"}'
+
 # AI Chat (grounded assistant)
 curl.exe -X POST http://localhost:5100/api/chat -H "Content-Type: application/json" -d '{"messages":[{"role":"user","content":"who should I call today?"}],"rmId":"RM-104"}'
 ```

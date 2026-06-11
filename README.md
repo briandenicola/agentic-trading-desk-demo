@@ -13,6 +13,7 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 | Route | Scene | Purpose |
 |---|---|---|
 | `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
+| `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/inventory-axe driven), trade ideas + talking points; re-ranks live over SSE |
 | `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
 | `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
 | `/chat` | **AI Chat** | Grounded Markets-Intelligence assistant — multi-turn Q&A over the same systems-of-record (who to call, a customer, the market, complaints, pipeline) |
@@ -48,7 +49,7 @@ broadcasts one consolidated re-synthesized briefing per scene over SSE when even
 ### Orchestrator vs. agent
 
 - **Orchestrator** (the per-scene runners, the tool functions, `MAX_TOOL_HOPS`, the event fan-out, JSON→DTO mapping) runs **inside the `orchestration-api` Container App**.
-- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Five are registered: `rm-daily-briefing`, `morning-brief` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), `markets-assistant` (the grounded AI Chat agent), and `briefing-synthesizer` (the shared synthesis contract).
+- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Six are registered: `rm-daily-briefing`, `morning-brief`, `trading-desk-morning` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), `markets-assistant` (the grounded AI Chat agent), and `briefing-synthesizer` (the shared synthesis contract).
 - **Tool execution** happens back in the Container App: the agent only *decides* which tool to call; the C# function runs locally and fetches data from `mock-api` over HTTP.
 
 In LIVE mode each briefing is a **per-event multi-agent fan-out into a synthesizer** (002 US4): the
@@ -91,6 +92,7 @@ deployment (separate quota pool)** so the high-concurrency fan-out never compete
 | Agent | Model deployment | Env var |
 |---|---|---|
 | `rm-daily-briefing` (primary synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
+| `trading-desk-morning` (Trading Desk synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL_TRADING` |
 | `morning-brief` (synthesizer) | `gpt-4o-mini` | `FOUNDRY_MODEL_MORNING` |
 | `event-specialist` (per-event fan-out) | `gpt-5.4-nano` | `FOUNDRY_MODEL_SPECIALIST` |
 | `markets-assistant` (AI Chat) | `gpt-4o-mini` | `FOUNDRY_MODEL_CHAT` |
@@ -155,7 +157,7 @@ gitleaks detect --source . --no-banner
 ## Layout
 
 ```
-src\ui-app\              React cockpit (RM, Trading, Cockpit, AI Chat, News Desk) + nginx reverse proxy
+src\ui-app\              React cockpit (Landing, Trading Desk, RM, Trading, Cockpit, AI Chat, News Desk) + nginx reverse proxy
 src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, /api/chat, DEMO/LIVE runners + event fan-out
 src\mock-api\            fictional system-of-record endpoints + reactive event store (/mock/events)
 src\agent-provisioner\   idempotent Foundry agent registration job (5 agents)
