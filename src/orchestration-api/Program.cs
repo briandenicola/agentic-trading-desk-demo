@@ -117,6 +117,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Bound concurrent model/Foundry calls process-wide so bursty LIVE briefing fan-outs stay under the
+// deployment's per-minute quota (avoids cascading HTTP 429s). Tunable via MODEL_MAX_CONCURRENCY /
+// MODEL_MIN_INTERVAL_MS; no effect on DEMO mode (no model calls).
+OrchestrationApi.Agents.Resilience.ModelCallGate.EnsureConfigured(builder.Configuration);
+
 app.UseCorrelationId();
 app.UseGlobalExceptionHandler();
 

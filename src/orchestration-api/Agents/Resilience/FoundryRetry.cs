@@ -42,6 +42,11 @@ public static class FoundryRetry
         {
             try
             {
+                // Hold a global model-call slot only for the duration of the attempt; the lease is
+                // released before any retry backoff so a throttled call never blocks a slot while it
+                // sleeps. This bounds concurrent model calls process-wide (ModelCallGate) to keep us
+                // under the deployment's per-minute quota and avoid cascading 429s.
+                using var lease = await ModelCallGate.Default.AcquireAsync(ct);
                 return await action(ct);
             }
             catch (Exception ex)
