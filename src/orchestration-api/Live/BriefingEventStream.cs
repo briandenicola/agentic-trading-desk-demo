@@ -110,6 +110,16 @@ public sealed class BriefingEventStream
                 return;
             }
 
+            // Detect a mock-api reset (the store restarted and dropped intraday events): if any
+            // previously-known id has vanished, re-seed the known set to the current baseline WITHOUT
+            // alerting. The admin id sequence restarts at a001 on restart, so without this a post-reset
+            // inject would reuse an id still in the stale known set and never be detected (no re-rank).
+            if (!_knownEventIds.IsSubsetOf(currentIds))
+            {
+                _knownEventIds = currentIds;
+                return;
+            }
+
             var newEvents = current.Where(e => !_knownEventIds.Contains(e.Id)).ToList();
             if (newEvents.Count == 0) return;
 
