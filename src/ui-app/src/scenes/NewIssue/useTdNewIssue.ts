@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { runTdNewIssue, type TdNewIssueStoryboard } from '../../api/client';
+import {
+  runTdNewIssue,
+  subscribeToEvents,
+  type LiveAlert,
+  type TdNewIssueStoryboard,
+} from '../../api/client';
 import { loadPersistentOnce, usePersistentState } from '../../hooks/usePersistentState';
 
 // Demo defaults for the New Issue Radar storyboard: Prairie Green Renewables
@@ -18,6 +23,7 @@ export function useTdNewIssue(key: string) {
   const [story, setStory] = usePersistentState<TdNewIssueStoryboard | null>(key, null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
   const didAutoRun = useRef(false);
 
   const load = useCallback(
@@ -51,5 +57,26 @@ export function useTdNewIssue(key: string) {
     void load(false);
   }, [story, load]);
 
-  return { story, loading, error, reload };
+  // Reactive live push: once the storyboard is on screen, subscribe to the New Issue
+  // event stream. A News Desk inject that touches the issuer, either tranche, the
+  // sector, or the focus client re-synthesizes the storyboard and surfaces a liveAlert.
+  const hasStory = story !== null;
+  useEffect(() => {
+    if (!hasStory) return;
+    const unsubscribe = subscribeToEvents<TdNewIssueStoryboard>(
+      'td-new-issue',
+      {
+        onUpdate: (update) => {
+          setStory(update.briefing);
+          setLiveAlert(update.alert);
+        },
+      },
+      { persona: NI_ISSUER_SECURITY },
+    );
+    return unsubscribe;
+  }, [hasStory, setStory]);
+
+  const dismissAlert = useCallback(() => setLiveAlert(null), []);
+
+  return { story, loading, error, reload, liveAlert, dismissAlert };
 }

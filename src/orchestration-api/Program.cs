@@ -236,6 +236,7 @@ app.MapPost("/api/agent/td-new-issue", async (
     ModeOptions modeOpts,
     TdNewIssueComposer composer,
     TdNewIssueRunner runner,
+    EventTools eventTools,
     CancellationToken ct) =>
 {
     var issuerSecurityId = request?.Payload?.IssuerSecurityId;
@@ -245,6 +246,18 @@ app.MapPost("/api/agent/td-new-issue", async (
     var storyboard = modeOpts.DemoMode
         ? await composer.ComposeAsync(issuerSecurityId, clientId, date, ct)
         : await runner.RunAsync(issuerSecurityId, clientId, date, ct);
+
+    // Fold in any injected events that touch this issuer so a single POST reflects the current
+    // event store (parity with the briefings, where the composer already reads live events).
+    try
+    {
+        var events = await eventTools.ListEventsAsync(ct: ct);
+        (storyboard, _) = TdNewIssueLive.ApplyEvents(storyboard, events);
+    }
+    catch
+    {
+        // Event store unavailable — return the base storyboard unchanged.
+    }
 
     return Results.Json(storyboard, TdNewIssueJson.Options);
 });
@@ -373,6 +386,13 @@ app.MapGet("/api/agent/td-briefing/stream", (
     [FromQuery] string? salespersonId,
     CancellationToken ct) =>
         StreamSceneAsync(ctx, stream, "td-briefing", string.IsNullOrWhiteSpace(salespersonId) ? null : salespersonId, ct));
+
+app.MapGet("/api/agent/td-new-issue/stream", (
+    HttpContext ctx,
+    BriefingEventStream stream,
+    [FromQuery] string? issuerSecurityId,
+    CancellationToken ct) =>
+        StreamSceneAsync(ctx, stream, "td-new-issue", string.IsNullOrWhiteSpace(issuerSecurityId) ? null : issuerSecurityId, ct));
 
 app.Run();
 

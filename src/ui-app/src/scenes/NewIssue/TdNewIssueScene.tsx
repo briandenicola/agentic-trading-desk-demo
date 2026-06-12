@@ -18,6 +18,7 @@ import CampaignRoundedIcon from '@mui/icons-material/CampaignRounded';
 import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
 import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
 import CommandCenterShell from '../../components/CommandCenterShell';
+import LiveAlertBanner from '../../components/LiveAlertBanner';
 import { mint } from '../../theme/theme';
 import type {
   ShellKpi,
@@ -90,7 +91,11 @@ function deriveKpis(story: TdNewIssueStoryboard): ShellKpi[] {
 }
 
 function deriveTicker(story: TdNewIssueStoryboard): string[] {
-  const items = [`📣 ${story.issuer.headline}`];
+  const items: string[] = [];
+  for (const ev of story.liveEvents ?? []) {
+    items.push(`⚡ ${ev.headline}`);
+  }
+  items.push(`📣 ${story.issuer.headline}`);
   for (const t of story.issuer.tranches) {
     items.push(`💠 ${t.securityName} · ${t.assetClass}${t.detail ? ` · ${t.detail}` : ''}`);
   }
@@ -100,17 +105,35 @@ function deriveTicker(story: TdNewIssueStoryboard): string[] {
 
 function MetricChip({ metric }: { metric: StoryboardMetric }) {
   const color = toneColor(metric.tone);
+  const live = metric.live === true;
   return (
     <Box
       sx={{
         px: 1.5,
         py: 0.75,
         borderRadius: 1.5,
-        bgcolor: mint.bgAlt,
-        border: `1px solid ${color}40`,
+        bgcolor: live ? `${mint.gold}14` : mint.bgAlt,
+        border: `1px solid ${live ? mint.gold : `${color}40`}`,
         minWidth: 96,
+        position: 'relative',
       }}
     >
+      {live && (
+        <Chip
+          label="LIVE"
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: -9,
+            right: 6,
+            height: 16,
+            fontSize: 8,
+            fontWeight: 800,
+            color: mint.bg,
+            bgcolor: mint.gold,
+          }}
+        />
+      )}
       <Typography sx={{ fontSize: 8, color: mint.textFaint, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         {metric.label}
       </Typography>
@@ -122,6 +145,7 @@ function MetricChip({ metric }: { metric: StoryboardMetric }) {
 
 function EvidenceRow({ ev }: { ev: StoryboardEvidence }) {
   const color = evidenceColor(ev.kind);
+  const live = ev.live === true;
   return (
     <Box
       sx={{
@@ -129,19 +153,23 @@ function EvidenceRow({ ev }: { ev: StoryboardEvidence }) {
         gap: 1.25,
         alignItems: 'flex-start',
         py: 0.75,
+        px: live ? 1 : 0,
+        borderRadius: live ? 1 : 0,
+        bgcolor: live ? `${mint.gold}12` : 'transparent',
         borderBottom: `1px solid ${mint.borderSoft}`,
+        borderLeft: live ? `3px solid ${mint.gold}` : undefined,
       }}
     >
       <Chip
-        label={ev.kind.toUpperCase()}
+        label={live ? 'LIVE' : ev.kind.toUpperCase()}
         size="small"
         sx={{
           height: 18,
           fontSize: 8,
           fontWeight: 700,
-          color,
-          bgcolor: `${color}22`,
-          border: `1px solid ${color}55`,
+          color: live ? mint.bg : color,
+          bgcolor: live ? mint.gold : `${color}22`,
+          border: `1px solid ${live ? mint.gold : `${color}55`}`,
           flexShrink: 0,
           mt: 0.25,
         }}
@@ -253,7 +281,7 @@ function OutreachCard({ story }: { story: TdNewIssueStoryboard }) {
 }
 
 export default function TdNewIssueScene() {
-  const { story, loading, error, reload } = useTdNewIssue('td-new-issue/story');
+  const { story, loading, error, reload, liveAlert, dismissAlert } = useTdNewIssue('td-new-issue/story');
   const [stepIdx, setStepIdx] = useState(0);
 
   const steps = useMemo(() => (story ? [...story.steps].sort((a, b) => a.order - b.order) : []), [story]);
@@ -275,6 +303,7 @@ export default function TdNewIssueScene() {
       tickerItems={story ? deriveTicker(story) : []}
     >
       <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5, maxWidth: 1180, mx: 'auto' }}>
+        <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
         <Box sx={{ mb: 2 }}>
           <Typography variant="overline" color="text.secondary">
             New Issue Radar · Institutional Sales &amp; Trading

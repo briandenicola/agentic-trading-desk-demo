@@ -236,6 +236,17 @@ public sealed class BriefingEventStream
                 .ToHashSet(StringComparer.Ordinal);
             return (brief, ids);
         }
+        else if (scene == "td-new-issue")
+        {
+            // Persona, when present, overrides the issuer equity security to anchor the storyboard.
+            var issuerSecurityId = string.IsNullOrWhiteSpace(persona) ? null : persona;
+            var story = _mode.DemoMode
+                ? await sp.GetRequiredService<TdNewIssueComposer>().ComposeAsync(issuerSecurityId, null, null, ct)
+                : await sp.GetRequiredService<TdNewIssueRunner>().RunAsync(issuerSecurityId, null, null, ct);
+            var events = await FetchEventsAsync(ct);
+            var (folded, driverIds) = TdNewIssueLive.ApplyEvents(story, events);
+            return (folded, driverIds);
+        }
         else
         {
             var brief = _mode.DemoMode

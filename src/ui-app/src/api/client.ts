@@ -229,7 +229,7 @@ export async function runRmBriefing(req: RmBriefingRequest = {}): Promise<RmBrie
 // from the latest snapshot on reconnect. Mirrors contracts/live-update.schema.json.
 // ---------------------------------------------------------------------------
 
-export type LiveScene = 'rm-briefing' | 'morning-brief' | 'td-briefing';
+export type LiveScene = 'rm-briefing' | 'morning-brief' | 'td-briefing' | 'td-new-issue';
 
 export interface LiveAlert {
   priority: 'info' | 'notice' | 'urgent';
@@ -266,6 +266,7 @@ export function subscribeToEvents<TBriefing = RmBriefing | MorningBrief | TdBrie
   if (options?.persona) {
     if (scene === 'rm-briefing') query = `?rmId=${encodeURIComponent(options.persona)}`;
     else if (scene === 'td-briefing') query = `?salespersonId=${encodeURIComponent(options.persona)}`;
+    else if (scene === 'td-new-issue') query = `?issuerSecurityId=${encodeURIComponent(options.persona)}`;
   }
   const source = new EventSource(`${base}/agent/${scene}/stream${query}`);
 
@@ -518,6 +519,7 @@ export interface StoryboardMetric {
   value: string;
   sub?: string;
   tone?: 'neutral' | 'positive' | 'warning' | 'accent';
+  live?: boolean;
 }
 
 export interface StoryboardEvidence {
@@ -527,6 +529,7 @@ export interface StoryboardEvidence {
   refId?: string;
   date?: string;
   securityId?: string;
+  live?: boolean;
 }
 
 export interface TdStoryboardStep {
@@ -559,6 +562,7 @@ export interface TdNewIssueStoryboard {
   steps: TdStoryboardStep[];
   outreach: TdOutreachRecommendation;
   notes?: string[];
+  liveEvents?: MarketEvent[];
 }
 
 export async function runTdNewIssue(req: TdNewIssueRequest = {}): Promise<TdNewIssueStoryboard> {

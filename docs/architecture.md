@@ -142,6 +142,8 @@ orchestration reaches it only over HTTP (Principle II / FR-004).
   the briefing, and broadcasts ONE consolidated `briefing-update` (full re-synthesized DTO + a
   `LiveAlert`) per (scene, persona). Reconnects get a snapshot frame; `heartbeat` frames hold the
   connection open. The `ui-app` nginx config passes SSE through unbuffered (`X-Accel-Buffering: no`).
+  Streamed scenes: `rm-briefing`, `morning-brief`, `td-briefing`, and `td-new-issue` (the New Issue
+  Radar storyboard — folds matching events in via `TdNewIssueLive.ApplyEvents`).
 
 ## Multi-agent fan-out / synthesis (LIVE)
 
@@ -234,6 +236,17 @@ message).
   and emits the storyboard JSON; on any failure or empty output it **degrades to the DEMO composer**
   (re-stamped LIVE), so the demo is never blocked on model quality. Model deployment:
   `FOUNDRY_MODEL_TRADING` (defaults to `FOUNDRY_MODEL`).
+- **Reactive fold-in** (`Live\TdNewIssueLive.cs`, `GET /api/agent/td-new-issue/stream`): the New Issue
+  Radar reacts to the News Desk the same way the briefings do. After the composer/runner builds the base
+  storyboard, the shared `TdNewIssueLive.ApplyEvents` helper folds in any injected `MarketEvent` whose
+  affected entities touch the issuer (`Prairie Green Renewables`), either tranche (`SEC-3601`/`SEC-3602`),
+  the sector (`Utilities`), or the focus client (`CL-2015`). A matching ("driver") event surfaces as a
+  `LIVE` evidence row on the announcement beat, a `live` metric on the announcement + outreach beats, a
+  leading outreach talking point, and the storyboard's `liveEvents[]`; non-matching events are ignored.
+  The same helper runs on **both** paths — the one-shot `POST` folds in the current event store, and the
+  SSE hub (`BriefingEventStream`, scene `td-new-issue`) re-synthesizes + pushes a full snapshot +
+  `LiveAlert` on each new event. Because the helper runs after compose/run, DEMO and LIVE stay byte-stable
+  and the composer/runner are unchanged (Principle III).
 
 ## Grounded chat assistant (AI Chat)
 
@@ -276,11 +289,14 @@ applies each re-synthesized DTO in place and surfaces a `LiveAlertBanner`.
   morning-brief layout (macro/market context, reasoning, axes, events on the left; the outreach plan
   on the right), sharing the persisted brief via the same store key.
 - **`/desk/new-issue` (`NewIssue\TdNewIssueScene`)** — the **New Issue Radar** guided walkthrough.
-  `useTdNewIssue` auto-runs `POST /api/agent/td-new-issue` once per session and persists the storyboard.
-  The scene renders the issuer/new-issue header, a clickable four-beat progress rail, the active beat
-  (narration + metric chips + evidence rows), and Back/Next controls; the concluding `outreach`
-  recommendation card (talking points, trade idea, draft message) reveals on the final beat. The landing
-  chooser also links it directly via a "New Issue Radar" featured chip on the Trading Desk card.
+  `useTdNewIssue` auto-runs `POST /api/agent/td-new-issue` once per session and persists the storyboard,
+  and — like the trading-desk scenes — once the storyboard is on screen it holds an SSE subscription
+  (`subscribeToEvents('td-new-issue', …)`) that applies each re-synthesized storyboard in place, surfaces
+  a `LiveAlertBanner`, and highlights the folded-in `LIVE` metric/evidence. The scene renders the
+  issuer/new-issue header, a clickable four-beat progress rail, the active beat (narration + metric chips +
+  evidence rows), and Back/Next controls; the concluding `outreach` recommendation card (talking points,
+  trade idea, draft message) reveals on the final beat. The landing chooser also links it directly via a
+  "New Issue Radar" featured chip on the Trading Desk card.
 
 ### Agent-driven main page (`/` — `scenes\Workspace`)
 

@@ -23,6 +23,12 @@ public sealed record TdNewIssueStoryboard
     public required NewIssueIssuer Issuer { get; init; }
     public required IReadOnlyList<TdStoryboardStep> Steps { get; init; }
     public required TdOutreachRecommendation Outreach { get; init; }
+    /// <summary>
+    /// Injected/live market events (002 US2) that touch this issuer, its tranches, sector, or the
+    /// focus client — folded in by the reactive SSE path so the storyboard reacts to the News Desk
+    /// the same way the briefings do. Null/empty when nothing live is in view.
+    /// </summary>
+    public IReadOnlyList<MarketEvent>? LiveEvents { get; init; }
     public IReadOnlyList<string>? Notes { get; init; }
 }
 
@@ -66,6 +72,7 @@ public sealed record StoryboardMetric
     public required string Value { get; init; }
     public string? Sub { get; init; }
     public string? Tone { get; init; }                               // neutral|positive|warning|accent
+    public bool? Live { get; init; }                                 // true when injected by a live event
 }
 
 /// <summary>A supporting record from a system-of-record (the "receipts" behind a beat).</summary>
@@ -77,6 +84,7 @@ public sealed record StoryboardEvidence
     public string? RefId { get; init; }                              // source record id (RFQ-XXXX, TRD-XXXX, ...)
     public string? Date { get; init; }
     public string? SecurityId { get; init; }
+    public bool? Live { get; init; }                                 // true when this is an injected live event
 }
 
 /// <summary>The concluding "call them now" recommendation with talking points and a trade idea.</summary>

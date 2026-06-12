@@ -61,7 +61,10 @@ the scene agent, which folds them into the ranking and emits the unchanged DTO.
 The agents are **registered once** by `src\agent-provisioner\` and **reused by name** on every
 request (no per-request agent churn), so all runs consolidate under those agents in the Foundry
 portal. See [`docs/architecture.md`](docs/architecture.md) for the full flow, the reactive event
-store, the SSE channel, and the fan-out topology.
+store, the SSE channel, and the fan-out topology. For which parts of each page are agent-driven
+(LIVE) vs. deterministic (DEMO) and what reacts to injected news, see
+[`docs/agentic-vs-synthetic.md`](docs/agentic-vs-synthetic.md); for a trader-facing demo script see
+[`docs/demo-talk-track.md`](docs/demo-talk-track.md).
 
 ## Quickstart — local DEMO mode
 
