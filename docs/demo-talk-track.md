@@ -108,6 +108,11 @@ which routes through the *same* ingestion path a real feed would use.
 3. **Key message:** *"The desk's morning plan isn't a snapshot — it's live. News broke, the agent
    re-scored the book, and the call order changed in front of you. No refresh, no re-run."*
 
+> **Prefer a custom, grounded positive print?** Use the curated **Quartzite Semiconductors (QRTX,
+> `SEC-3003`)** earnings beat in [News Desk headlines](news-desk-headlines.md#headline-1--quartzite-semiconductors-qrtx-earnings-blowout--sec-3003)
+> — it's engineered to move Theo Wexler's book (clients hold ~$61mm, are actively buying, and the desk
+> is axed to sell), so the re-rank has a concrete reason to lead the call.
+
 ### 3b. The New Issue Radar folds in breaking news (`/desk/new-issue`)  *(new)*
 
 1. Have `/desk/new-issue` visible (storyboard already loaded).
@@ -153,6 +158,7 @@ which routes through the *same* ingestion path a real feed would use.
 | Reaction | Where to watch | News Desk action | Targets | Expected result |
 |---|---|---|---|---|
 | Call list re-rank | `/desk` | Click **Inject AI-capex breaking print** | tickers `SEC-3003`,`SEC-3002` | Hyperion & Tradewinds jump to top (~10s), driving-event callouts |
+| Call list re-rank (custom, grounded) | `/desk` | Submit **QRTX earnings beat** — see [News Desk headlines](news-desk-headlines.md#headline-1--quartzite-semiconductors-qrtx-earnings-blowout--sec-3003) | ticker `SEC-3003`, issuer `Quartzite Semiconductors`, Technology / High / Positive | QRTX holders (Forge Hill, Crestline) jump up with RE-RANKED callouts (~10s) |
 | New Issue fold-in | `/desk/new-issue` | Submit custom: *Prairie Green senior note upsized…*, Issuer credit / High / Positive | issuer `Prairie Green Renewables` **or** ticker `SEC-3602` | LIVE banner + LIVE evidence/metric + new leading talking point (~10s) |
 
 ## Troubleshooting
