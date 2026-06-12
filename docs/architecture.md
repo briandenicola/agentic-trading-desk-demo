@@ -29,7 +29,7 @@ exactly which pieces are built today and how they map onto this picture.
 |---|---|---|---|
 | **RM Daily Briefing** (PRIMARY — "Morning Planning & Prioritized Outreach") | `POST /api/agent/rm-briefing` | `RmBriefing` | Commercial Banking RM — `/mock/cb/*` (customers, RMs, opportunities, complaints, interactions) |
 | **Morning Brief** (municipal cross-asset) | `POST /api/agent/morning-brief` | `MorningBrief` | `/mock/{tableau,dynamics,trading,calendar,marketdata,news,coalition}/*` |
-| **AI Chat** (grounded Markets-Intelligence assistant) | `POST /api/chat` | `ChatReply` | Same RM systems-of-record — `/mock/cb/*` + the reactive event store |
+| **AI Chat** (grounded Markets-Intelligence assistant) | `POST /api/chat` | `ChatReply` | Commercial Banking RM (default) — `/mock/cb/*`; **or** Trading Desk when `salespersonId` is set — `/mock/td/*`; plus the reactive event store |
 | **Trading Desk** (Institutional Sales & Trading — "Morning Planning & Prioritized Outreach") | `POST /api/agent/td-briefing` | `TdBriefing` | Trading Desk — `/mock/td/*` (clients, securities, trades, rfqs, crm, holdings, inventory, inquiries, news, research, narrative-themes) |
 | **New Issue Radar** (Institutional Sales & Trading — guided new-issue storyboard) | `POST /api/agent/td-new-issue` | `TdNewIssueStoryboard` | Trading Desk — `/mock/td/*` (same family; reuses `securities/{id}/interest` + `clients/{id}/activity` aggregates) |
 
@@ -191,7 +191,8 @@ list current events ─► EventFanOut (bounded by EVENT_FANOUT_MAX_CONCURRENCY)
   affected items' scores, re-ranks, and lists every contributing event as a driver, emitting the
   **unchanged** DTO. DEMO stays deterministic/offline with the identical shape (SC-004).
 - **Provisioning**: `agent-provisioner` idempotently registers `rm-daily-briefing`, `morning-brief`,
-  `trading-desk-morning`, `event-specialist`, `markets-assistant` (the AI Chat agent), and
+  `trading-desk-morning`, `event-specialist`, `markets-assistant` (the CB AI Chat agent),
+  `trading-desk-assistant` (the Trading Desk chat agent), and
   `briefing-synthesizer` (GetAIAgentAsync-first, create only when absent).
 
 ## Institutional Sales & Trading (Trading Desk)
@@ -266,11 +267,16 @@ message).
   `LiveAlert` on each new event. Because the helper runs after compose/run, DEMO and LIVE stay byte-stable
   and the composer/runner are unchanged (Principle III).
 
-## Grounded chat assistant (AI Chat)
+## Grounded chat assistant (AI Chat / Open Chat)
 
-The **AI Chat** surface (`POST /api/chat`, route `/chat`) is a multi-turn Markets-Intelligence
-assistant that answers from the **same systems-of-record** as the briefings (Principle II/III). It is
-stateless — the client replays the conversation each turn.
+The chat surface (`POST /api/chat`, route `/chat`) is a multi-turn assistant that answers from the
+**same systems-of-record** as the briefings (Principle II/III). It is stateless — the client replays
+the conversation each turn — and routes to one of **two grounded assistants** by the request context:
+a `salespersonId` selects the Trading Desk assistant (grounded in `/mock/td/*`); otherwise the
+Commercial Banking RM assistant answers (grounded in `/mock/cb/*`). Both return the same `ChatReply`
+shape so the UI is mode-blind.
+
+**Commercial Banking — Markets-Intelligence assistant** (default):
 
 - **DEMO** (`Agents\Demo\ChatResponder.cs`): a deterministic intent router (who-to-call, customer
   lookup, market/events, complaints, pipeline, help) reusing `RmBriefingComposer` / `MockApiClient` /
@@ -278,8 +284,19 @@ stateless — the client replays the conversation each turn.
 - **LIVE** (`Agents\ChatAgentRunner.cs`): the persistent `markets-assistant` Foundry agent
   (`Prompts\markets-assistant.md`) reusing the **same RM mock-api tools**; on any failure or empty
   output it degrades gracefully to the DEMO responder (re-stamped LIVE).
-- **Model**: `FOUNDRY_MODEL_CHAT`, which defaults to the `gpt-4o-mini` morning deployment so chat never
-  competes with the briefing synthesizers for quota. Both surfaces return the same `ChatReply` shape.
+
+**Institutional Sales & Trading — Trading Desk assistant** (`salespersonId` present):
+
+- **DEMO** (`Agents\Demo\TdChatResponder.cs`): a deterministic intent router (who-to-call, client
+  profile by `CL-####`, security interest by `SEC-####`, inventory axes, market/events, help)
+  grounded in `/mock/td/*` via `TdBriefingComposer` / `MockApiClient` / `EventTools`.
+- **LIVE** (`Agents\TdChatAgentRunner.cs`): the persistent `trading-desk-assistant` Foundry agent
+  (`Prompts\trading-desk-assistant.md`) binding the **trading-desk mock-api tools** (clients,
+  securities, RFQs, inquiries, CRM, inventory, news, research, events); degrades to the DEMO
+  `TdChatResponder` (re-stamped LIVE) on any failure or empty output.
+
+- **Model**: both assistants use `FOUNDRY_MODEL_CHAT`, which defaults to the `gpt-4o-mini` morning
+  deployment so chat never competes with the briefing synthesizers for quota.
 
 ## Frontend / UI (`src\ui-app`)
 
@@ -340,8 +357,13 @@ footer bar that shares the bottom row with the floating chat pill.
 Chat is a floating overlay, not an inline panel. `ChatDockProvider` exposes `useChatDock()` with
 `openChat(seed?)`; a bottom-right launcher expands into an overlay wired to `POST /api/chat`
 (`MarkdownMessage` renders assistant replies as Markdown). Panels can pop it open seeded with context
-(e.g. the hero "Open Chat" pre-fills a question about the top call). The dock is mounted on the
-**main page and the Cockpit**.
+(e.g. the hero "Open Chat" pre-fills a question about the top call). The dock is **grounding-agnostic**:
+a `ChatDockConfig` selects the assistant (`send` function), a distinct persisted-state namespace and
+the panel copy, so the same dock serves the Commercial Banking RM (default config) and the Trading
+Desk (`scenes\TradeDesk\tdChatConfig.ts`, which calls `sendDeskChat` with the coverage salesperson so
+`/api/chat` routes to the trading-desk-grounded assistant). It is mounted on the **main page and the
+Cockpit** (CB) and on **`/desk`, `/desk/morning-brief` and `/desk/new-issue`** (Trading Desk), where
+each `TdCallCard` and the New Issue outreach card expose a seeded **Open Chat** action.
 
 ### Cross-navigation persistence (`hooks\usePersistentState.ts`)
 

@@ -46,6 +46,7 @@ What is **agentic only in LIVE**:
 | **Commercial Banking RM** (`/cb`, `/rm-briefing`, `/`) | `RmBriefing` | Chrome; DEMO composer ranking; event re-rank | Synthesizer + per-event fan-out | **Yes** — SSE re-rank |
 | **Municipal Morning Brief** (`/morning-brief`) | `MorningBrief` | Chrome; DEMO composer | Synthesizer agent + tools | **Yes** — SSE re-rank |
 | **AI Chat** (`/chat`) | `ChatReply` | Chrome; DEMO intent router | `markets-assistant` agent over the same tools | Indirectly (reads current events) |
+| **Trading Desk "Open Chat"** (`/desk*`, `salespersonId`) | `ChatReply` | Chrome; DEMO intent router (`TdChatResponder`) | `trading-desk-assistant` agent over the `/mock/td/*` tools | Indirectly (reads current events) |
 | **News Desk** (`/admin`) | `MarketEvent` | Entire operator UI | — | It is the **injector** |
 
 ### Trading Desk (`/desk`, `/desk/morning-brief`) — `TdBriefing`
@@ -88,7 +89,11 @@ What is **agentic only in LIVE**:
 
 Same DEMO-composer-vs-Foundry-agent split. The RM and municipal briefings re-rank reactively over SSE;
 AI Chat reads the **current** event store each turn (so it reflects injects) but does not hold an SSE
-subscription.
+subscription. The **Trading Desk "Open Chat"** mirrors AI Chat for the institutional desk: the same
+floating dock, parameterised with a `salespersonId` so `/api/chat` routes to the trading-desk-grounded
+assistant (`TdChatResponder` in DEMO, `trading-desk-assistant` Foundry agent in LIVE) over the
+`/mock/td/*` tools. Each `TdCallCard` and the New Issue outreach card seed it with the client in
+context.
 
 ## How reactivity actually works (shared plumbing)
 

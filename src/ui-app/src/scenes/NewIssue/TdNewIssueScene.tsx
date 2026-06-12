@@ -14,6 +14,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
+import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded';
 import CampaignRoundedIcon from '@mui/icons-material/CampaignRounded';
 import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
 import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
@@ -30,6 +31,8 @@ import type {
   TdStoryboardStep,
 } from '../../api/client';
 import { useTdNewIssue } from './useTdNewIssue';
+import { ChatDockProvider, useChatDock } from '../Workspace/ChatOverlay';
+import { tdChatConfig } from '../TradeDesk/tdChatConfig';
 
 const toneColor = (tone?: StoryboardMetric['tone']): string => {
   switch (tone) {
@@ -190,7 +193,7 @@ function EvidenceRow({ ev }: { ev: StoryboardEvidence }) {
   );
 }
 
-function OutreachCard({ story }: { story: TdNewIssueStoryboard }) {
+function OutreachCard({ story, onOpenChat }: { story: TdNewIssueStoryboard; onOpenChat?: (seed: string) => void }) {
   const { outreach } = story;
   return (
     <Paper
@@ -274,6 +277,36 @@ function OutreachCard({ story }: { story: TdNewIssueStoryboard }) {
               </Typography>
             </Box>
           )}
+
+          {onOpenChat && (
+            <Box
+              onClick={() =>
+                onOpenChat(
+                  `Tell me about ${outreach.clientName} (${outreach.clientId}) — why should I call them now on this new issue, and what should I lead with?`,
+                )
+              }
+              role="button"
+              aria-label={`Open chat about ${outreach.clientName}`}
+              sx={{
+                mt: 1.5,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 1.75,
+                py: 0.75,
+                borderRadius: 99,
+                cursor: 'pointer',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: 12.5,
+                background: `linear-gradient(135deg, ${mint.blue}, ${mint.cyan})`,
+                '&:hover': { filter: 'brightness(1.08)' },
+              }}
+            >
+              <ChatBubbleRoundedIcon sx={{ fontSize: 15 }} />
+              Open Chat
+            </Box>
+          )}
         </Box>
       </Box>
     </Paper>
@@ -281,6 +314,15 @@ function OutreachCard({ story }: { story: TdNewIssueStoryboard }) {
 }
 
 export default function TdNewIssueScene() {
+  return (
+    <ChatDockProvider config={tdChatConfig}>
+      <TdNewIssueInner />
+    </ChatDockProvider>
+  );
+}
+
+function TdNewIssueInner() {
+  const { openChat } = useChatDock();
   const { story, loading, error, reload, liveAlert, dismissAlert } = useTdNewIssue('td-new-issue/story');
   const [stepIdx, setStepIdx] = useState(0);
 
@@ -468,7 +510,7 @@ export default function TdNewIssueScene() {
             </Paper>
 
             {/* Outreach recommendation reveals on the final beat */}
-            {isOutreach && <OutreachCard story={story} />}
+            {isOutreach && <OutreachCard story={story} onOpenChat={openChat} />}
 
             {/* Walkthrough controls */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

@@ -75,6 +75,11 @@ builder.Services.AddScoped<TdNewIssueRunner>();
 builder.Services.AddScoped<ChatResponder>();
 builder.Services.AddScoped<ChatAgentRunner>();
 
+// Trading-desk "Open Chat": DEMO intent responder + LIVE Foundry chat agent, both grounded in the
+// trading-desk systems-of-record (/mock/td/*). Routed when the request carries a salespersonId.
+builder.Services.AddScoped<TdChatResponder>();
+builder.Services.AddScoped<TdChatAgentRunner>();
+
 // --- CORS for the React cockpit (tightened for deployment in Phase 8) ---
 var corsOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"];
 builder.Services.AddCors(options =>
@@ -307,6 +312,8 @@ app.MapPost("/api/chat", async (
     ModeOptions modeOpts,
     ChatResponder responder,
     ChatAgentRunner runner,
+    TdChatResponder tdResponder,
+    TdChatAgentRunner tdRunner,
     CancellationToken ct) =>
 {
     if (request is null || request.Messages is null || request.Messages.Count == 0 ||
@@ -318,9 +325,16 @@ app.MapPost("/api/chat", async (
             statusCode: StatusCodes.Status400BadRequest);
     }
 
-    var reply = modeOpts.DemoMode
-        ? await responder.RespondAsync(request, ct)
-        : await runner.RunAsync(request, ct);
+    // A salespersonId routes to the trading-desk assistant (grounded in /mock/td/*); otherwise the
+    // Commercial Banking RM assistant answers. Both share the mode-blind ChatReply shape.
+    var trading = !string.IsNullOrWhiteSpace(request.SalespersonId);
+    var reply = trading
+        ? (modeOpts.DemoMode
+            ? await tdResponder.RespondAsync(request, ct)
+            : await tdRunner.RunAsync(request, ct))
+        : (modeOpts.DemoMode
+            ? await responder.RespondAsync(request, ct)
+            : await runner.RunAsync(request, ct));
 
     return Results.Json(reply, RmBriefingJson.Options);
 });

@@ -13,6 +13,14 @@ public sealed class ChatRequest
 
     /// <summary>Optional RM context (e.g. <c>RM-104</c>) so "who should I call?" resolves a book.</summary>
     public string? RmId { get; init; }
+
+    /// <summary>
+    /// Optional trading-desk coverage salesperson (e.g. <c>Theo Wexler</c>). When present, the
+    /// request is routed to the Institutional Sales &amp; Trading assistant grounded in
+    /// <c>/mock/td/*</c> (clients, securities, RFQs, inventory axes, events) instead of the
+    /// Commercial Banking RM assistant. Mutually exclusive with <see cref="RmId"/> in practice.
+    /// </summary>
+    public string? SalespersonId { get; init; }
 }
 
 /// <summary>One conversational turn. <c>Role</c> is <c>user</c> or <c>assistant</c>.</summary>

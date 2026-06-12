@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosResponse } from 'axios';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -161,5 +161,37 @@ describe('TradeDeskScene', () => {
     await screen.findByTestId('td-briefing');
     expect(screen.getByTestId('td-driving-events-CL-2006')).toBeInTheDocument();
     expect(screen.getByText(/RE-RANKED BY LIVE EVENTS/)).toBeInTheDocument();
+  });
+
+  it('opens a trading-grounded chat seeded from a call card and posts the salesperson context', async () => {
+    const postSpy = vi.spyOn(apiClient, 'post').mockImplementation((url: string) => {
+      if (url === '/chat') {
+        return Promise.resolve({
+          data: { mode: 'DEMO', message: 'Tradewinds holds the AI basket and has an open RFQ.' },
+        } as AxiosResponse);
+      }
+      return Promise.resolve({ data: mockBrief } as AxiosResponse<TdBriefing>);
+    });
+
+    renderScene();
+    await screen.findByTestId('td-briefing');
+
+    // The call card exposes an "Open Chat" affordance grounded in the trading book.
+    fireEvent.click(screen.getByRole('button', { name: /Open chat about Tradewinds Partners/i }));
+
+    // The composer is pre-seeded with that client's context.
+    const input = (await screen.findByPlaceholderText(/Ask about a client/i)) as HTMLInputElement;
+    expect(input.value).toContain('Tradewinds Partners (CL-2006)');
+
+    fireEvent.click(screen.getByRole('button', { name: /send message/i }));
+
+    await waitFor(() =>
+      expect(postSpy).toHaveBeenCalledWith(
+        '/chat',
+        expect.objectContaining({ salespersonId: 'Theo Wexler' }),
+        expect.objectContaining({ timeout: expect.any(Number) }),
+      ),
+    );
+    expect(await screen.findByText(/Tradewinds holds the AI basket/)).toBeInTheDocument();
   });
 });

@@ -363,6 +363,18 @@ export async function sendChat(messages: ChatTurn[], rmId?: string): Promise<Cha
   return data;
 }
 
+/**
+ * Send the conversation to the Institutional Sales & Trading assistant. A non-empty
+ * salespersonId routes /api/chat to the trading-desk-grounded responder/agent (/mock/td/*)
+ * instead of the Commercial Banking RM assistant. Same mode-blind ChatReply shape.
+ */
+export async function sendDeskChat(messages: ChatTurn[], salespersonId?: string): Promise<ChatReply> {
+  const { data } = await apiClient.post<ChatReply>('/chat', { messages, salespersonId }, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
+  return data;
+}
+
 // ---------------------------------------------------------------------------
 // Institutional Sales & Trading — "Morning Planning & Prioritized Outreach" for a
 // coverage salesperson (Theo Wexler). Mirrors the orchestration-api TdBriefing DTO;

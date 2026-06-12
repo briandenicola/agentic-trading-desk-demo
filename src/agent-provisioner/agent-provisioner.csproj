@@ -38,6 +38,9 @@
     <Content Include="..\orchestration-api\Prompts\markets-assistant.md"
              Link="Prompts\markets-assistant.md"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\orchestration-api\Prompts\trading-desk-assistant.md"
+             Link="Prompts\trading-desk-assistant.md"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -20,8 +20,19 @@ import TdCallCard from './TdCallCard';
 import { AgentReasoning, AxeBoard, EventsConsidered, MacroThemes, MarketStrip } from './TdPanels';
 import { useTdBriefing } from './useTdBriefing';
 import { deriveKpis, deriveTicker } from './tdShellData';
+import { ChatDockProvider, useChatDock } from '../Workspace/ChatOverlay';
+import { tdChatConfig } from './tdChatConfig';
 
 export default function TradeDeskScene() {
+  return (
+    <ChatDockProvider config={tdChatConfig}>
+      <TradeDeskInner />
+    </ChatDockProvider>
+  );
+}
+
+function TradeDeskInner() {
+  const { openChat } = useChatDock();
   const { brief, loading, error, reload, liveAlert, dismissAlert } = useTdBriefing('td-desk/brief');
 
   return (
@@ -114,7 +125,7 @@ export default function TradeDeskScene() {
                 </SectionTitle>
                 <Stack spacing={1.5} sx={{ mt: 1.5 }}>
                   {brief.priorityCallList.map((call) => (
-                    <TdCallCard key={call.clientId} call={call} />
+                    <TdCallCard key={call.clientId} call={call} onOpenChat={openChat} />
                   ))}
                 </Stack>
 

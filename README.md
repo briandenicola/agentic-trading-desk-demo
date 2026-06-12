@@ -13,7 +13,7 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 | Route | Scene | Purpose |
 |---|---|---|
 | `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
-| `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/inventory-axe driven), trade ideas + talking points; re-ranks live over SSE |
+| `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/inventory-axe driven), trade ideas + talking points; re-ranks live over SSE. Each call card has a seeded **Open Chat** grounded in `/mock/td/*` |
 | `/desk/new-issue` | **New Issue Radar** (Institutional Sales & Trading) | Guided new-issue storyboard: a concurrent debt+equity issue prints, the desk cross-references an existing equity holder who's actively trading the new note, and lands on a prioritized "call now" with allocation, talking points + draft message |
 | `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
 | `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
@@ -50,7 +50,7 @@ broadcasts one consolidated re-synthesized briefing per scene over SSE when even
 ### Orchestrator vs. agent
 
 - **Orchestrator** (the per-scene runners, the tool functions, `MAX_TOOL_HOPS`, the event fan-out, JSON→DTO mapping) runs **inside the `orchestration-api` Container App**.
-- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Six are registered: `rm-daily-briefing`, `morning-brief`, `trading-desk-morning` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), `markets-assistant` (the grounded AI Chat agent), and `briefing-synthesizer` (the shared synthesis contract).
+- **Agents** (instructions + model `gpt-5.4-mini`) are **persistent in Azure AI Foundry**, on the Agent Service / capability host, reached via `FOUNDRY_PROJECT_ENDPOINT`. Seven are registered: `rm-daily-briefing`, `morning-brief`, `trading-desk-morning` (the scene synthesizers), `event-specialist` (run once per event in the fan-out), `markets-assistant` (the grounded CB AI Chat agent), `trading-desk-assistant` (the grounded Trading Desk Open Chat agent), and `briefing-synthesizer` (the shared synthesis contract).
 - **Tool execution** happens back in the Container App: the agent only *decides* which tool to call; the C# function runs locally and fetches data from `mock-api` over HTTP.
 
 In LIVE mode each briefing is a **per-event multi-agent fan-out into a synthesizer** (002 US4): the
@@ -101,6 +101,7 @@ deployment (separate quota pool)** so the high-concurrency fan-out never compete
 | `morning-brief` (synthesizer) | `gpt-4o-mini` | `FOUNDRY_MODEL_MORNING` |
 | `event-specialist` (per-event fan-out) | `gpt-5.4-nano` | `FOUNDRY_MODEL_SPECIALIST` |
 | `markets-assistant` (AI Chat) | `gpt-4o-mini` | `FOUNDRY_MODEL_CHAT` |
+| `trading-desk-assistant` (Trading Desk Open Chat) | `gpt-4o-mini` | `FOUNDRY_MODEL_CHAT` |
 | `briefing-synthesizer` (shared contract) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
 
 `FOUNDRY_MODEL_MORNING` / `FOUNDRY_MODEL_SPECIALIST` fall back to `FOUNDRY_MODEL` if unset;
@@ -165,7 +166,7 @@ gitleaks detect --source . --no-banner
 src\ui-app\              React cockpit (Landing, Trading Desk, RM, Trading, Cockpit, AI Chat, News Desk) + nginx reverse proxy
 src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, /api/chat, DEMO/LIVE runners + event fan-out
 src\mock-api\            fictional system-of-record endpoints + reactive event store (/mock/events)
-src\agent-provisioner\   idempotent Foundry agent registration job (5 agents)
+src\agent-provisioner\   idempotent Foundry agent registration job (7 agents)
 src\shared\Observability\ Serilog, OTEL, correlation id, JSON errors
 infra\                   Terraform for ACA, ACR, Key Vault, Foundry
 tasks\                   Taskfile includes for local, build, and cloud workflows

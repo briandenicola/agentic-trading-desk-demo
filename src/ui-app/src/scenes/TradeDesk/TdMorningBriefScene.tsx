@@ -8,6 +8,8 @@ import TdCallCard from './TdCallCard';
 import { AgentReasoning, AxeBoard, EventsConsidered, MacroThemes, MarketStrip } from './TdPanels';
 import { useTdBriefing } from './useTdBriefing';
 import { deriveKpis, deriveTicker } from './tdShellData';
+import { ChatDockProvider, useChatDock } from '../Workspace/ChatOverlay';
+import { tdChatConfig } from './tdChatConfig';
 
 /**
  * Two-column morning-brief view of the same TdBriefing: LEFT = macro/market context,
@@ -15,6 +17,15 @@ import { deriveKpis, deriveTicker } from './tdShellData';
  * plan. Shares the persisted brief with the trading desk via the same store key.
  */
 export default function TdMorningBriefScene() {
+  return (
+    <ChatDockProvider config={tdChatConfig}>
+      <TdMorningBriefInner />
+    </ChatDockProvider>
+  );
+}
+
+function TdMorningBriefInner() {
+  const { openChat } = useChatDock();
   const { brief, loading, error, liveAlert, dismissAlert } = useTdBriefing('td-desk/brief');
 
   return (
@@ -95,7 +106,7 @@ export default function TdMorningBriefScene() {
                 </SectionTitle>
                 <Stack spacing={1.5} sx={{ mt: 1.5 }}>
                   {brief.priorityCallList.map((call) => (
-                    <TdCallCard key={call.clientId} call={call} />
+                    <TdCallCard key={call.clientId} call={call} onOpenChat={openChat} />
                   ))}
                 </Stack>
 

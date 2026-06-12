@@ -1,4 +1,5 @@
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material';
+import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded';
 import type { TdPriorityCall, WhyNowDriver } from '../../api/client';
 import { mint } from '../../theme/theme';
 
@@ -67,9 +68,11 @@ interface TdCallCardProps {
   call: TdPriorityCall;
   /** Highlights the card when its rank/priority just changed from a live event. */
   flash?: boolean;
+  /** When provided, renders an "Open Chat" affordance seeded with this client's context. */
+  onOpenChat?: (seed: string) => void;
 }
 
-export default function TdCallCard({ call, flash }: TdCallCardProps) {
+export default function TdCallCard({ call, flash, onOpenChat }: TdCallCardProps) {
   const accent = BAND_COLOR[call.priority] ?? BAND_COLOR[4];
   const meta = [call.clientType, call.region, call.preferredAssetClass, call.clientId]
     .filter(Boolean)
@@ -211,6 +214,36 @@ export default function TdCallCard({ call, flash }: TdCallCardProps) {
         </Box>
         {call.suggestedAction}
       </Typography>
+
+      {onOpenChat && (
+        <Box
+          onClick={() =>
+            onOpenChat(
+              `Tell me about ${call.clientName} (${call.clientId}) — why are they my top call this morning, and what should I lead with?`,
+            )
+          }
+          role="button"
+          aria-label={`Open chat about ${call.clientName}`}
+          sx={{
+            mt: 1.5,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1.75,
+            py: 0.75,
+            borderRadius: 99,
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: 12.5,
+            background: `linear-gradient(135deg, ${mint.blue}, ${mint.cyan})`,
+            '&:hover': { filter: 'brightness(1.08)' },
+          }}
+        >
+          <ChatBubbleRoundedIcon sx={{ fontSize: 15 }} />
+          Open Chat
+        </Box>
+      )}
     </Paper>
   );
 }

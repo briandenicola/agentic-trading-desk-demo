@@ -19,6 +19,7 @@
 //     - trading-desk-morning : Institutional Sales & Trading morning brief    -> FOUNDRY_MODEL_TRADING
 //     - event-specialist  : Per-event fan-out assessment (high concurrency)  -> FOUNDRY_MODEL_SPECIALIST
 //     - markets-assistant : Grounded "AI Chat" assistant (interactive)       -> FOUNDRY_MODEL_CHAT
+//     - trading-desk-assistant : Grounded trading-desk "Open Chat" assistant  -> FOUNDRY_MODEL_CHAT
 //
 //   CONTRACT-ONLY (registered for traceability, never executed) — created tool-less on FOUNDRY_MODEL:
 //     - briefing-synthesizer : Shared synthesis contract the per-scene briefing agents fulfil (R9).
@@ -84,6 +85,12 @@ var agents = new[]
         "markets-assistant",
         "Grounded Markets-Intelligence chat assistant that answers RM questions by calling the Commercial Banking mock systems-of-record and the event feed as tools.",
         "markets-assistant.md",
+        chatModel,
+        RuntimeManaged: true),
+    new AgentSpec(
+        "trading-desk-assistant",
+        "Grounded Institutional Sales & Trading chat assistant that answers coverage-salesperson questions by calling the trading-desk mock systems-of-record and the event feed as tools.",
+        "trading-desk-assistant.md",
         chatModel,
         RuntimeManaged: true),
     new AgentSpec(

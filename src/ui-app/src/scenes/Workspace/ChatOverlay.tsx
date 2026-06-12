@@ -12,7 +12,7 @@ import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { sendChat, type ChatTurn } from '../../api/client';
+import { sendChat, type ChatReply, type ChatTurn } from '../../api/client';
 import { usePersistentState } from '../../hooks/usePersistentState';
 import { mint } from '../../theme/theme';
 import MarkdownMessage from '../../components/MarkdownMessage';
@@ -21,9 +21,32 @@ import MarkdownMessage from '../../components/MarkdownMessage';
 // Floating chat dock. A persistent "Open Chat" launcher in the bottom-right that
 // expands into an overlay panel wired to the real /api/chat assistant. Any panel
 // can pop it open (optionally seeded with context) via useChatDock().openChat().
+//
+// The dock is grounding-agnostic: a ChatDockConfig selects the assistant (the
+// send function), its persisted-state namespace and its copy, so the same dock
+// serves both the Commercial Banking RM (default) and the trading desk.
 // ---------------------------------------------------------------------------
 
 const RM_CONTEXT = 'RM-104';
+
+export interface ChatDockConfig {
+  /** Distinct persisted-state namespace so each dock keeps its own thread + mode. */
+  storageKey: string;
+  title: string;
+  subtitle: string;
+  emptyHint: string;
+  placeholder?: string;
+  /** Sends the conversation to the grounded assistant and resolves the reply. */
+  send: (turns: ChatTurn[]) => Promise<ChatReply>;
+}
+
+const RM_CONFIG: ChatDockConfig = {
+  storageKey: 'workspace/chat',
+  title: 'Markets-Intelligence Assistant',
+  subtitle: 'Grounded in your book & live feed',
+  emptyHint: 'Ask about who to call first, a specific customer, complaints or your pipeline.',
+  send: (turns) => sendChat(turns, RM_CONTEXT),
+};
 
 interface ChatDockValue {
   open: boolean;
@@ -39,7 +62,7 @@ interface Msg {
   content: string;
 }
 
-export function ChatDockProvider({ children }: { children: ReactNode }) {
+export function ChatDockProvider({ children, config = RM_CONFIG }: { children: ReactNode; config?: ChatDockConfig }) {
   const [open, setOpen] = useState(false);
   const [seed, setSeed] = useState<string | null>(null);
 
@@ -52,7 +75,7 @@ export function ChatDockProvider({ children }: { children: ReactNode }) {
   return (
     <ChatDockContext.Provider value={{ open, openChat, closeChat }}>
       {children}
-      <ChatOverlay open={open} seed={seed} onSeedConsumed={() => setSeed(null)} onClose={closeChat} onOpen={() => setOpen(true)} />
+      <ChatOverlay open={open} seed={seed} config={config} onSeedConsumed={() => setSeed(null)} onClose={closeChat} onOpen={() => setOpen(true)} />
     </ChatDockContext.Provider>
   );
 }
@@ -107,16 +130,17 @@ function Bubble({ msg }: { msg: Msg }) {
 interface ChatOverlayProps {
   open: boolean;
   seed: string | null;
+  config: ChatDockConfig;
   onSeedConsumed: () => void;
   onClose: () => void;
   onOpen: () => void;
 }
 
-function ChatOverlay({ open, seed, onSeedConsumed, onClose, onOpen }: ChatOverlayProps) {
-  const [messages, setMessages] = usePersistentState<Msg[]>('workspace/chat', []);
+function ChatOverlay({ open, seed, config, onSeedConsumed, onClose, onOpen }: ChatOverlayProps) {
+  const [messages, setMessages] = usePersistentState<Msg[]>(config.storageKey, []);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = usePersistentState<'DEMO' | 'LIVE' | null>('workspace/chat-mode', null);
+  const [mode, setMode] = usePersistentState<'DEMO' | 'LIVE' | null>(`${config.storageKey}-mode`, null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const idRef = useRef<number | null>(null);
   if (idRef.current === null) {
@@ -151,7 +175,7 @@ function ChatOverlay({ open, seed, onSeedConsumed, onClose, onOpen }: ChatOverla
     setLoading(true);
     try {
       const turns: ChatTurn[] = convo.map(({ role, content }) => ({ role, content }));
-      const reply = await sendChat(turns, RM_CONTEXT);
+      const reply = await config.send(turns);
       setMode(reply.mode);
       setMessages((m) => [...m, { id: nextId(), role: 'assistant', content: reply.message }]);
     } catch {
@@ -244,9 +268,9 @@ function ChatOverlay({ open, seed, onSeedConsumed, onClose, onOpen }: ChatOverla
             </Box>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography sx={{ fontSize: 13, fontWeight: 800, color: mint.text, lineHeight: 1.2 }}>
-                Markets-Intelligence Assistant
+                {config.title}
               </Typography>
-              <Typography sx={{ fontSize: 10.5, color: mint.textDim }}>Grounded in your book & live feed</Typography>
+              <Typography sx={{ fontSize: 10.5, color: mint.textDim }}>{config.subtitle}</Typography>
             </Box>
             {mode && (
               <Chip
@@ -270,7 +294,7 @@ function ChatOverlay({ open, seed, onSeedConsumed, onClose, onOpen }: ChatOverla
           <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
             {messages.length === 0 && (
               <Typography sx={{ fontSize: 13, color: mint.textDim, textAlign: 'center', mt: 4, px: 2 }}>
-                Ask about who to call first, a specific customer, complaints or your pipeline.
+                {config.emptyHint}
               </Typography>
             )}
             <Stack spacing={1.25}>
@@ -311,7 +335,7 @@ function ChatOverlay({ open, seed, onSeedConsumed, onClose, onOpen }: ChatOverla
                   void send();
                 }
               }}
-              placeholder="Ask anything or give a command..."
+              placeholder={config.placeholder ?? 'Ask anything or give a command...'}
               sx={{
                 flex: 1,
                 background: 'transparent',
