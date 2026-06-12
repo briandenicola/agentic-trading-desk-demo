@@ -2,9 +2,8 @@
 .env
 
 # Client-provided design / sample data references (never commit)
-assets/Designer Layout.png
-assets/Design Layout.png
-
+assets/
+User 
 # Python
 __pycache__/
 *.pyc
