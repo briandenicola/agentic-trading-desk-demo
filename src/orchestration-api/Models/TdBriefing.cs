@@ -21,6 +21,18 @@ public sealed record TdBriefing
     public required string SuggestedFirstAction { get; init; }
     public IReadOnlyList<string>? Notes { get; init; }
 
+    /// <summary>
+    /// True when this briefing was produced by the deterministic safety net instead of the LIVE
+    /// Foundry agent (agent unavailable, run failed, or returned no parseable call list). The JSON
+    /// shape is unchanged (Principle III) — this flag lets the cockpit show an honest "degraded"
+    /// banner rather than silently passing the fallback off as a normal LIVE result. Always false
+    /// for a genuine DEMO/LIVE response.
+    /// </summary>
+    public bool Degraded { get; init; }
+
+    /// <summary>Human-readable reason the briefing degraded (mirrors the leading <c>notes</c> entry). Null unless <see cref="Degraded"/>.</summary>
+    public string? DegradedReason { get; init; }
+
     /// <summary>All news/research the synthesis weighed (overnight + intraday). Empty ⇒ none processed.</summary>
     public IReadOnlyList<TdEventConsidered> EventsConsidered { get; init; } = [];
 

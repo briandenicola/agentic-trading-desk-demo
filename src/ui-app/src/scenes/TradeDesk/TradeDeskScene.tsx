@@ -14,6 +14,7 @@ import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import { Link } from 'react-router-dom';
 import CommandCenterShell from '../../components/CommandCenterShell';
 import LiveAlertBanner from '../../components/LiveAlertBanner';
+import DegradedBanner from './DegradedBanner';
 import SectionTitle from '../../components/SectionTitle';
 import { mint } from '../../theme/theme';
 import TdCallCard from './TdCallCard';
@@ -46,6 +47,7 @@ function TradeDeskInner() {
     >
       <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5, maxWidth: 1480, mx: 'auto' }}>
         <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
+        <DegradedBanner brief={brief} />
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="overline" color="text.secondary">
             Morning · Institutional Sales &amp; Trading
@@ -56,9 +58,9 @@ function TradeDeskInner() {
             </Typography>
             {brief && (
               <Chip
-                label={brief.mode}
+                label={brief.degraded ? `${brief.mode} · DEGRADED` : brief.mode}
                 size="small"
-                color={brief.mode === 'LIVE' ? 'success' : 'default'}
+                color={brief.degraded ? 'error' : brief.mode === 'LIVE' ? 'success' : 'default'}
                 sx={{ fontWeight: 700 }}
               />
             )}

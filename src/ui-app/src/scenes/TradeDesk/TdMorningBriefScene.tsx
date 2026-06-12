@@ -2,6 +2,7 @@ import { Alert, Box, Chip, CircularProgress, Paper, Stack, Typography } from '@m
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
 import CommandCenterShell from '../../components/CommandCenterShell';
 import LiveAlertBanner from '../../components/LiveAlertBanner';
+import DegradedBanner from './DegradedBanner';
 import SectionTitle from '../../components/SectionTitle';
 import { mint } from '../../theme/theme';
 import TdCallCard from './TdCallCard';
@@ -39,6 +40,7 @@ function TdMorningBriefInner() {
     >
       <Box sx={{ px: { xs: 2, md: 3 }, py: 2.5, maxWidth: 1480, mx: 'auto' }}>
         <LiveAlertBanner alert={liveAlert} onDismiss={dismissAlert} />
+        <DegradedBanner brief={brief} />
         <Box sx={{ mb: 2.5 }}>
           <Typography variant="overline" color="text.secondary">
             Morning brief · Institutional Sales &amp; Trading
@@ -49,9 +51,9 @@ function TdMorningBriefInner() {
             </Typography>
             {brief && (
               <Chip
-                label={brief.mode}
+                label={brief.degraded ? `${brief.mode} · DEGRADED` : brief.mode}
                 size="small"
-                color={brief.mode === 'LIVE' ? 'success' : 'default'}
+                color={brief.degraded ? 'error' : brief.mode === 'LIVE' ? 'success' : 'default'}
                 sx={{ fontWeight: 700 }}
               />
             )}

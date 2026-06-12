@@ -156,6 +156,9 @@ public sealed class TdAgentRunner(
             return deterministic with
             {
                 Mode = "LIVE",
+                Degraded = true,
+                DegradedReason = brief.DegradedReason
+                    ?? "The LIVE agent did not return a usable call list — this briefing was reconstructed deterministically from the systems-of-record.",
                 LiveEvents = events.Count > 0 ? events : deterministic.LiveEvents,
                 Notes = notes,
             };
@@ -412,6 +415,8 @@ public sealed class TdAgentRunner(
     private static TdBriefing Degraded(string salespersonId, string? date, string note) => new()
     {
         Mode = "LIVE",
+        Degraded = true,
+        DegradedReason = note,
         AsOf = date ?? TdBriefingComposer.DefaultDate,
         Greeting = "Good morning",
         Salesperson = new SalespersonIdentity { SalespersonId = salespersonId, Name = salespersonId, ClientCount = 0 },

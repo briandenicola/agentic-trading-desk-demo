@@ -482,6 +482,10 @@ export interface TdBriefing {
   inventoryAxes: InventoryAxe[];
   suggestedFirstAction: string;
   notes?: string[];
+  /** True when the LIVE agent was unavailable and this briefing came from the deterministic safety net. */
+  degraded?: boolean;
+  /** Human-readable reason the briefing degraded (present only when `degraded`). */
+  degradedReason?: string;
   eventsConsidered?: TdEventConsidered[];
   liveEvents?: MarketEvent[];
 }

@@ -163,6 +163,33 @@ describe('TradeDeskScene', () => {
     expect(screen.getByText(/RE-RANKED BY LIVE EVENTS/)).toBeInTheDocument();
   });
 
+  it('does not show the degraded banner for a normal briefing', async () => {
+    vi.spyOn(apiClient, 'post').mockResolvedValue({ data: mockBrief } as AxiosResponse<TdBriefing>);
+
+    renderScene();
+
+    await screen.findByTestId('td-briefing');
+    expect(screen.queryByTestId('td-degraded-banner')).not.toBeInTheDocument();
+  });
+
+  it('shows an honest degraded banner and DEGRADED chip when the LIVE agent fell back', async () => {
+    const degradedBrief: TdBriefing = {
+      ...mockBrief,
+      mode: 'LIVE',
+      degraded: true,
+      degradedReason: 'LIVE agent run failed: Foundry endpoint unreachable.',
+    };
+    vi.spyOn(apiClient, 'post').mockResolvedValue({ data: degradedBrief } as AxiosResponse<TdBriefing>);
+
+    renderScene();
+
+    await screen.findByTestId('td-briefing');
+    expect(screen.getByTestId('td-degraded-banner')).toBeInTheDocument();
+    expect(screen.getByText(/LIVE agent unavailable/)).toBeInTheDocument();
+    expect(screen.getByText(/Foundry endpoint unreachable/)).toBeInTheDocument();
+    expect(screen.getByText('LIVE · DEGRADED')).toBeInTheDocument();
+  });
+
   it('opens a trading-grounded chat seeded from a call card and posts the salesperson context', async () => {
     const postSpy = vi.spyOn(apiClient, 'post').mockImplementation((url: string) => {
       if (url === '/chat') {
