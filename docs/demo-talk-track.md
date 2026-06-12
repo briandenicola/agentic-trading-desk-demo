@@ -151,6 +151,12 @@ which routes through the *same* ingestion path a real feed would use.
 - **Close:** *"This is a pattern, not a one-off — the same three-layer design (mode-blind UI →
   orchestration → tools over HTTP) drops onto any desk or any book."*
 
+> **Optional "superpower" beat (LIVE only):** show that the desk's playbook is *editable English*. Open
+> `src/orchestration-api/Prompts/trading-desk-morning.md`, paste the **"flow-trading day"** override, re-run
+> `/desk`, and the **call list re-orders** — same data, different prompt. Full recipe in the
+> [prompt-tuning demo](prompt-tuning-demo.md). Pairs naturally with a News Desk inject: change the
+> *instructions*, then change the *inputs*.
+
 ---
 
 ## Quick reference — inject cheat-sheet
@@ -160,6 +166,7 @@ which routes through the *same* ingestion path a real feed would use.
 | Call list re-rank | `/desk` | Click **Inject AI-capex breaking print** | tickers `SEC-3003`,`SEC-3002` | Hyperion & Tradewinds jump to top (~10s), driving-event callouts |
 | Call list re-rank (custom, grounded) | `/desk` | Submit **QRTX earnings beat** — see [News Desk headlines](news-desk-headlines.md#headline-1--quartzite-semiconductors-qrtx-earnings-blowout--sec-3003) | ticker `SEC-3003`, issuer `Quartzite Semiconductors`, Technology / High / Positive | QRTX holders (Forge Hill, Crestline) jump up with RE-RANKED callouts (~10s) |
 | New Issue fold-in | `/desk/new-issue` | Submit custom: *Prairie Green senior note upsized…*, Issuer credit / High / Positive | issuer `Prairie Green Renewables` **or** ticker `SEC-3602` | LIVE banner + LIVE evidence/metric + new leading talking point (~10s) |
+| Prompt re-tune (LIVE only) | `/desk` | Paste the **"flow-trading day"** override into `trading-desk-morning.md`, re-run — see [prompt-tuning demo](prompt-tuning-demo.md) | the prompt itself (needs `FOUNDRY_RECREATE_AGENTS=true`) | Call list **re-orders** — hottest open-RFQ client leads, cards lead with RFQ not news |
 
 ## Troubleshooting
 

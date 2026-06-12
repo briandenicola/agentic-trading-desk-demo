@@ -9,6 +9,7 @@
 | Agentic vs. Synthetic | `docs/agentic-vs-synthetic.md` | ✅ Per-page: agent (LIVE) vs. deterministic (DEMO) + reactivity |
 | Demo Talk Track | `docs/demo-talk-track.md` | ✅ Trader-facing scene-by-scene demo script |
 | News Desk Headlines | `docs/news-desk-headlines.md` | ✅ Curated, grounded positive injects for the Trading Desk re-rank |
+| Prompt-Tuning Demo | `docs/prompt-tuning-demo.md` | ✅ Edit the agent prompt live → the call list re-orders (prompt-engineering showcase) |
 | Getting Started | `docs/getting-started.md` | ✅ Local DEMO/LIVE setup, tests & deploy |
 | References | `docs/references.md` | ✅ Internal docs, contracts & external links |
 

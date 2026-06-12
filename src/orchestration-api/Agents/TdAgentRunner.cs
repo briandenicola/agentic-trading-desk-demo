@@ -217,6 +217,23 @@ public sealed class TdAgentRunner(
         var aiTools = BuildTools();
 
 #pragma warning disable CS0618 // rc5 transitional API; native AIProjectClient.Agents APIs are not yet stable.
+        // Demo lever (prompt-tuning showcase): when FOUNDRY_RECREATE_AGENTS is truthy, delete any
+        // persisted definition first so the agent is rebuilt from the CURRENT prompt file on this
+        // run. This makes a live prompt edit show up after a single re-run — no provisioner step.
+        // Leave it OFF in normal deployments so the persistent agent is reused (faster, cheaper).
+        if (ShouldRecreateAgents())
+        {
+            try
+            {
+                await projectClient.Agents.DeleteAgentAsync(AgentName, ct);
+                logger.LogWarning("FOUNDRY_RECREATE_AGENTS is on — deleted persistent agent '{Agent}' so it is rebuilt from the current prompt.", AgentName);
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation(ex, "FOUNDRY_RECREATE_AGENTS is on but agent '{Agent}' was not present to delete (will be created fresh).", AgentName);
+            }
+        }
+
         AIAgent baseAgent;
         try
         {
@@ -241,6 +258,17 @@ public sealed class TdAgentRunner(
             .AsBuilder()
             .UseOpenTelemetry(sourceName: OrchestrationTelemetry.SourceName, configure: c => c.EnableSensitiveData = captureContent)
             .Build();
+    }
+
+    // Opt-in demo lever: "true"/"1"/"yes"/"on" makes each LIVE run rebuild the agent from the
+    // current prompt file. Defaults OFF (persistent agent reused).
+    private bool ShouldRecreateAgents()
+    {
+        var raw = config["FOUNDRY_RECREATE_AGENTS"];
+        return string.Equals(raw, "true", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(raw, "1", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(raw, "yes", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(raw, "on", StringComparison.OrdinalIgnoreCase);
     }
 
     private IList<AITool> BuildTools() =>
