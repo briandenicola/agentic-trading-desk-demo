@@ -77,7 +77,12 @@ export default function TdCallCard({ call, flash, onOpenChat }: TdCallCardProps)
   const meta = [call.clientType, call.region, call.preferredAssetClass, call.clientId]
     .filter(Boolean)
     .join(' · ');
-  const hasEvents = !!call.drivingEvents && call.drivingEvents.length > 0;
+  // Only surface the live re-rank callout for driving events that carry a real rationale. The LIVE
+  // Foundry agent can emit placeholder driving-event entries with a blank rationale on the base
+  // briefing (before any inject), which would otherwise render an empty "RE-RANKED BY LIVE EVENTS"
+  // box; filtering on rationale text hides those while still showing genuine event-driven re-ranks.
+  const liveDrivers = (call.drivingEvents ?? []).filter((ev) => !!ev.rationale && ev.rationale.trim().length > 0);
+  const hasEvents = liveDrivers.length > 0;
 
   return (
     <Paper
@@ -137,7 +142,7 @@ export default function TdCallCard({ call, flash, onOpenChat }: TdCallCardProps)
             ⚡ RE-RANKED BY LIVE EVENTS
           </Typography>
           <Box component="ul" sx={{ pl: 2.5, my: 0.5, '& li': { mb: 0.25 } }}>
-            {call.drivingEvents!.map((ev) => (
+            {liveDrivers.map((ev) => (
               <Typography component="li" key={ev.eventId} variant="body2" sx={{ color: mint.text }}>
                 {ev.rationale}
               </Typography>
