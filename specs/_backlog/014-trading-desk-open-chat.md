@@ -2,7 +2,7 @@
 
 ## Priority: P2 (High)
 
-## Status: Delivered — requested by client 2026-06-13. DEMO end-to-end + LIVE Foundry path + UI built and tested; pending Sweden deploy verification.
+## Status: Delivered & deployed to Sweden (2026-06-13). DEMO end-to-end + LIVE Foundry path + UI built, tested, and LIVE-smoke verified.
 
 ## Description
 Bring the Commercial Banking RM "Open Chat" affordance to the **Trading Desk** scenes. The desk's call
@@ -39,8 +39,10 @@ III). All data is fictional.
       `TradeDeskScene.test.tsx` case asserting the seeded Open Chat posts `salespersonId` to `/chat`).
 - [x] DEMO and LIVE return the identical `ChatReply` shape (Principle III); CB chat path unchanged
       (`sendChat` and its tests untouched).
-- [ ] Deployed to Sweden (orchestration + ui-app) and LIVE-smoke verified (`mode=LIVE`, grounded
-      answer); agent-provisioner job registers `trading-desk-assistant`.
+- [x] Deployed to Sweden (orchestration + ui-app + mock-api @e9ab5a6, rev r2606121130) and LIVE-smoke
+      verified: `POST /api/chat {salespersonId:"Theo Wexler", …}` → `mode=LIVE`, grounded trading-desk
+      answer (CL-/SEC- IDs + current Fed event). `trading-desk-assistant` auto-created on first LIVE call
+      (GetAIAgent→catch→Create). CB chat regression: default path still routes to `markets-assistant`.
 
 ## Non-Goals
 - No new mock-api endpoints — reuses the existing `/mock/td/*` aggregates.
