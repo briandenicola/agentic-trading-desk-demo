@@ -24,13 +24,13 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Restore dependencies
-        run: dotnet restore WF-Garage.sln
+        run: dotnet restore AgenticTradersDesk.sln
 
       - name: Build solution
-        run: dotnet build WF-Garage.sln --configuration Release --no-restore
+        run: dotnet build AgenticTradersDesk.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test WF-Garage.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test AgenticTradersDesk.sln --configuration Release --no-build --verbosity normal
 
   build-ui:
     name: Build UI
@@ -116,7 +116,7 @@ jobs:
 
       - name: Build .NET (for C#)
         if: matrix.language == 'csharp'
-        run: dotnet build WF-Garage.sln --configuration Release
+        run: dotnet build AgenticTradersDesk.sln --configuration Release
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

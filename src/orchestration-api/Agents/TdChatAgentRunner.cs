@@ -62,7 +62,7 @@ public sealed class TdChatAgentRunner(
         var prompt = BuildPrompt(request);
 
         using var span = OrchestrationTelemetry.ActivitySource.StartActivity("td.chat.run", ActivityKind.Internal);
-        span?.SetTag("wf.mode", "LIVE");
+        span?.SetTag("atd.mode", "LIVE");
         span?.SetTag("gen_ai.request.model", model);
 
         try
@@ -76,7 +76,7 @@ public sealed class TdChatAgentRunner(
             if (usage?.TotalTokenCount is long total)
             {
                 span?.SetTag("gen_ai.usage.total_tokens", total);
-                OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.surface", "td-chat"));
+                OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("atd.surface", "td-chat"));
             }
 
             var text = response.Text?.Trim();

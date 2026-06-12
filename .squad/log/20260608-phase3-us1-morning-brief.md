@@ -24,8 +24,8 @@
 
 ## Outcome
 
-- `dotnet build WF-Garage.sln` → **0 warnings, 0 errors**.
-- `dotnet test WF-Garage.sln` → **26 passed / 0 skipped / 0 failed**
+- `dotnet build AgenticTradersDesk.sln` → **0 warnings, 0 errors**.
+- `dotnet test AgenticTradersDesk.sln` → **26 passed / 0 skipped / 0 failed**
   (mock-api 20; orchestration-api 6 incl. T013, T014, T047 now passing, previously skipped).
 - DEMO smoke: `POST /api/agent/morning-brief {"eventId":"fed_surprise_hike","date":"2026-06-08"}`
   → **HTTP 200**, `application/json`, keys

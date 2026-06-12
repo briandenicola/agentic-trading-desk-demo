@@ -8,7 +8,7 @@ WORKDIR /src
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY global.json .
-COPY WF-Garage.sln .
+COPY AgenticTradersDesk.sln .
 COPY src/orchestration-api/orchestration-api.csproj src/orchestration-api/
 COPY src/shared/Observability/Observability.csproj src/shared/Observability/
 

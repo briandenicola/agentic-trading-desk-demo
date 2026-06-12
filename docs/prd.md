@@ -1,4 +1,4 @@
-# Product Requirements — WF-Garage: Morning Planning & Prioritized Outreach
+# Product Requirements — AgenticTradersDesk: Morning Planning & Prioritized Outreach
 
 > **Status**: Living document for the active demo build.
 > **Scope**: An interactive **Client CV** demo for Commercial Banking RMs and a Municipal Sales desk.

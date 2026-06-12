@@ -31,7 +31,7 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 
 **Purpose**: Confirm the additive baseline builds and reserve configuration knobs.
 
-- [ ] T001 Verify baseline builds on branch `002-reactive-event-cockpit`: `dotnet restore WF-Garage.sln`, `dotnet build WF-Garage.sln --nologo`, `npm --prefix src\ui-app install` (no code changes — establishes a green starting point).
+- [ ] T001 Verify baseline builds on branch `002-reactive-event-cockpit`: `dotnet restore AgenticTradersDesk.sln`, `dotnet build AgenticTradersDesk.sln --nologo`, `npm --prefix src\ui-app install` (no code changes — establishes a green starting point).
 - [ ] T002 [P] Add reactive-feature config knobs to `.env.example` and `docker-compose.yml` (e.g. `SSE_COALESCE_WINDOW_MS=750`, `EVENT_FANOUT_MAX_CONCURRENCY`, `EVENTS_SEED_PATH`) with safe DEMO defaults; document in `.env.example` comments. No secrets.
 - [ ] T003 [P] Confirm `openapi\tools.yaml` and `src\mock-api\Data\` exist and note the `Cb`/`Td` store + endpoint patterns to mirror (read-only orientation task; record findings in the PR description).
 
@@ -170,7 +170,7 @@ description: "Dependency-ordered task list for 002-reactive-event-cockpit"
 - [x] T050 [P] Update `docs\architecture.md` with the event store, `/mock/events` HTTP surface, SSE channel, and the synthesizer→specialist fan-out topology. (Principle X)
 - [x] T051 [P] Run `specs\002-reactive-event-cockpit\quickstart.md` end-to-end in DEMO mode (`task local:up`) and confirm SC-001, SC-002, SC-003, SC-006. (DEMO smoke: admin inject → store id/scope=intraday/origin=admin set + dedup/validation enforced; morning-brief + rm-briefing re-synthesize and reflect the injected intraday event.)
 - [x] T052 Verify SSE traverses the deployed Sweden ACA ingress through the `ui-app` nginx proxy (FR-013). VERIFIED on `https://ui-app.politefield-f4f3b782.swedencentral.azurecontainerapps.io`: stream returns `200` + `content-type: text/event-stream` + `cache-control: no-cache`, and `curl -N` receives the `event: ready` frame unbuffered through nginx. No WebSocket fallback needed. through the `ui-app` nginx proxy (FR-013); document the WebSocket fallback decision in the PR if buffering cannot be disabled cleanly. (R2)
-- [x] T053 Run the constitution §17 quality gate: `dotnet build`/`dotnet test WF-Garage.sln` (74 pass: 27 mock-api + 47 orchestration), `npm --prefix src\ui-app run build` + `npm --prefix src\ui-app test` (14 Vitest pass), `terraform -chdir=infra fmt -check` + `validate` (clean + valid), and `gitleaks detect --source . --no-banner` (not installed locally — enforced in CI).
+- [x] T053 Run the constitution §17 quality gate: `dotnet build`/`dotnet test AgenticTradersDesk.sln` (74 pass: 27 mock-api + 47 orchestration), `npm --prefix src\ui-app run build` + `npm --prefix src\ui-app test` (14 Vitest pass), `terraform -chdir=infra fmt -check` + `validate` (clean + valid), and `gitleaks detect --source . --no-banner` (not installed locally — enforced in CI).
 
 ---
 

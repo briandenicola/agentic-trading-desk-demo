@@ -1,5 +1,5 @@
 # Retired by ADR-0002.
 #
-# WF-Garage is now a C#/.NET 10 + React + Azure AI Foundry + Azure Container Apps project.
+# AgenticTradersDesk is now a C#/.NET 10 + React + Azure AI Foundry + Azure Container Apps project.
 # Python dependencies are not required for the application runtime. This file remains as a
 # compatibility marker for older backlog/spec references; do not add app dependencies here.

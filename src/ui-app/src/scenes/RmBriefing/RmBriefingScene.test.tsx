@@ -33,7 +33,7 @@ const mockBrief: RmBriefing = {
       customerId: 'CB-10036',
       customerName: 'Prairie Grain Cooperative',
       industrySector: 'Agriculture',
-      hqCity: 'Fargo',
+      hqCity: 'Cedar Falls',
       state: 'ND',
       annualRevenueMm: 120,
       riskRating: '3',

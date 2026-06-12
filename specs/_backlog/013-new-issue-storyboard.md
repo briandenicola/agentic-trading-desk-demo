@@ -36,7 +36,7 @@ the identical shape — Principle III) and rendered as a beat-by-beat walkthroug
 - **iteration-2 landing**: deliberate terminal/command-center restyle of `LandingScene.tsx`.
 
 ## Acceptance Criteria
-- [x] `dotnet build WF-Garage.sln` clean; `POST /api/agent/td-new-issue` returns the 4-beat
+- [x] `dotnet build AgenticTradersDesk.sln` clean; `POST /api/agent/td-new-issue` returns the 4-beat
       storyboard + outreach in DEMO (figures data-derived: $998.8mm holding, 5 RFQs, $69.6mm traded).
 - [x] `npm --prefix src\ui-app run build` clean; `npm --prefix src\ui-app test` green (22/22).
 - [x] DEMO and LIVE return the identical `TdNewIssueStoryboard` shape (Principle III).

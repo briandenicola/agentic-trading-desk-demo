@@ -5,7 +5,7 @@
 
 ## Project Overview
 
-**WF-Garage / Client CV** — an interactive Municipal Sales cockpit. The active feature, `001-morning-planning-outreach`, turns the Demo 1 storyboard into a C#/.NET 10 + React app with Azure AI Foundry agents and Azure Container Apps deployment. All data is fictional.
+**AgenticTradersDesk / Client CV** — an interactive Municipal Sales cockpit. The active feature, `001-morning-planning-outreach`, turns the Demo 1 storyboard into a C#/.NET 10 + React app with Azure AI Foundry agents and Azure Container Apps deployment. All data is fictional.
 
 | Layer | Tech | Path |
 |---|---|---|
@@ -47,9 +47,9 @@ All decisions must respect `.specify\memory\constitution.md` §0:
 
 ```powershell
 # .NET
-dotnet restore WF-Garage.sln
-dotnet build WF-Garage.sln --nologo
-dotnet test WF-Garage.sln --nologo
+dotnet restore AgenticTradersDesk.sln
+dotnet build AgenticTradersDesk.sln --nologo
+dotnet test AgenticTradersDesk.sln --nologo
 
 # React UI
 npm --prefix src\ui-app install

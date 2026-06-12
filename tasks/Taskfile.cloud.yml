@@ -1,6 +1,6 @@
 version: '3'
 
-# Cloud infrastructure lifecycle for WF-Garage (Azure Container Apps + optional
+# Cloud infrastructure lifecycle for AgenticTradersDesk (Azure Container Apps + optional
 # Azure AI Foundry). Region-per-workspace model, mirroring
 # briandenicola/online-banking-demo:
 #

@@ -99,7 +99,7 @@ tool-call` for a multi-event briefing (SC-007). DEMO produces the same DTO shape
 ## 6. Tests (constitution §17 / Principle VII)
 
 ```powershell
-dotnet test WF-Garage.sln --nologo     # xunit: EventStore contract, DEMO determinism, conflict net-score, SSE re-synthesis, parity
+dotnet test AgenticTradersDesk.sln --nologo     # xunit: EventStore contract, DEMO determinism, conflict net-score, SSE re-synthesis, parity
 npm --prefix src\ui-app test           # vitest/RTL: AdminScene validation, LiveAlertBanner, SSE-driven re-rank
 ```
 

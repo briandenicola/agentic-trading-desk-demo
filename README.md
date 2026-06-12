@@ -1,4 +1,4 @@
-# WF-Garage — Morning Planning & Prioritized Outreach
+# AgenticTradersDesk — Morning Planning & Prioritized Outreach
 
 Interactive **Client CV** demo for Commercial Banking RMs and a Municipal Sales desk. The React
 cockpit runs event-reactive morning briefings that combine a market narrative, the overnight **and**
@@ -152,8 +152,8 @@ GenAI spans, per-tool-call spans, token usage) is tracked in
 ## Quality gates
 
 ```powershell
-dotnet build WF-Garage.sln --nologo
-dotnet test WF-Garage.sln --nologo
+dotnet build AgenticTradersDesk.sln --nologo
+dotnet test AgenticTradersDesk.sln --nologo
 npm --prefix src\ui-app test
 terraform -chdir=infra fmt -check
 terraform -chdir=infra validate

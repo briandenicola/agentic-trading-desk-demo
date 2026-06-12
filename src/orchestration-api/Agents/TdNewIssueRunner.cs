@@ -66,9 +66,9 @@ public sealed class TdNewIssueRunner(
             $"and emit ONLY the JSON object matching the td-new-issue storyboard schema. Use at most {maxHops} tool calls.";
 
         using var runSpan = OrchestrationTelemetry.ActivitySource.StartActivity("td_new_issue.run", ActivityKind.Internal);
-        runSpan?.SetTag("wf.issuer_security_id", equityId);
-        runSpan?.SetTag("wf.client_id", focusClientId);
-        runSpan?.SetTag("wf.mode", "LIVE");
+        runSpan?.SetTag("atd.issuer_security_id", equityId);
+        runSpan?.SetTag("atd.client_id", focusClientId);
+        runSpan?.SetTag("atd.mode", "LIVE");
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
@@ -87,7 +87,7 @@ public sealed class TdNewIssueRunner(
                 runSpan?.SetTag("gen_ai.usage.total_tokens", usage.TotalTokenCount);
                 if (usage.TotalTokenCount is long total)
                 {
-                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.issuer_security_id", equityId));
+                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("atd.issuer_security_id", equityId));
                 }
                 logger.LogInformation(
                     "LIVE td-new-issue token usage (issuer={IssuerSecurityId}, client={ClientId}): input={Input} output={Output} total={Total}",
@@ -223,8 +223,8 @@ public sealed class TdNewIssueRunner(
         {
             var result = await call(ct);
             sw.Stop();
-            span?.SetTag("wf.tool.result_bytes", result?.Length ?? 0);
-            span?.SetTag("wf.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
+            span?.SetTag("atd.tool.result_bytes", result?.Length ?? 0);
+            span?.SetTag("atd.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
             OrchestrationTelemetry.ToolDuration.Record(
                 sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("gen_ai.tool.name", toolName));
             return result ?? string.Empty;

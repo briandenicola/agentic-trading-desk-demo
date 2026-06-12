@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "WF-Garage cockpit — React 19 + MUI v9 port of mockup/demos/01-morning-prep.html (T003).",
+  "description": "AgenticTradersDesk cockpit — React 19 + MUI v9 port of mockup/demos/01-morning-prep.html (T003).",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build --logLevel warn",

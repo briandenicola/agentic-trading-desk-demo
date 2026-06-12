@@ -8,7 +8,7 @@ using OrchestrationApi.Agents.Demo;
 using OrchestrationApi.Agents.Tools;
 using OrchestrationApi.Live;
 using OrchestrationApi.Models;
-using WF.Garage.Observability;
+using AgenticTradersDesk.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 

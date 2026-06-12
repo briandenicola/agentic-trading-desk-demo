@@ -1,12 +1,12 @@
 version: '3'
 
-# Root orchestrator for the WF-Garage solution (T004). Per ADR-0002 the stack is
+# Root orchestrator for the AgenticTradersDesk solution (T004). Per ADR-0002 the stack is
 # C#/.NET 10 + React; this replaces the prior Python Taskfile (retired in T043).
 dotenv: ['.env']
 
 vars:
-  SOLUTION: WF-Garage.sln
-  TAG: wf-garage
+  SOLUTION: AgenticTradersDesk.sln
+  TAG: agentic-traders-desk
 
 includes:
   local: ./tasks/Taskfile.local.yml

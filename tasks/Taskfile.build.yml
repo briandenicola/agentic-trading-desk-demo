@@ -3,10 +3,10 @@ version: '3'
 # Container image builds via `az acr build` (server-side; no local Docker).
 #
 # OneDrive Files-On-Demand note: this repo lives under OneDrive and is reached
-# through a symlink (C:\Users\<u>\Code\WF-Garage -> OneDrive\...). Files are
+# through a symlink (C:\Users\<u>\Code\AgenticTradersDesk -> OneDrive\...). Files are
 # dehydrated reparse-point placeholders, which `az acr build`'s tar packer
 # silently skips. The `stage` task robocopies a clean, fully-hydrated build
-# context to a REAL non-OneDrive path (%TEMP%\wf-garage-build) first; all image
+# context to a REAL non-OneDrive path (%TEMP%\agentic-traders-desk-build) first; all image
 # builds run from there. ACR_NAME/RG_NAME auto-derive from terraform output and
 # can be overridden on the CLI (e.g. task build:all ACR_NAME=... RG_NAME=...).
 

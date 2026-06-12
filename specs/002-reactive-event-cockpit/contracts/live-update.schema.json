@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wf-garage/specs/002-reactive-event-cockpit/live-update.schema.json",
+  "$id": "https://agentic-traders-desk/specs/002-reactive-event-cockpit/live-update.schema.json",
   "title": "LiveUpdate",
   "description": "The SSE 'briefing-update' envelope pushed to open cockpit briefings (FR-010/FR-011). Carries a consolidated alert plus the FULL re-synthesized scene DTO (reaction granularity, research R7). Validated with JsonSchema.Net draft-2020-12 (Decision #6).",
   "type": "object",

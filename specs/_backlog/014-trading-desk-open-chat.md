@@ -32,7 +32,7 @@ III). All data is fictional.
   seeded **Open Chat** button. `client.ts` adds `sendDeskChat(messages, salespersonId?)`.
 
 ## Acceptance Criteria
-- [x] `dotnet build WF-Garage.sln` clean; trading path of `POST /api/chat` (with
+- [x] `dotnet build AgenticTradersDesk.sln` clean; trading path of `POST /api/chat` (with
       `{ salespersonId: "Theo Wexler", … }`) returns grounded `ChatReply` in DEMO. New tests in
       `tests\orchestration-api.Tests\TdChatTests.cs` (4) pass.
 - [x] `npm --prefix src\ui-app run build` clean; `npm --prefix src\ui-app test` green (incl. a new

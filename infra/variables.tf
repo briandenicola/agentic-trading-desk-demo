@@ -14,7 +14,7 @@ variable "tags" {
   description = "Common tags applied to all resources"
   type        = map(string)
   default = {
-    project    = "WF-Garage"
+    project    = "AgenticTradersDesk"
     managed_by = "terraform"
   }
 }

@@ -31,7 +31,7 @@
 
 ### 2026-06-08T21:12:16Z: Pre-existing app/Dockerfile bugs found & worked around (build context only) — Basher
 **By:** Brian Denicola (via Squad/Basher)
-**What:** Three real defects in committed source were worked around in an EPHEMERAL staged build context (`C:\Users\brdenico\Code\wf-build`), leaving the committed repo source untouched. The human should fix these in-repo:
+**What:** Three real defects in committed source were worked around in an EPHEMERAL staged build context (`C:\Users\brdenico\Code\agentic-traders-desk-build`), leaving the committed repo source untouched. The human should fix these in-repo:
   1. **.NET Dockerfiles** (mock-api, orchestration-api, agent-provisioner): `RUN adduser -D -u $APP_UID appuser` collides with the .NET 10 aspnet base image's pre-existing `app` user (uid 1654 via `ENV APP_UID`). Fix: make adduser idempotent or drop it and use the base image's app user. Workaround used: `adduser ... 2>/dev/null || true`.
   2. **src/ui-app/nginx.conf**: missing `proxy_ssl_server_name on;` -> nginx omits SNI proxying to the ACA internal HTTPS ingress -> TLS reset -> 502.
   3. **src/ui-app/nginx.conf**: `proxy_set_header Host $host;` forwards the ui-app hostname; ACA internal ingress routes by Host -> 404 "app does not exist". Fix: `proxy_set_header Host $proxy_host;`.

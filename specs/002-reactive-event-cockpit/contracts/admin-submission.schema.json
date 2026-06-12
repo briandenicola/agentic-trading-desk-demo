@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wf-garage/specs/002-reactive-event-cockpit/admin-submission.schema.json",
+  "$id": "https://agentic-traders-desk/specs/002-reactive-event-cockpit/admin-submission.schema.json",
   "title": "AdminNewsSubmission",
   "description": "Operator-authored payload from the /admin route (US3, FR-014). On a successful POST it becomes an intraday Event (scope=intraday, origin=admin) and flows through the same ingestion + reactive SSE path as a real intraday event (FR-016). Client-side validation here mirrors the server re-validation (FR-015); nothing is ingested on failure. Validated with JsonSchema.Net draft-2020-12 (Decision #6).",
   "type": "object",

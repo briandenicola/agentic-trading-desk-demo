@@ -1,4 +1,4 @@
-# References — WF-Garage
+# References — AgenticTradersDesk
 
 Curated links for the **Morning Planning & Prioritized Outreach** demo. Internal paths are relative to
 the repository root.

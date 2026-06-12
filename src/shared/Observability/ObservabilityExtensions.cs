@@ -10,7 +10,7 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 
-namespace WF.Garage.Observability;
+namespace AgenticTradersDesk.Observability;
 
 /// <summary>
 /// Shared cross-cutting observability wiring (T006): Serilog structured logging,

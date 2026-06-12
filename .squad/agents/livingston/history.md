@@ -6,7 +6,7 @@
   (`Directory.Packages.props`), Microsoft Agent Framework, Azure AI Foundry, Serilog +
   OpenTelemetry, xunit + Moq + FluentAssertions + WebApplicationFactory.
 - **You own**: `src\orchestration-api`, `src\mock-api`, `src\shared\Observability`, solution
-  plumbing (`global.json`, `Directory.Packages.props`, `WF-Garage.sln`).
+  plumbing (`global.json`, `Directory.Packages.props`, `AgenticTradersDesk.sln`).
 - **Contracts**: `openapi\tools.yaml` (mock SoR), `contracts\morning-brief.schema.json` (scene
   response), `contracts\agent-api.yaml` (`POST /api/agent/morning-brief`).
 - **Seed clients** (fictional, from mockup): Atlas Pension/ATLAS, Brookline Bank/BROOK,

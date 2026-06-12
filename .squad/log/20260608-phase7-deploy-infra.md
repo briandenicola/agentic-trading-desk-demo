@@ -7,7 +7,7 @@
 
 ## Summary
 
-Successfully implemented complete infrastructure-as-code deployment stack for WF-Garage. All Terraform modules, Dockerfiles, CI/CD workflows, and task automation are operational and validated.
+Successfully implemented complete infrastructure-as-code deployment stack for AgenticTradersDesk. All Terraform modules, Dockerfiles, CI/CD workflows, and task automation are operational and validated.
 
 ## Tasks Completed
 
@@ -77,7 +77,7 @@ Implemented per research R4 RBAC-propagation requirements:
 ### T041 — CI Workflow
 **Replaced** the Python-based .github/workflows/ci.yml with .NET/React/Terraform CI:
 - Jobs:
-  - **build-dotnet**: dotnet build + test on WF-Garage.sln
+  - **build-dotnet**: dotnet build + test on AgenticTradersDesk.sln
   - **build-ui**: npm ci + npm run build (src/ui-app)
   - **security-scan**: gitleaks secret detection
   - **terraform-validate**: init -backend=false, fmt -check, validate
@@ -136,7 +136,7 @@ The orchestration-api FOUNDRY_MODEL env var is wired to the deployment name (`{f
    - cd.yml: Valid YAML (OIDC-based deployment)
    - Python PyYAML module used for parsing
 
-5. **dotnet build WF-Garage.sln**: ✅ SUCCESS
+5. **dotnet build AgenticTradersDesk.sln**: ✅ SUCCESS
    - Restored 6 projects (mock-api, orchestration-api, agent-provisioner, Observability, 2 test projects)
    - Built Release configuration: 0 warnings, 0 errors
    - Time: 35.36 seconds

@@ -62,7 +62,7 @@ public sealed class ChatAgentRunner(
         var prompt = BuildPrompt(request);
 
         using var span = OrchestrationTelemetry.ActivitySource.StartActivity("chat.run", ActivityKind.Internal);
-        span?.SetTag("wf.mode", "LIVE");
+        span?.SetTag("atd.mode", "LIVE");
         span?.SetTag("gen_ai.request.model", model);
 
         try
@@ -76,7 +76,7 @@ public sealed class ChatAgentRunner(
             if (usage?.TotalTokenCount is long total)
             {
                 span?.SetTag("gen_ai.usage.total_tokens", total);
-                OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.surface", "chat"));
+                OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("atd.surface", "chat"));
             }
 
             var text = response.Text?.Trim();

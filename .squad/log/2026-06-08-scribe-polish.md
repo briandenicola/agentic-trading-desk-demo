@@ -6,9 +6,9 @@
 - T046: Marked `007-foundry-migration` and `003-container-deployment` backlog cards delivered/realized by `001-morning-planning-outreach`; appended the decision to `.squad\decisions.md`.
 
 ## Verification notes
-- Run after edits: Terraform fmt/validate, optional gitleaks, and `dotnet build WF-Garage.sln --nologo -v q`.
+- Run after edits: Terraform fmt/validate, optional gitleaks, and `dotnet build AgenticTradersDesk.sln --nologo -v q`.
 
 ## Verification results
 - `terraform -chdir=infra fmt`; `terraform -chdir=infra fmt -check`; `terraform -chdir=infra validate` — passed.
 - `gitleaks detect --source . --no-banner` — skipped; `gitleaks` is not installed on PATH.
-- `dotnet build WF-Garage.sln --nologo -v q` — passed (0 warnings, 0 errors).
+- `dotnet build AgenticTradersDesk.sln --nologo -v q` — passed (0 warnings, 0 errors).

@@ -35,9 +35,9 @@ public sealed class EventFanOut(IConfiguration config, ILogger<EventFanOut> logg
 
         using var parent = OrchestrationTelemetry.ActivitySource.StartActivity(
             "briefing_synthesis.fanout", ActivityKind.Internal);
-        parent?.SetTag("wf.scene", scene);
-        parent?.SetTag("wf.fanout.event_count", events.Count);
-        parent?.SetTag("wf.fanout.max_concurrency", MaxConcurrency);
+        parent?.SetTag("atd.scene", scene);
+        parent?.SetTag("atd.fanout.event_count", events.Count);
+        parent?.SetTag("atd.fanout.max_concurrency", MaxConcurrency);
 
         using var gate = new SemaphoreSlim(MaxConcurrency);
 
@@ -48,9 +48,9 @@ public sealed class EventFanOut(IConfiguration config, ILogger<EventFanOut> logg
             {
                 using var span = OrchestrationTelemetry.ActivitySource.StartActivity(
                     $"event_specialist.assess {e.Id}", ActivityKind.Internal);
-                span?.SetTag("wf.event_id", e.Id);
-                span?.SetTag("wf.event_severity", e.Severity);
-                span?.SetTag("wf.event_type", e.Type);
+                span?.SetTag("atd.event_id", e.Id);
+                span?.SetTag("atd.event_severity", e.Severity);
+                span?.SetTag("atd.event_type", e.Type);
                 try
                 {
                     var assessment = await assessOne(e, ct);
@@ -79,7 +79,7 @@ public sealed class EventFanOut(IConfiguration config, ILogger<EventFanOut> logg
             .ThenBy(a => a.EventId, StringComparer.Ordinal)
             .ToList();
 
-        parent?.SetTag("wf.fanout.assessment_count", assessments.Count);
+        parent?.SetTag("atd.fanout.assessment_count", assessments.Count);
         return assessments;
     }
 }

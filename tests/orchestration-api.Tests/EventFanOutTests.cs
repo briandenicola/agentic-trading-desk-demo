@@ -29,7 +29,7 @@ public sealed class EventFanOutTests : IDisposable
     {
         _listener = new ActivityListener
         {
-            ShouldListenTo = src => src.Name == "WF.Garage.Orchestration",
+            ShouldListenTo = src => src.Name == "AgenticTradersDesk.Orchestration",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = a =>
             {
@@ -84,8 +84,8 @@ public sealed class EventFanOutTests : IDisposable
         assessments.Should().HaveCount(2);
 
         var parent = _activities.Single(a => a.OperationName == "briefing_synthesis.fanout");
-        parent.GetTagItem("wf.fanout.event_count").Should().Be(2);
-        parent.GetTagItem("wf.fanout.assessment_count").Should().Be(2);
+        parent.GetTagItem("atd.fanout.event_count").Should().Be(2);
+        parent.GetTagItem("atd.fanout.assessment_count").Should().Be(2);
 
         var specialists = _activities.Where(a => a.OperationName.StartsWith("event_specialist.assess")).ToList();
         specialists.Should().HaveCount(2);

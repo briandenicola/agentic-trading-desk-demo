@@ -1,5 +1,5 @@
 using MockApi;
-using WF.Garage.Observability;
+using AgenticTradersDesk.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 

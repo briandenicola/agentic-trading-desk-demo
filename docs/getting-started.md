@@ -1,4 +1,4 @@
-# Getting Started — WF-Garage
+# Getting Started — AgenticTradersDesk
 
 This guide gets the **Morning Planning & Prioritized Outreach** demo running locally in DEMO mode,
 then points at LIVE (Azure AI Foundry) mode and an Azure deploy. All data is fictional; **DEMO mode is
@@ -89,8 +89,8 @@ curl.exe -X POST http://localhost:5100/api/chat -H "Content-Type: application/js
 ## 4. Run the tests & quality gates
 
 ```powershell
-dotnet build WF-Garage.sln --nologo
-dotnet test  WF-Garage.sln --nologo        # mock-api + orchestration-api xUnit
+dotnet build AgenticTradersDesk.sln --nologo
+dotnet test  AgenticTradersDesk.sln --nologo        # mock-api + orchestration-api xUnit
 npm --prefix src\ui-app run build
 npm --prefix src\ui-app test               # Vitest / React Testing Library
 terraform -chdir=infra fmt -check

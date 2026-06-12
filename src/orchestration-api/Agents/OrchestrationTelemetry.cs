@@ -19,16 +19,16 @@ namespace OrchestrationApi.Agents;
 internal static class OrchestrationTelemetry
 {
     /// <summary>Shared ActivitySource + Meter name; also passed to the Agent Framework <c>UseOpenTelemetry(sourceName: ...)</c>.</summary>
-    public const string SourceName = "WF.Garage.Orchestration";
+    public const string SourceName = "AgenticTradersDesk.Orchestration";
 
     public static readonly ActivitySource ActivitySource = new(SourceName);
     public static readonly Meter Meter = new(SourceName);
 
     /// <summary>Total tokens consumed per LIVE morning-brief run (input + output).</summary>
     public static readonly Histogram<long> TokenUsage =
-        Meter.CreateHistogram<long>("wf.morning_brief.tokens", unit: "{token}", description: "Total tokens per LIVE morning-brief run.");
+        Meter.CreateHistogram<long>("atd.morning_brief.tokens", unit: "{token}", description: "Total tokens per LIVE morning-brief run.");
 
     /// <summary>Wall-clock duration of each mock-api tool call, in milliseconds.</summary>
     public static readonly Histogram<double> ToolDuration =
-        Meter.CreateHistogram<double>("wf.tool.duration", unit: "ms", description: "Duration of each mock-api tool call.");
+        Meter.CreateHistogram<double>("atd.tool.duration", unit: "ms", description: "Duration of each mock-api tool call.");
 }

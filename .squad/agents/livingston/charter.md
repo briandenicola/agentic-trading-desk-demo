@@ -26,7 +26,7 @@ library. Names are an easter egg — no role-play, no persona voice. Plain and t
   - `Agents\Tools\` — typed-HttpClient tool wrappers (return JSON, never throw). [T018]
   - `Agents\AgentRunner.cs` — Foundry chat client (`Microsoft.Agents.AI.AzureAI` +
     `DefaultAzureCredential`), tool loop capped at `MAX_TOOL_HOPS`, model→DTO map. [T019]
-- Solution plumbing: `global.json`, `Directory.Packages.props`, `WF-Garage.sln`. [T001, T002]
+- Solution plumbing: `global.json`, `Directory.Packages.props`, `AgenticTradersDesk.sln`. [T001, T002]
 - Later phases: `Agents\Demo\OutreachRanker.cs` [T024], LIVE ext [T025], DEMO hardening
   [T033–T034].
 

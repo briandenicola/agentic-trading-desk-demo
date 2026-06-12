@@ -79,9 +79,9 @@ public sealed class AgentRunner(
             $"Use at most {maxHops} tool calls.";
 
         using var runSpan = OrchestrationTelemetry.ActivitySource.StartActivity("morning_brief.run", ActivityKind.Internal);
-        runSpan?.SetTag("wf.event_id", eventId);
-        runSpan?.SetTag("wf.mode", "LIVE");
-        runSpan?.SetTag("wf.trading_day", date ?? "current");
+        runSpan?.SetTag("atd.event_id", eventId);
+        runSpan?.SetTag("atd.mode", "LIVE");
+        runSpan?.SetTag("atd.trading_day", date ?? "current");
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
@@ -104,7 +104,7 @@ public sealed class AgentRunner(
                 runSpan?.SetTag("gen_ai.usage.total_tokens", usage.TotalTokenCount);
                 if (usage.TotalTokenCount is long total)
                 {
-                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.event_id", eventId));
+                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("atd.event_id", eventId));
                 }
                 logger.LogInformation(
                     "LIVE morning-brief token usage (event={EventId}): input={Input} output={Output} total={Total}",
@@ -201,7 +201,7 @@ public sealed class AgentRunner(
             logger.LogWarning(ex, "Event fan-out failed; synthesizing the morning brief without per-event assessments.");
         }
 
-        runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
+        runSpan?.SetTag("atd.fanout.assessment_count", assessments.Count);
         if (assessments.Count == 0)
         {
             return (userMessage, events);
@@ -310,7 +310,7 @@ public sealed class AgentRunner(
     /// <summary>
     /// Run a single tool call inside a child span so every tool invocation is traceable: it
     /// records the tool name, any string arguments, the wall-clock duration (also on the
-    /// <c>wf.tool.duration</c> histogram), and the response size. Tools never throw — the catch
+    /// <c>atd.tool.duration</c> histogram), and the response size. Tools never throw — the catch
     /// is defensive so an unexpected failure still marks the span and propagates.
     /// </summary>
     private async Task<string> InvokeToolAsync(
@@ -335,8 +335,8 @@ public sealed class AgentRunner(
         {
             var result = await call(ct);
             sw.Stop();
-            span?.SetTag("wf.tool.result_bytes", result?.Length ?? 0);
-            span?.SetTag("wf.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
+            span?.SetTag("atd.tool.result_bytes", result?.Length ?? 0);
+            span?.SetTag("atd.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
             OrchestrationTelemetry.ToolDuration.Record(
                 sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("gen_ai.tool.name", toolName));
             return result ?? string.Empty;

@@ -12,14 +12,14 @@ per ADR-0002 / constitution v0.2.1.
 ## Environment
 - .NET SDK 10.0.204 installed (global.json pins 10.0.100 with `rollForward: latestFeature`).
 - Node v25.9.0 / npm 11.12.1.
-- Repo reached via Windows junction `C:\Users\brdenico\Code\WF-Garage` → OneDrive real path.
+- Repo reached via Windows junction `C:\Users\brdenico\Code\AgenticTradersDesk` → OneDrive real path.
 
 ## Task-by-task status
 
 | Task | Status | Notes |
 |------|--------|-------|
 | T001 | ✅ | `global.json` (10.0.100, rollForward latestFeature) + `Directory.Packages.props` (central PM). Also `Directory.Build.props` for shared net10.0 settings. |
-| T002 | ✅ | `WF-Garage.sln` (classic format) + 6 projects: Observability, mock-api, orchestration-api, agent-provisioner (stub), mock-api.Tests, orchestration-api.Tests. |
+| T002 | ✅ | `AgenticTradersDesk.sln` (classic format) + 6 projects: Observability, mock-api, orchestration-api, agent-provisioner (stub), mock-api.Tests, orchestration-api.Tests. |
 | T003 | ✅ | `src/ui-app` Vite + React 19.2.7 + TS 6.0.3 + MUI 9.1.0 + React Router 7.17.0 + Axios 1.17.0 + `nginx.conf`. `npm install` + `npm run build` succeed (dist/ produced). |
 | T004 | ✅ | Root `Taskfile.yaml` with `dotenv: ['.env']` + includes → `tasks/Taskfile.local.yml` (compose up/down/logs) + cloud/build stubs (full impl Phase 7 T040). Replaced legacy Python Taskfile. |
 | T005 | ✅ | `docker-compose.yml` (ui-app, orchestration-api, mock-api, healthcheck, depends_on) + `.env.example` (DEMO_MODE, MOCK_API_BASEURL, FOUNDRY_*, MAX_TOOL_HOPS — no secrets). Dockerfiles referenced are added in Phase 7 (T035). |
@@ -35,8 +35,8 @@ per ADR-0002 / constitution v0.2.1.
 
 ## Verification gates
 
-- `dotnet build WF-Garage.sln -c Debug` → **Build succeeded. 0 Warning(s), 0 Error(s).**
-- `dotnet test WF-Garage.sln` → **Passed. Failed: 0, Passed: 23, Skipped: 2 (T013/T014).**
+- `dotnet build AgenticTradersDesk.sln -c Debug` → **Build succeeded. 0 Warning(s), 0 Error(s).**
+- `dotnet test AgenticTradersDesk.sln` → **Passed. Failed: 0, Passed: 23, Skipped: 2 (T013/T014).**
   - mock-api.Tests: 20 passed.
   - orchestration-api.Tests: 3 passed, 2 skipped.
 - `src/ui-app`: `npm install` → 0 vulnerabilities; `npm run build` → **dist/ produced** (index.html + assets/index-*.js).

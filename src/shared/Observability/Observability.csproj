@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>WF.Garage.Observability</RootNamespace>
-    <AssemblyName>WF.Garage.Observability</AssemblyName>
+    <RootNamespace>AgenticTradersDesk.Observability</RootNamespace>
+    <AssemblyName>AgenticTradersDesk.Observability</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

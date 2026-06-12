@@ -119,7 +119,7 @@ resource "azapi_resource" "ai_project" {
 
   body = {
     properties = {
-      displayName = "WF-Garage AI Project"
+      displayName = "AgenticTradersDesk AI Project"
     }
   }
 

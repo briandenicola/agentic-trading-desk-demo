@@ -72,9 +72,9 @@ public sealed class TdAgentRunner(
             $"Use at most {maxHops} tool calls.";
 
         using var runSpan = OrchestrationTelemetry.ActivitySource.StartActivity("td_briefing.run", ActivityKind.Internal);
-        runSpan?.SetTag("wf.salesperson_id", salespersonId);
-        runSpan?.SetTag("wf.mode", "LIVE");
-        runSpan?.SetTag("wf.briefing_day", date ?? TdBriefingComposer.DefaultDate);
+        runSpan?.SetTag("atd.salesperson_id", salespersonId);
+        runSpan?.SetTag("atd.mode", "LIVE");
+        runSpan?.SetTag("atd.briefing_day", date ?? TdBriefingComposer.DefaultDate);
         runSpan?.SetTag("gen_ai.request.model", model);
         runSpan?.SetTag("gen_ai.request.max_tool_calls", maxHops);
 
@@ -97,7 +97,7 @@ public sealed class TdAgentRunner(
                 runSpan?.SetTag("gen_ai.usage.total_tokens", usage.TotalTokenCount);
                 if (usage.TotalTokenCount is long total)
                 {
-                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("wf.salesperson_id", salespersonId));
+                    OrchestrationTelemetry.TokenUsage.Record(total, new KeyValuePair<string, object?>("atd.salesperson_id", salespersonId));
                 }
                 logger.LogInformation(
                     "LIVE td-briefing token usage (salesperson={SalespersonId}): input={Input} output={Output} total={Total}",
@@ -194,7 +194,7 @@ public sealed class TdAgentRunner(
             logger.LogWarning(ex, "Event fan-out failed; synthesizing the trading-desk briefing without per-event assessments.");
         }
 
-        runSpan?.SetTag("wf.fanout.assessment_count", assessments.Count);
+        runSpan?.SetTag("atd.fanout.assessment_count", assessments.Count);
         if (assessments.Count == 0)
         {
             return (userMessage, events);
@@ -305,8 +305,8 @@ public sealed class TdAgentRunner(
         {
             var result = await call(ct);
             sw.Stop();
-            span?.SetTag("wf.tool.result_bytes", result?.Length ?? 0);
-            span?.SetTag("wf.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
+            span?.SetTag("atd.tool.result_bytes", result?.Length ?? 0);
+            span?.SetTag("atd.tool.duration_ms", sw.Elapsed.TotalMilliseconds);
             OrchestrationTelemetry.ToolDuration.Record(
                 sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("gen_ai.tool.name", toolName));
             return result ?? string.Empty;

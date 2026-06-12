@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 
-// The repo is reached through a Windows junction (C:\...\Code\WF-Garage ->
+// The repo is reached through a Windows junction (C:\...\Code\AgenticTradersDesk ->
 // OneDrive real path). Pin `root` to this config file's own resolved directory so
 // Vite's index.html path stays consistent with the realpath and the build emits
 // correctly regardless of which path the build is launched from.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wf-garage/contracts/morning-brief.schema.json",
+  "$id": "https://agentic-traders-desk/contracts/morning-brief.schema.json",
   "title": "MorningBrief",
   "description": "Response contract for POST /api/agent/morning-brief. Identical shape in DEMO and LIVE modes (constitution Principle III / FR-010).",
   "type": "object",

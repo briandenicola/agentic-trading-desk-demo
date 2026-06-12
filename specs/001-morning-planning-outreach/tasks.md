@@ -28,7 +28,7 @@ quality gate requires `dotnet test`. Write tests before/with implementation per 
       `plan.md` (Microsoft.Agents.AI, Microsoft.Agents.AI.AzureAI, Azure.AI.Agents.Persistent,
       Azure.AI.Projects, Azure.Identity, Serilog.*, OpenTelemetry.*, Swashbuckle, xunit, Moq,
       FluentAssertions, Microsoft.AspNetCore.Mvc.Testing).
-- [ ] T002 Create `WF-Garage.sln` and add empty project stubs: `src/shared/Observability`,
+- [ ] T002 Create `AgenticTradersDesk.sln` and add empty project stubs: `src/shared/Observability`,
       `src/mock-api`, `src/orchestration-api`, `src/agent-provisioner`, `tests/mock-api.Tests`,
       `tests/orchestration-api.Tests`.
 - [ ] T003 [P] Scaffold `src/ui-app` (Vite + React 19 + TypeScript 6 + MUI v9 + React Router v7 +

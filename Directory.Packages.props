@@ -1,6 +1,6 @@
 <Project>
   <!--
-    Central NuGet package version management (T001) for the WF-Garage solution (net10.0).
+    Central NuGet package version management (T001) for the AgenticTradersDesk solution (net10.0).
     Per plan.md / ADR-0002. Projects reference packages without a Version attribute;
     versions are pinned here. Substitutions vs plan.md are noted inline and in
     .squad/decisions.md (see the T001 row).

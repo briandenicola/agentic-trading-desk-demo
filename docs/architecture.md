@@ -122,7 +122,7 @@ structured `{"error": …}` object so the loop degrades gracefully (FR-011).
   `OTEL_EXPORTER_OTLP_ENDPOINT` is set. DEMO mode stays fully offline — neither exporter attaches
   unless its key is present (`src\shared\Observability\ObservabilityExtensions.cs`).
 - **Agent Framework GenAI spans**: the resolved Foundry agent is wrapped with
-  `.AsBuilder().UseOpenTelemetry(sourceName: "WF.Garage.Orchestration", …)`, emitting `gen_ai.*`
+  `.AsBuilder().UseOpenTelemetry(sourceName: "AgenticTradersDesk.Orchestration", …)`, emitting `gen_ai.*`
   spans (model, tool selection, token usage). `EnableSensitiveData` captures prompts/responses
   (data is fictional) and is gated by `OTEL_CAPTURE_MESSAGE_CONTENT` (default on).
 - **Agent-run span**: each LIVE run opens one run span (`morning_brief.run` / `rm_briefing.run`)
@@ -131,8 +131,8 @@ structured `{"error": …}` object so the loop degrades gracefully (FR-011).
 - **Per-tool-call spans**: every tool invocation runs inside an `execute_tool <name>` child span
   recording the tool name, string arguments, duration, and response size
   (`src\orchestration-api\Agents\AgentRunner.cs`, `RmAgentRunner.cs`).
-- **Metrics**: token usage (`wf.morning_brief.tokens`) and per-tool duration (`wf.tool.duration`)
-  histograms are emitted under the `WF.Garage.Orchestration` meter
+- **Metrics**: token usage (`atd.morning_brief.tokens`) and per-tool duration (`atd.tool.duration`)
+  histograms are emitted under the `AgenticTradersDesk.Orchestration` meter
   (`src\orchestration-api\Agents\OrchestrationTelemetry.cs`).
 
 All custom source/meter names are registered with OpenTelemetry in
