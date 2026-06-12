@@ -136,5 +136,5 @@ variable "deploy_apps" {
 variable "max_tool_hops" {
   description = "Maximum tool execution hops for agent orchestration"
   type        = number
-  default     = 8
+  default     = 24
 }

@@ -365,12 +365,97 @@ public sealed class TdAgentRunner(
         return "You are the Institutional Sales & Trading morning-planning agent. Use the tools to gather the book, desk axes, news and research, score each client, and emit a single JSON object matching the td-briefing schema.";
     }
 
-    private static string ExtractJsonObject(string? text)
+    /// <summary>
+    /// Pulls the briefing JSON object out of the model's raw text. The LIVE synthesizer often wraps
+    /// the object in prose, reasoning, or a markdown fence (and the output can be very large), so a
+    /// naive first-<c>{</c>-to-last-<c>}</c> slice would capture a non-JSON span and fail to parse —
+    /// silently triggering the deterministic fallback. This scans for balanced top-level objects
+    /// (string-aware) and returns the briefing-shaped one.
+    /// </summary>
+    internal static string ExtractJsonObject(string? text)
     {
         if (string.IsNullOrWhiteSpace(text)) return "{}";
-        var start = text.IndexOf('{');
-        var end = text.LastIndexOf('}');
-        return start >= 0 && end > start ? text.Substring(start, end - start + 1) : "{}";
+
+        var haystack = ExtractFencedJson(text) ?? text;
+
+        string? best = null;
+        string? longest = null;
+        foreach (var span in BalancedObjects(haystack))
+        {
+            if (longest is null || span.Length > longest.Length) longest = span;
+            if (span.Contains("\"priorityCallList\"", StringComparison.OrdinalIgnoreCase)
+                || span.Contains("\"mode\"", StringComparison.OrdinalIgnoreCase))
+            {
+                best = span; // keep the LAST briefing-shaped object the model emitted
+            }
+        }
+
+        if (best is not null) return best;
+        if (longest is not null) return longest;
+
+        var start = haystack.IndexOf('{');
+        var end = haystack.LastIndexOf('}');
+        return start >= 0 && end > start ? haystack.Substring(start, end - start + 1) : "{}";
+    }
+
+    /// <summary>Returns the inner content of the last ```` ``` ```` fenced block if it contains an object, else null.</summary>
+    private static string? ExtractFencedJson(string text)
+    {
+        const string fence = "```";
+        var close = text.LastIndexOf(fence, StringComparison.Ordinal);
+        if (close <= 0) return null;
+        var open = text.LastIndexOf(fence, close - 1, StringComparison.Ordinal);
+        if (open < 0 || open >= close) return null;
+
+        var inner = text.Substring(open + fence.Length, close - (open + fence.Length));
+        var nl = inner.IndexOf('\n');
+        if (nl >= 0)
+        {
+            var firstLine = inner[..nl].Trim();
+            if (firstLine.Length > 0 && !firstLine.Contains('{'))
+            {
+                inner = inner[(nl + 1)..]; // drop an optional language tag (```json)
+            }
+        }
+        return inner.Contains('{') ? inner : null;
+    }
+
+    /// <summary>Yields each balanced top-level <c>{...}</c> object in <paramref name="text"/>, ignoring braces inside string literals.</summary>
+    private static IEnumerable<string> BalancedObjects(string text)
+    {
+        var depth = 0;
+        var startIdx = -1;
+        var inString = false;
+        var escaped = false;
+        for (var i = 0; i < text.Length; i++)
+        {
+            var c = text[i];
+            if (inString)
+            {
+                if (escaped) escaped = false;
+                else if (c == '\\') escaped = true;
+                else if (c == '"') inString = false;
+                continue;
+            }
+
+            switch (c)
+            {
+                case '"':
+                    inString = true;
+                    break;
+                case '{':
+                    if (depth == 0) startIdx = i;
+                    depth++;
+                    break;
+                case '}':
+                    if (depth > 0 && --depth == 0 && startIdx >= 0)
+                    {
+                        yield return text.Substring(startIdx, i - startIdx + 1);
+                        startIdx = -1;
+                    }
+                    break;
+            }
+        }
     }
 
     private TdBriefing MapToBriefing(string json, string salespersonId, string? date)
@@ -395,7 +480,7 @@ public sealed class TdAgentRunner(
     // consistent regardless of how the model ordered the list.
     private static TdBriefing NormalizeLiveBriefing(TdBriefing brief)
     {
-        var calls = brief.PriorityCallList
+        var calls = (brief.PriorityCallList ?? [])
             .OrderByDescending(c => c.Score)
             .ThenBy(c => c.ClientId, StringComparer.Ordinal)
             .Select((c, i) => c with { Rank = i + 1, Priority = PriorityByRank(i + 1) })

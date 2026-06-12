@@ -13,11 +13,11 @@ public sealed record TdBriefing
     public required string AsOf { get; init; }                   // ISO-8601 date
     public required string Greeting { get; init; }               // "Good morning, Theo"
     public required SalespersonIdentity Salesperson { get; init; }
-    public required IReadOnlyList<MarketStripItem> MarketStrip { get; init; }
-    public required IReadOnlyList<MacroThemeBullet> MacroThemes { get; init; }
-    public required IReadOnlyList<ReasoningStep> Reasoning { get; init; }
-    public required IReadOnlyList<TdPriorityCall> PriorityCallList { get; init; }
-    public required IReadOnlyList<InventoryAxe> InventoryAxes { get; init; }
+    public required IReadOnlyList<MarketStripItem> MarketStrip { get; init; } = [];
+    public required IReadOnlyList<MacroThemeBullet> MacroThemes { get; init; } = [];
+    public required IReadOnlyList<ReasoningStep> Reasoning { get; init; } = [];
+    public required IReadOnlyList<TdPriorityCall> PriorityCallList { get; init; } = [];
+    public required IReadOnlyList<InventoryAxe> InventoryAxes { get; init; } = [];
     public required string SuggestedFirstAction { get; init; }
     public IReadOnlyList<string>? Notes { get; init; }
 
@@ -98,9 +98,9 @@ public sealed record TdPriorityCall
     public string? PreferredAssetClass { get; init; }
     public required int Score { get; init; }
     public required TdCallRationale Rationale { get; init; }
-    public required IReadOnlyList<WhyNowDriver> WhyNow { get; init; }
-    public required IReadOnlyList<string> TalkingPoints { get; init; }
-    public required IReadOnlyList<TradeIdea> TradeIdeas { get; init; }
+    public required IReadOnlyList<WhyNowDriver> WhyNow { get; init; } = [];
+    public required IReadOnlyList<string> TalkingPoints { get; init; } = [];
+    public required IReadOnlyList<TradeIdea> TradeIdeas { get; init; } = [];
     public string? PersonalNote { get; init; }
     public required string SuggestedAction { get; init; }
 

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace OrchestrationApi.Models;
 
@@ -14,6 +15,27 @@ public static class TdBriefingJson
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        WriteIndented = false
+        WriteIndented = false,
+        // The DTO tree uses `required` for compile-time safety in the DEMO composer, but the LIVE
+        // Foundry synthesizer (a small model emitting a large nested object) frequently omits one
+        // or more nested fields. Without this, System.Text.Json throws a JsonException on the first
+        // missing `required` member and the ENTIRE briefing is discarded — silently falling back to
+        // the deterministic composer, which is why LIVE prompt edits never changed the output.
+        // Disabling runtime `required` enforcement (only for this contract) lets the model's actual
+        // call list survive partial output; list properties default to [] (see DTO initializers).
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers =
+            {
+                static typeInfo =>
+                {
+                    if (typeInfo.Kind != JsonTypeInfoKind.Object) return;
+                    foreach (var property in typeInfo.Properties)
+                    {
+                        property.IsRequired = false;
+                    }
+                },
+            },
+        },
     };
 }
