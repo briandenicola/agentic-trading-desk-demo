@@ -10,6 +10,15 @@
 **Companion docs:** [`agentic-vs-synthetic.md`](agentic-vs-synthetic.md) (what's agent vs. scripted),
 [`architecture.md`](architecture.md) (how it's built).
 
+## The big picture (one slide)
+
+![Agentic Trading Intelligence — from market noise to actionable client signals: an AI signal filter feeds an orchestrator that runs a Who → Why → How → Talk Track pipeline plus parallel market-context agents, surfacing prioritized signals to a human-in-the-loop trader dashboard.](<Traders Agent Diagram.png>)
+
+Use this as the opening slide. The story in one breath: *hundreds of market events a second → an AI
+filter keeps only what's relevant to **this** desk → agents work out **who** to call, **why** they
+care, **how** to engage, and the exact **talk track** → it lands on the trader's dashboard, and the
+**trader decides**.* The rest of the demo is this picture, live.
+
 ---
 
 ## Before you start (presenter setup)

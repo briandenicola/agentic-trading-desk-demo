@@ -5,6 +5,24 @@
 > JSON shape (Principle III / FR-010): `RmBriefing` for the RM Daily Briefing and
 > `MorningBrief` for the municipal morning brief.
 
+## Conceptual overview — from market noise to actionable client signals
+
+![Agentic Trading Intelligence — an AI signal filter feeds an orchestrator ("My Trader Assistant") that runs a sequential client-intelligence pipeline (Who → Why → How → Talk Track) plus parallel market-context agents (Liquidity Risk, Market Mover, Inventory Analysis) that can escalate a major event, surfacing prioritized signals to a human-in-the-loop trader dashboard.](<Traders Agent Diagram.png>)
+
+The diagram above is the **north-star vision** for the Institutional Sales & Trading cockpit: hundreds
+of raw market events per second are reduced by an **AI signal filter** to high-signal items, an
+**orchestrator** ("My Trader Assistant") spawns a **sequential client-intelligence pipeline**
+(*Who* has exposure → *Why* should each client care → *How* do we engage → a personalized *Talk
+Track*) alongside **parallel market-context agents** (liquidity risk, market mover, inventory) that can
+**escalate a major event**, and everything surfaces to a **human-in-the-loop** trader dashboard where
+the trader reviews and acts. The competitive edge lives in the **prompt, not the model** — the model
+layer is swappable.
+
+This repo is a working, demo-scoped realization of that vision: the model layer is **Azure AI Foundry**
+(Microsoft Agent Framework), the agents reason over **fictional** systems-of-record exposed over HTTP,
+and the deterministic DEMO composers stand in for the same flow offline. The sections below describe
+exactly which pieces are built today and how they map onto this picture.
+
 ## Scenes & datasets
 
 | Scene | Endpoint | Output | Data family (`mock-api`) |
