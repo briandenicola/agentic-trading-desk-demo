@@ -388,5 +388,15 @@
     "offerPrice": 91.975,
     "traderName": "Sven Ostrom",
     "desk": "IG/HY Credit"
+  },
+  {
+    "inventoryId": "INV-4901",
+    "asOfDate": "2026-05-22",
+    "securityId": "SEC-3602",
+    "inventorySize": 50000000,
+    "bidPrice": 99.4,
+    "offerPrice": 99.65,
+    "traderName": "Rashid Karam",
+    "desk": "Credit Trading"
   }
 ]

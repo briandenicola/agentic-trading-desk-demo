@@ -14,6 +14,7 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 |---|---|---|
 | `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
 | `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/inventory-axe driven), trade ideas + talking points; re-ranks live over SSE |
+| `/desk/new-issue` | **New Issue Radar** (Institutional Sales & Trading) | Guided new-issue storyboard: a concurrent debt+equity issue prints, the desk cross-references an existing equity holder who's actively trading the new note, and lands on a prioritized "call now" with allocation, talking points + draft message |
 | `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
 | `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
 | `/chat` | **AI Chat** | Grounded Markets-Intelligence assistant — multi-turn Q&A over the same systems-of-record (who to call, a customer, the market, complaints, pipeline) |
@@ -93,6 +94,7 @@ deployment (separate quota pool)** so the high-concurrency fan-out never compete
 |---|---|---|
 | `rm-daily-briefing` (primary synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL` |
 | `trading-desk-morning` (Trading Desk synthesizer) | `gpt-5.4-mini` | `FOUNDRY_MODEL_TRADING` |
+| `trading-desk-new-issue` (New Issue Radar storyboard) | `gpt-5.4-mini` | `FOUNDRY_MODEL_TRADING` |
 | `morning-brief` (synthesizer) | `gpt-4o-mini` | `FOUNDRY_MODEL_MORNING` |
 | `event-specialist` (per-event fan-out) | `gpt-5.4-nano` | `FOUNDRY_MODEL_SPECIALIST` |
 | `markets-assistant` (AI Chat) | `gpt-4o-mini` | `FOUNDRY_MODEL_CHAT` |

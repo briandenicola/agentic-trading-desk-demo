@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LandingScene from './scenes/Landing/LandingScene';
 import TradeDeskScene from './scenes/TradeDesk/TradeDeskScene';
 import TdMorningBriefScene from './scenes/TradeDesk/TdMorningBriefScene';
+import TdNewIssueScene from './scenes/NewIssue/TdNewIssueScene';
 import WorkspaceScene from './scenes/Workspace/WorkspaceScene';
 import RmBriefingScene from './scenes/RmBriefing/RmBriefingScene';
 import MorningBriefScene from './scenes/MorningBrief/MorningBriefScene';
@@ -19,6 +20,7 @@ export default function App() {
       {/* Institutional Sales & Trading */}
       <Route path="/desk" element={<TradeDeskScene />} />
       <Route path="/desk/morning-brief" element={<TdMorningBriefScene />} />
+      <Route path="/desk/new-issue" element={<TdNewIssueScene />} />
 
       {/* Commercial Banking RM */}
       <Route path="/cb" element={<WorkspaceScene />} />

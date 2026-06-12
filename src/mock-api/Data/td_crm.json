@@ -718,5 +718,29 @@
     "clientInterest": "Active seller",
     "followUpAction": "Standard follow-up; no action",
     "urgency": "Medium"
+  },
+  {
+    "crmId": "CRM-9901",
+    "entryDate": "2026-05-08",
+    "clientId": "CL-2015",
+    "coverageSalesperson": "Theo Wexler",
+    "meetingType": "Call",
+    "topic": "Prairie Green positioning",
+    "callReportText": "PM walked through their long Prairie Green equity book and said they want to add the credit ahead of the capital-markets event. Asked us to keep them first in line on any new paper.",
+    "clientInterest": "Bullish",
+    "followUpAction": "Send runs on PG curve; flag any primary",
+    "urgency": "Medium"
+  },
+  {
+    "crmId": "CRM-9902",
+    "entryDate": "2026-05-19",
+    "clientId": "CL-2015",
+    "coverageSalesperson": "Theo Wexler",
+    "meetingType": "Call",
+    "topic": "Prairie Green new issue interest",
+    "callReportText": "Followed up after the larger electronic RFQ. PM expects PG to come with debt and equity and wants a meaningful allocation on the new debt. Very engaged, asked us to call the moment it's announced.",
+    "clientInterest": "Bullish",
+    "followUpAction": "Call immediately on announcement with allocation indication",
+    "urgency": "High"
   }
 ]

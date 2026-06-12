@@ -878,5 +878,60 @@
     "responseStatus": "Quoted",
     "salespersonName": "Priya Anand",
     "traderName": "Rashid Karam"
+  },
+  {
+    "rfqId": "RFQ-5901",
+    "rfqDate": "2026-04-24",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 15000000,
+    "responseStatus": "Traded",
+    "salespersonName": "Theo Wexler",
+    "traderName": "Rashid Karam"
+  },
+  {
+    "rfqId": "RFQ-5902",
+    "rfqDate": "2026-05-04",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 25000000,
+    "responseStatus": "Traded",
+    "salespersonName": "Theo Wexler",
+    "traderName": "Rashid Karam"
+  },
+  {
+    "rfqId": "RFQ-5903",
+    "rfqDate": "2026-05-12",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 20000000,
+    "responseStatus": "Quoted",
+    "salespersonName": "Theo Wexler",
+    "traderName": "Rashid Karam"
+  },
+  {
+    "rfqId": "RFQ-5904",
+    "rfqDate": "2026-05-18",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 30000000,
+    "responseStatus": "Traded",
+    "salespersonName": "Theo Wexler",
+    "traderName": "Rashid Karam"
+  },
+  {
+    "rfqId": "RFQ-5905",
+    "rfqDate": "2026-05-20",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 35000000,
+    "responseStatus": "Quoted",
+    "salespersonName": "Theo Wexler",
+    "traderName": "Rashid Karam"
   }
 ]

@@ -13,6 +13,7 @@
 | **Morning Brief** (municipal cross-asset) | `POST /api/agent/morning-brief` | `MorningBrief` | `/mock/{tableau,dynamics,trading,calendar,marketdata,news,coalition}/*` |
 | **AI Chat** (grounded Markets-Intelligence assistant) | `POST /api/chat` | `ChatReply` | Same RM systems-of-record — `/mock/cb/*` + the reactive event store |
 | **Trading Desk** (Institutional Sales & Trading — "Morning Planning & Prioritized Outreach") | `POST /api/agent/td-briefing` | `TdBriefing` | Trading Desk — `/mock/td/*` (clients, securities, trades, rfqs, crm, holdings, inventory, inquiries, news, research, narrative-themes) |
+| **New Issue Radar** (Institutional Sales & Trading — guided new-issue storyboard) | `POST /api/agent/td-new-issue` | `TdNewIssueStoryboard` | Trading Desk — `/mock/td/*` (same family; reuses `securities/{id}/interest` + `clients/{id}/activity` aggregates) |
 
 The course-correction datasets (`/mock/cb/*`, `/mock/td/*`) come from real client sample
 data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original tools.
@@ -20,7 +21,7 @@ data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original t
 ## Three-layer flow
 
 ```
-src\ui-app\ ─ POST /api/agent/{rm-briefing,td-briefing,morning-brief} ─► src\orchestration-api\
+src\ui-app\ ─ POST /api/agent/{rm-briefing,td-briefing,td-new-issue,morning-brief} ─► src\orchestration-api\
                                                      │
                             DEMO: deterministic C# composer (offline)
                             LIVE: Foundry agent + client-side tool loop
@@ -203,6 +204,37 @@ LIVE paths return the identical `TdBriefing` shape (Principle III / FR-010); all
   Technology); injecting it from the `/admin` News Desk (a one-click preset) jumps Hyperion & Tradewinds
   to the top of the call list within ~10s, with the driving events highlighted on each call card.
 
+## New Issue Radar (guided storyboard)
+
+The **New Issue Radar** (`POST /api/agent/td-new-issue`, route `/desk/new-issue`) is a guided,
+step-by-step storyboard for the same desk. A primary issuer (**Prairie Green Renewables**) announces a
+**concurrent debt + equity issue**; the desk's edge is connecting that announcement to an existing
+client (**Crestline Capital**, CL-2015) who both **holds ~$1.0bn of the issuer's equity** and has been
+**actively trading the new senior note** (electronic RFQs + calls) — so they are the first call, with a
+concrete allocation in hand. DEMO and LIVE return the identical `TdNewIssueStoryboard` shape (Principle
+III); all data is fictional (`/mock/td/*`). No new mock-api endpoints were added — the storyboard is
+built entirely from the existing `securities/{id}/interest` and `clients/{id}/activity` aggregates plus
+the Prairie Green fixtures (issuer equity `SEC-3601`, new note `SEC-3602`, holding `HLD-7901`, RFQs
+`RFQ-5901..5905`, trades `TRD-8901..8903`, calls `CRM-9901/9902`, announcement `NEWS-1901`, desk
+distribution axe `INV-4901`).
+
+The DTO is an ordered list of **four beats** — `announcement` → `holdings` → `activity` → `outreach` —
+each with `metrics[]` (headline figures) and `evidence[]` (the source records / "receipts"), plus a final
+`outreach` recommendation (talking points, a `TradeIdea`, suggested action, and a ready-to-send draft
+message).
+
+- **DEMO** (`Agents\Demo\TdNewIssueComposer.cs`): a deterministic, HTTP-only composer. It reads
+  `/mock/td/securities/{equity}/interest` (announcement news + holders), `/mock/td/securities?issuer=`
+  (the new debt tranche), and `/mock/td/clients/{id}` + `/activity` (the focus client's holdings, RFQs,
+  trades, CRM), then derives every figure (market value, share count, RFQ count, traded notional, axe
+  size/price). If the requested client does not hold the equity it falls back to the largest holder; on
+  tool failure it returns a degraded storyboard with a `notes` entry.
+- **LIVE** (`Agents\TdNewIssueRunner.cs`, agent `trading-desk-new-issue`, `Prompts\td-new-issue.md`):
+  the Foundry agent binds a focused subset of `TdBriefingTools`, reasons over the same systems-of-record,
+  and emits the storyboard JSON; on any failure or empty output it **degrades to the DEMO composer**
+  (re-stamped LIVE), so the demo is never blocked on model quality. Model deployment:
+  `FOUNDRY_MODEL_TRADING` (defaults to `FOUNDRY_MODEL`).
+
 ## Grounded chat assistant (AI Chat)
 
 The **AI Chat** surface (`POST /api/chat`, route `/chat`) is a multi-turn Markets-Intelligence
@@ -223,8 +255,9 @@ stateless — the client replays the conversation each turn.
 React 19 + TypeScript + MUI v9, themed with the **M.INT** mint palette
 (`src\ui-app\src\theme\theme.ts`). The frontend is mode-blind (Principle III): every scene renders
 the same DTO whether it came from DEMO or LIVE. Routes: `/` (landing — workspace chooser),
-`/desk` + `/desk/morning-brief` (Trading Desk — the demo focus), `/cb` (Commercial Banking RM
-workspace), `/cockpit`, `/rm-briefing`, `/morning-brief`, `/admin` (News Desk), `/chat`.
+`/desk` + `/desk/morning-brief` (Trading Desk — the demo focus), `/desk/new-issue` (New Issue Radar),
+`/cb` (Commercial Banking RM workspace), `/cockpit`, `/rm-briefing`, `/morning-brief`, `/admin` (News
+Desk), `/chat`.
 
 ### Trading Desk scenes (`scenes\TradeDesk`)
 
@@ -242,6 +275,12 @@ applies each re-synthesized DTO in place and surfaces a `LiveAlertBanner`.
 - **`/desk/morning-brief` (`TdMorningBriefScene`)** — the same `TdBriefing` in a two-column
   morning-brief layout (macro/market context, reasoning, axes, events on the left; the outreach plan
   on the right), sharing the persisted brief via the same store key.
+- **`/desk/new-issue` (`NewIssue\TdNewIssueScene`)** — the **New Issue Radar** guided walkthrough.
+  `useTdNewIssue` auto-runs `POST /api/agent/td-new-issue` once per session and persists the storyboard.
+  The scene renders the issuer/new-issue header, a clickable four-beat progress rail, the active beat
+  (narration + metric chips + evidence rows), and Back/Next controls; the concluding `outreach`
+  recommendation card (talking points, trade idea, draft message) reveals on the final beat. The landing
+  chooser also links it directly via a "New Issue Radar" featured chip on the Trading Desk card.
 
 ### Agent-driven main page (`/` — `scenes\Workspace`)
 

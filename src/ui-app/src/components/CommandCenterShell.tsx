@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import WbSunnyRoundedIcon from '@mui/icons-material/WbSunnyRounded';
+import RadarRoundedIcon from '@mui/icons-material/RadarRounded';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import CampaignRoundedIcon from '@mui/icons-material/CampaignRounded';
 import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
@@ -100,6 +101,13 @@ export default function CommandCenterShell({
             badge: priorityCount,
             badgeColor: mint.blue,
             match: (p) => p.startsWith('/desk/morning-brief'),
+          },
+          {
+            label: 'New Issue Radar',
+            sub: 'Guided storyboard',
+            to: '/desk/new-issue',
+            icon: <RadarRoundedIcon sx={{ fontSize: 16 }} />,
+            match: (p) => p.startsWith('/desk/new-issue'),
           },
         ],
       },

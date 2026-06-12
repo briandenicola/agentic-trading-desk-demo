@@ -65,6 +65,11 @@ builder.Services.AddScoped<TdBriefingComposer>();
 builder.Services.AddScoped<TdBriefingTools>();
 builder.Services.AddScoped<TdAgentRunner>();
 
+// --- New Issue Radar storyboard: DEMO composer (offline) + LIVE Foundry runner. Same
+// TdNewIssueStoryboard shape in both modes (Principle III). ---
+builder.Services.AddScoped<TdNewIssueComposer>();
+builder.Services.AddScoped<TdNewIssueRunner>();
+
 // --- Markets-Intelligence assistant ("AI Chat"): DEMO intent responder (offline) + LIVE Foundry
 // chat agent with the RM mock-api tools bound. Both grounded in the same systems-of-record. ---
 builder.Services.AddScoped<ChatResponder>();
@@ -221,6 +226,27 @@ app.MapPost("/api/agent/td-briefing", async (
             statusCode: StatusCodes.Status400BadRequest,
             extensions: new Dictionary<string, object?> { ["salespersonId"] = ex.SalespersonId });
     }
+});
+
+// --- New Issue Radar storyboard endpoint: POST /api/agent/td-new-issue ---
+// Same TdNewIssueStoryboard shape in both modes (Principle III). DEMO → deterministic composer;
+// LIVE → Foundry agent (TdNewIssueRunner), which degrades to the composer on upstream failure.
+app.MapPost("/api/agent/td-new-issue", async (
+    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TdNewIssueRequest? request,
+    ModeOptions modeOpts,
+    TdNewIssueComposer composer,
+    TdNewIssueRunner runner,
+    CancellationToken ct) =>
+{
+    var issuerSecurityId = request?.Payload?.IssuerSecurityId;
+    var clientId = request?.Payload?.ClientId;
+    var date = request?.Payload?.Date;
+
+    var storyboard = modeOpts.DemoMode
+        ? await composer.ComposeAsync(issuerSecurityId, clientId, date, ct)
+        : await runner.RunAsync(issuerSecurityId, clientId, date, ct);
+
+    return Results.Json(storyboard, TdNewIssueJson.Options);
 });
 
 // --- Admin / feed ingest endpoints (002 US3): same ingestion + reactive path as a real

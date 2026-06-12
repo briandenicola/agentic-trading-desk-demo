@@ -466,5 +466,29 @@
     "rating": "B+",
     "maturityDate": "2030-10-20",
     "referencePrice": 91.8
+  },
+  {
+    "securityId": "SEC-3601",
+    "securityName": "Prairie Green Renewables",
+    "assetClass": "Equity",
+    "sector": "Utilities",
+    "issuer": "Prairie Green Renewables",
+    "currency": "USD",
+    "region": "North America",
+    "rating": null,
+    "maturityDate": null,
+    "referencePrice": 42.5
+  },
+  {
+    "securityId": "SEC-3602",
+    "securityName": "Prairie Green Renewables 6.00% 2034",
+    "assetClass": "Corporate Bond",
+    "sector": "Utilities",
+    "issuer": "Prairie Green Renewables",
+    "currency": "USD",
+    "region": "North America",
+    "rating": "BBB-",
+    "maturityDate": "2034-06-15",
+    "referencePrice": 99.5
   }
 ]

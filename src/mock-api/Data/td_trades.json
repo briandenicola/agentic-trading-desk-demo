@@ -1948,5 +1948,44 @@
     "traderName": "Bree Halvorsen",
     "salespersonName": "Ada Voss",
     "executionChannel": "Chat"
+  },
+  {
+    "tradeId": "TRD-8901",
+    "tradeDate": "2026-04-24",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 15000000,
+    "price": 99.35,
+    "notional": 14902500.0,
+    "traderName": "Rashid Karam",
+    "salespersonName": "Theo Wexler",
+    "executionChannel": "Electronic"
+  },
+  {
+    "tradeId": "TRD-8902",
+    "tradeDate": "2026-05-04",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 25000000,
+    "price": 99.45,
+    "notional": 24862500.0,
+    "traderName": "Rashid Karam",
+    "salespersonName": "Theo Wexler",
+    "executionChannel": "RFQ"
+  },
+  {
+    "tradeId": "TRD-8903",
+    "tradeDate": "2026-05-18",
+    "clientId": "CL-2015",
+    "securityId": "SEC-3602",
+    "direction": "Buy",
+    "quantity": 30000000,
+    "price": 99.55,
+    "notional": 29865000.0,
+    "traderName": "Rashid Karam",
+    "salespersonName": "Theo Wexler",
+    "executionChannel": "Electronic"
   }
 ]

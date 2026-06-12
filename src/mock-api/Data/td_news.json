@@ -298,5 +298,15 @@
     "relatedSector": "Sovereign",
     "sentiment": "Mixed",
     "macroTheme": "Macro Slowdown"
+  },
+  {
+    "newsId": "NEWS-1901",
+    "publishTimestamp": "2026-05-21 22:14:00",
+    "headline": "Prairie Green Renewables announces $2.5bn debt and equity issuance",
+    "summary": "Prairie Green Renewables said it will raise roughly $2.5bn through a concurrent senior note and primary equity offering to fund its grid-scale storage build-out. Pricing expected within days; books open to anchor accounts.",
+    "relatedSecurityId": "SEC-3601",
+    "relatedSector": "Utilities",
+    "sentiment": "Mixed",
+    "macroTheme": "Energy Transition / New Issue"
   }
 ]

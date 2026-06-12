@@ -479,3 +479,91 @@ export async function runTdBriefing(req: TdBriefingRequest = {}): Promise<TdBrie
   });
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// New Issue Radar — guided storyboard. A primary issuer announces a concurrent
+// debt + equity issue; the desk spots an existing client who both holds the
+// equity AND has been actively trading the new debt, and is prompted to call
+// them now. Mirrors the orchestration-api TdNewIssueStoryboard DTO; DEMO and
+// LIVE return the same shape (Principle III), grounded in /mock/td/*.
+// ---------------------------------------------------------------------------
+
+export interface TdNewIssueRequest {
+  payload?: {
+    issuerSecurityId?: string;
+    clientId?: string;
+    date?: string;
+  };
+}
+
+export interface NewIssueTranche {
+  securityId: string;
+  securityName: string;
+  assetClass: string; // Equity | Corporate Bond
+  detail?: string;
+  referencePrice?: number;
+}
+
+export interface NewIssueIssuer {
+  name: string;
+  sector?: string;
+  headline: string;
+  summary?: string;
+  announcedAt?: string;
+  tranches: NewIssueTranche[];
+}
+
+export interface StoryboardMetric {
+  label: string;
+  value: string;
+  sub?: string;
+  tone?: 'neutral' | 'positive' | 'warning' | 'accent';
+}
+
+export interface StoryboardEvidence {
+  kind: 'news' | 'holding' | 'rfq' | 'trade' | 'crm' | 'inquiry' | 'axe';
+  label: string;
+  detail?: string;
+  refId?: string;
+  date?: string;
+  securityId?: string;
+}
+
+export interface TdStoryboardStep {
+  id: string; // announcement | holdings | activity | outreach
+  order: number;
+  beat: string;
+  title: string;
+  narration: string;
+  metrics?: StoryboardMetric[];
+  evidence?: StoryboardEvidence[];
+}
+
+export interface TdOutreachRecommendation {
+  clientId: string;
+  clientName: string;
+  clientType?: string;
+  headline: string;
+  talkingPoints: string[];
+  tradeIdea?: TradeIdea;
+  suggestedAction: string;
+  draftMessage?: string;
+}
+
+export interface TdNewIssueStoryboard {
+  mode: 'DEMO' | 'LIVE';
+  asOf: string;
+  title: string;
+  subtitle: string;
+  issuer: NewIssueIssuer;
+  steps: TdStoryboardStep[];
+  outreach: TdOutreachRecommendation;
+  notes?: string[];
+}
+
+export async function runTdNewIssue(req: TdNewIssueRequest = {}): Promise<TdNewIssueStoryboard> {
+  const { data } = await apiClient.post<TdNewIssueStoryboard>('/agent/td-new-issue', req, {
+    timeout: AGENT_TIMEOUT_MS,
+  });
+  return data;
+}
