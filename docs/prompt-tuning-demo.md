@@ -36,11 +36,56 @@ do** instead of the macro headline.
 
 ---
 
-## The mechanics — make the edit show up in one re-run
+## Where the prompt actually lives (read this first)
 
-Normally the LIVE runner **reuses the persistent Foundry agent**, whose instructions are baked in when the
-agent is *created*. So an edit only takes effect once the agent is **recreated**. To make the demo a clean
-**edit → re-run** loop, the orchestration API has an opt-in toggle:
+The prompt file is **real**, but it's the **seed**, not the live copy:
+
+1. `trading-desk-morning` is *runtime-managed* — the provisioner deletes it, and the LIVE runner
+   **creates** the agent in Foundry **from the file** on the first `/desk` run.
+2. After that, every run calls `GetAIAgentAsync(name, tools)` → it **reuses the agent that already lives in
+   Foundry**, whose instructions are stored **server-side**. The file is no longer read on reuse.
+
+That gives you **two ways** to tune the prompt for the demo. Pick based on where you're running:
+
+| Method | Best for | Edit happens in | Needs redeploy? | Version-controlled? |
+|---|---|---|---|---|
+| **A — Foundry portal** | The **deployed** demo (e.g. Sweden) | The agent's *Instructions* in the Azure AI Foundry portal | ❌ No | ❌ No (lives only in Foundry until the agent is recreated) |
+| **B — Prompt file + toggle** | **Local** iteration; committing the change | `Prompts/trading-desk-morning.md` in the repo | Local: no · Deployed: yes (image bake) | ✅ Yes |
+
+---
+
+## Method A — edit the agent in the Foundry portal (recommended for the deployed demo)
+
+Because the runner **reuses** the server-side agent, editing its Instructions in the portal takes effect on
+the very next `/desk` run — **no code, no redeploy, no toggle.** This is the cleanest "very obvious" lever
+against the deployed environment.
+
+1. **Materialize the agent once.** Hit `/desk` in LIVE so the runner creates `trading-desk-morning` in
+   Foundry from the shipped prompt. (Skip if it already exists.)
+2. In the **Azure AI Foundry portal**, open your project → **Agents** → **`trading-desk-morning`** →
+   **Instructions**. This text is the live prompt — note the current top of the call list on `/desk` first.
+3. **Paste the edit** (the [flow-trading-day block](#the-canonical-edit--flow-trading-day) or the
+   [risk-off variant](#variant--change-the-persona-guaranteed-visible-text-change)) into Instructions →
+   **Save**.
+4. **Re-run `/desk`.** The reused agent applies your portal edit immediately — the call list re-orders.
+
+> ⚠️ **Two things that will wipe a portal edit:**
+> - Setting `FOUNDRY_RECREATE_AGENTS=true` (Method B) — it deletes + rebuilds the agent from the *file* each run.
+> - Re-running the **agent-provisioner** — it deletes runtime-managed agents (the next `/desk` recreates from the file).
+>
+> So for Method A, keep the toggle **off** and don't re-provision mid-demo. The portal edit is **ephemeral**
+> (not in git) — to make it permanent, also land it in `Prompts/trading-desk-morning.md`.
+
+**Revert (Method A):** restore the original Instructions text in the portal and Save, **or** delete the
+agent (portal or provisioner) and re-run `/desk` to recreate it from the shipped file.
+
+---
+
+## Method B — edit the prompt file (recommended for local iteration)
+
+For local LIVE work — or to commit the change — edit the repo prompt file. Normally the runner reuses the
+persistent agent, so a file edit only lands once the agent is **recreated**. The orchestration API has an
+opt-in toggle that makes this a clean **edit → re-run** loop:
 
 | Env var | Effect |
 |---|---|
@@ -75,9 +120,11 @@ copied `PreserveNewest`). Two equally good ways to get your edit in front of the
 - **Or** edit the already-copied file `src\orchestration-api\bin\Debug\net10.0\Prompts\trading-desk-morning.md`
   directly — no rebuild needed, just re-run `/desk` (the runner re-reads it every request).
 
-> **Deployed (Sweden) variant:** the prompt ships **inside the orchestration-api container image**, so a
-> truly "live" edit isn't possible there — you'd rebuild + redeploy that image (then the toggle, or one
-> agent-provisioner run, recreates the agent). For the prompt-tuning story, **run it locally in LIVE.**
+> **Deployed (Sweden) variant:** the prompt *file* ships **inside the orchestration-api container image**,
+> so a file edit there means rebuild + redeploy that image (then the toggle, or one agent-provisioner run,
+> recreates the agent). To tune the prompt against the deployed demo **without redeploying, use
+> [Method A — the Foundry portal](#method-a--edit-the-agent-in-the-foundry-portal-recommended-for-the-deployed-demo)**
+> instead.
 
 ---
 
