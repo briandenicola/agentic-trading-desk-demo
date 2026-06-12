@@ -27,9 +27,10 @@ Wexler**'s book.
 - **Sell-side thesis to lean on** — Pasternak Research initiated QRTX at Buy, **$200 TP**, on the QX-9
   accelerator cycle (`RES-2002`).
 
-Expected result on `/desk`: within ~10s a live alert banner appears and **Forge Hill / Crestline (and
-other QRTX holders) jump up** the call list with a **"⚡ RE-RANKED BY LIVE EVENTS"** callout naming the
-print.
+Expected result on `/desk`: within **~1-2s** a live alert banner appears and **Forge Hill / Crestline
+(and other QRTX holders) jump up** the call list with a **"⚡ RE-RANKED BY LIVE EVENTS"** callout naming
+the print. (The re-rank is applied by the deterministic overlay in both DEMO and LIVE — see notes — so
+LIVE no longer waits ~1 min for a full agent re-run.)
 
 ### Paste-ready News Desk values
 
@@ -59,4 +60,21 @@ combo and matches the one-click *"Inject AI-capex breaking print"* preset.
   `/desk/new-issue` (one deal, so news doesn't reorder — it adds a LIVE evidence row + leading talking
   point). See the [demo talk track](demo-talk-track.md) Scene 3.
 - LIVE and DEMO behave identically (Principle III): the agent/composer produces the same shape, and the
-  event match + re-rank is the same deterministic step in both modes.
+  event match + re-rank is the same deterministic step in both modes. In LIVE the Foundry agent builds
+  the **base** briefing once per connect (the slow step); each subsequent News Desk inject is folded by
+  the deterministic re-rank **overlay** (`TdBriefingLive`) in ~1-2s, so prompt edits still show in the
+  base while injects react instantly — no full agent re-run per push.
+
+## Reset between demo runs
+The mock-api event store is **in-memory**: injected (intraday) headlines live only until the container
+restarts, at which point the seed/overnight events reload clean. To reset the Trading Desk to baseline
+after a run:
+
+```powershell
+task cloud:reset-mock-api      # restarts the active mock-api revision (drops admin injects)
+# local docker-compose:  docker compose restart mock-api
+```
+
+Then **reload `/desk`** — the reconnect rebuilds the LIVE base briefing against the now-clean event set
+(the overlay self-invalidates when its events disappear), so the call list returns to its un-injected
+ranking.

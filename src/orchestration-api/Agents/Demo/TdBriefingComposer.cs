@@ -119,6 +119,62 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
         };
     }
 
+    /// <summary>
+    /// Per-client entity sets (the securities, issuers and sectors each client in the salesperson's
+    /// book touches via holdings/trades/RFQs/inquiries), keyed by clientId. Reuses the same HTTP data
+    /// path as <see cref="ComposeAsync"/> so the LIVE deterministic re-rank overlay
+    /// (<see cref="OrchestrationApi.Live.TdBriefingLive"/>) can fold injected events onto the agent's
+    /// briefing without re-running the agent. HTTP-only (Principle II); all data fictional.
+    /// </summary>
+    public async Task<IReadOnlyDictionary<string, ClientEntitySet>> GetClientEntitySetsAsync(
+        string salespersonId, string? date, CancellationToken ct = default)
+    {
+        var notes = new List<string>();
+        var asOf = ParseDate(date) ?? DateOnly.Parse(DefaultDate, CultureInfo.InvariantCulture);
+        var since = asOf.AddDays(-WindowDays);
+        var salesperson = string.IsNullOrWhiteSpace(salespersonId) ? DefaultSalespersonId : salespersonId;
+
+        var result = new Dictionary<string, ClientEntitySet>(StringComparer.OrdinalIgnoreCase);
+        var clients = await GetBookAsync(salesperson, notes, ct);
+        if (clients is null || clients.Count == 0) return result;
+
+        var securities = IndexById(await TryGetArrayAsync("/mock/td/securities", notes, ct), "securityId");
+        foreach (var client in clients)
+        {
+            var cid = Str(client, "clientId");
+            if (cid is null) continue;
+            var activity = await GetActivityAsync(cid, since, notes, ct);
+            var (secIds, issuers, sectors) = ExtractEntitySets(activity, securities);
+            result[cid] = new ClientEntitySet(secIds, issuers, sectors);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Extract the securities / issuers / sectors a client touches from its 360° activity payload.
+    /// Shared by <see cref="BuildSignals"/> and <see cref="GetClientEntitySetsAsync"/> so the DEMO
+    /// composer and the LIVE overlay resolve the same entity universe per client.
+    /// </summary>
+    private static (HashSet<string> Securities, HashSet<string> Issuers, HashSet<string> Sectors) ExtractEntitySets(
+        JsonNode? activity, IReadOnlyDictionary<string, JsonNode> securities)
+    {
+        var secIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var h in Arr(activity, "holdings")) AddIf(secIds, Str(h, "securityId"));
+        foreach (var t in Arr(activity, "trades")) AddIf(secIds, Str(t, "securityId"));
+        foreach (var r in Arr(activity, "rfqs")) AddIf(secIds, Str(r, "securityId"));
+        foreach (var i in Arr(activity, "inquiries")) AddIf(secIds, Str(i, "inferredSecurity"));
+
+        var issuers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var sectors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var sid in secIds)
+        {
+            if (!securities.TryGetValue(sid, out var sec)) continue;
+            AddIf(issuers, Str(sec, "issuer"));
+            AddIf(sectors, Str(sec, "sector"));
+        }
+        return (secIds, issuers, sectors);
+    }
+
     // ---------------------------------------------------------------- signal assembly
 
     private sealed record ScoredClient
@@ -149,20 +205,7 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
         var crm = Arr(activity, "crm");
 
         // Securities / issuers / sectors this client touches.
-        var secIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var h in holdings) AddIf(secIds, Str(h, "securityId"));
-        foreach (var t in trades) AddIf(secIds, Str(t, "securityId"));
-        foreach (var r in rfqs) AddIf(secIds, Str(r, "securityId"));
-        foreach (var i in inquiries) AddIf(secIds, Str(i, "inferredSecurity"));
-
-        var issuers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var sectors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var sid in secIds)
-        {
-            if (!securities.TryGetValue(sid, out var sec)) continue;
-            AddIf(issuers, Str(sec, "issuer"));
-            AddIf(sectors, Str(sec, "sector"));
-        }
+        var (secIds, issuers, sectors) = ExtractEntitySets(activity, securities);
 
         var exposureMm = Math.Round(holdings.Sum(h => Dbl(h, "marketValue") ?? 0) / 1_000_000d, 1);
         var whyNow = new List<WhyNowDriver>();
@@ -810,3 +853,12 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
 
     private static string Encode(string value) => Uri.EscapeDataString(value);
 }
+
+/// <summary>
+/// The securities, issuers and sectors a single client touches (holdings/trades/RFQs/inquiries),
+/// used to resolve event→client linkage in both the DEMO composer and the LIVE re-rank overlay.
+/// </summary>
+public sealed record ClientEntitySet(
+    IReadOnlySet<string> Securities,
+    IReadOnlySet<string> Issuers,
+    IReadOnlySet<string> Sectors);

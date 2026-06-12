@@ -34,6 +34,20 @@ public sealed class BriefingEventStream
     private bool _seeded;
     private long _sequence;
 
+    // LIVE td-briefing base cache: the (expensive) Foundry agent briefing is built ONCE per persona
+    // and then overlaid with deterministic event deltas on every SSE push (TdBriefingLive), so a
+    // News Desk inject re-ranks in ~1-2s instead of re-running the agent (~50-60s) each time. The
+    // base is rebuilt when it ages out (TTL) or when its events vanish (e.g. a mock-api reset drops
+    // the injected headlines), which self-heals the cockpit back to baseline on the next (re)connect.
+    private readonly ConcurrentDictionary<string, TdBaseCacheEntry> _tdBaseCache = new(StringComparer.Ordinal);
+    private static readonly TimeSpan TdBaseTtl = TimeSpan.FromMinutes(10);
+
+    private sealed record TdBaseCacheEntry(
+        TdBriefing Briefing,
+        HashSet<string> EventIds,
+        IReadOnlyDictionary<string, ClientEntitySet> EntitySets,
+        DateTimeOffset BuiltAt);
+
     /// <summary>
     /// Test seam: when set, replaces the HTTP event fetch with a supplied source so the
     /// new-event-detection and coalescing logic can be exercised deterministically (T024).
@@ -227,14 +241,34 @@ public sealed class BriefingEventStream
         else if (scene == "td-briefing")
         {
             var salespersonId = string.IsNullOrWhiteSpace(persona) ? TdBriefingComposer.DefaultSalespersonId : persona!;
-            var brief = _mode.DemoMode
-                ? await sp.GetRequiredService<TdBriefingComposer>().ComposeAsync(salespersonId, null, ct)
-                : await sp.GetRequiredService<TdAgentRunner>().RunAsync(salespersonId, null, ct);
-            var ids = brief.PriorityCallList
-                .SelectMany(c => c.DrivingEvents)
-                .Select(d => d.EventId)
-                .ToHashSet(StringComparer.Ordinal);
-            return (brief, ids);
+
+            // DEMO: the composer is already fast and folds events inline — re-run it each push.
+            if (_mode.DemoMode)
+            {
+                var demoBrief = await sp.GetRequiredService<TdBriefingComposer>().ComposeAsync(salespersonId, null, ct);
+                return (demoBrief, demoBrief.PriorityCallList
+                    .SelectMany(c => c.DrivingEvents).Select(d => d.EventId)
+                    .ToHashSet(StringComparer.Ordinal));
+            }
+
+            // LIVE: build the agent base once, then overlay injected events deterministically (fast).
+            var current = await FetchEventsAsync(ct);
+            var currentIds = current.Select(e => e.Id).ToHashSet(StringComparer.Ordinal);
+
+            if (!_tdBaseCache.TryGetValue(salespersonId, out var baseEntry)
+                || DateTimeOffset.UtcNow - baseEntry.BuiltAt > TdBaseTtl
+                || !baseEntry.EventIds.IsSubsetOf(currentIds))
+            {
+                var liveBrief = await sp.GetRequiredService<TdAgentRunner>().RunAsync(salespersonId, null, ct);
+                var entitySets = await sp.GetRequiredService<TdBriefingComposer>()
+                    .GetClientEntitySetsAsync(salespersonId, liveBrief.AsOf, ct);
+                baseEntry = new TdBaseCacheEntry(liveBrief, currentIds, entitySets, DateTimeOffset.UtcNow);
+                _tdBaseCache[salespersonId] = baseEntry;
+            }
+
+            var (folded, driverIds) = TdBriefingLive.ApplyEvents(
+                baseEntry.Briefing, current, baseEntry.EventIds, baseEntry.EntitySets);
+            return (folded, driverIds);
         }
         else if (scene == "td-new-issue")
         {

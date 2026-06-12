@@ -85,6 +85,14 @@ tasks:
       - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
       - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
 
+  reset-mock-api:
+    desc: 'Reset the demo - restart mock-api so admin-injected headlines drop and the seed events reload (in-memory store). Usage: task cloud:reset-mock-api'
+    vars:
+      RG_NAME:
+        sh: terraform -chdir={{.INFRA_DIR}} output -raw resource_group_name
+    cmds:
+      - az containerapp revision restart --name mock-api --resource-group {{.RG_NAME}} --revision $(az containerapp revision list --name mock-api --resource-group {{.RG_NAME}} --query "[?properties.active].name | [0]" -o tsv)
+
   destroy:
     desc: 'Tear down a region. Usage: task cloud:destroy -- <region>'
     cmds:
