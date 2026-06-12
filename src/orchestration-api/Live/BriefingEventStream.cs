@@ -273,7 +273,14 @@ public sealed class BriefingEventStream
                 var entitySets = await sp.GetRequiredService<TdBriefingComposer>()
                     .GetClientEntitySetsAsync(salespersonId, liveBrief.AsOf, ct);
                 baseEntry = new TdBaseCacheEntry(liveBrief, currentIds, entitySets, DateTimeOffset.UtcNow);
-                _tdBaseCache[salespersonId] = baseEntry;
+
+                // Only memoize a HEALTHY base. A degraded run (Foundry 429/transient on a cold replica)
+                // or an empty call list must not stick for the whole TTL — leaving the cockpit blank on
+                // every reconnect — so skip caching and let the next synth re-attempt the agent.
+                if (!liveBrief.Degraded && liveBrief.PriorityCallList.Count > 0)
+                {
+                    _tdBaseCache[salespersonId] = baseEntry;
+                }
             }
 
             var (folded, driverIds) = TdBriefingLive.ApplyEvents(
