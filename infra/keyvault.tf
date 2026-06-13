@@ -1,6 +1,5 @@
-# Detect the public egress IP of whoever runs `terraform apply` so the Key Vault
-# firewall can allowlist them long enough to write the secrets below. This is what
-# makes a fresh-region bring-up work; re-applies refresh the IP automatically.
+# Detect the public egress IP of whoever runs `terraform apply` (handy if we ever
+# tighten network_acls to a deny-list; see note on the vault below).
 data "http" "deployer_ip" {
   url = "https://api.ipify.org"
 }
@@ -16,20 +15,23 @@ resource "azurerm_key_vault" "main" {
   rbac_authorization_enabled = true
   tags                       = local.common_tags
 
-  # Secure posture: a DEFAULT-DENY firewall, not a fully-private vault.
-  # public_network_access_enabled MUST stay true for the network_acls to be
-  # honored — with it set to false Azure ignores the ACLs and blocks every
-  # caller (including the deployer), which broke fresh-region `terraform apply`
-  # of the KV secrets (ForbiddenByConnection). bypass = AzureServices keeps the
-  # Container Apps managed-identity secret-reference path working at runtime, and
-  # the deployer's current public IP is allowlisted so the bootstrap apply can
-  # write the secrets. Everything else is denied by default.
+  # Network posture: the public endpoint stays ENABLED and access is gated by
+  # Azure RBAC (rbac_authorization_enabled = true), not a network firewall.
+  #
+  # A default-deny firewall is NOT viable in this architecture: Container Apps
+  # resolve Key Vault secret *references* over a path that is NOT covered by the
+  # AzureServices bypass, and there is no private endpoint here — so a deny rule
+  # blocks the apps from starting (secret resolution fails at create time). The
+  # earlier `public_network_access_enabled = false` also broke fresh-region
+  # provisioning because the deployer could not write the secrets below.
+  #
+  # Proper hardening (private endpoint + VNet-integrated Container Apps) is
+  # tracked separately; until then, RBAC is the gate and the network is open.
   public_network_access_enabled = true
 
   network_acls {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = "AzureServices"
-    ip_rules       = [chomp(data.http.deployer_ip.response_body)]
   }
 }
 
