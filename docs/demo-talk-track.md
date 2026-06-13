@@ -35,6 +35,19 @@ care, **how** to engage, and the exact **talk track** → it lands on the trader
 - **One sentence to open with:** *"This is the desk's morning cockpit. Everything you see is grounded
   in our own systems-of-record — holdings, RFQs, trades, CRM calls, the news feed — and it's either
   computed deterministically or reasoned by an Azure AI Foundry agent. Same screen, same numbers."*
+- **Let the cockpit load before you inject (LIVE).** In LIVE the first briefing is the slow part — the
+  Foundry agent reasons over the book for ~40–60s on a cold replica. Open `/desk` (and
+  `/desk/new-issue`) and wait for the call list to render *before* you trigger any News Desk inject.
+  Once the baseline is up, the live re-rank lands in **a second or two** — the inject is folded by a
+  fast deterministic overlay, not a full agent re-run. (DEMO is instant from the first load.)
+- **Reset between runs.** Admin-injected headlines live in the mock-api's in-memory store. To start a
+  clean run, restart it: `task cloud:reset-mock-api` — injected events drop and the seed events reload.
+  The cockpit self-heals across that reset (the live channel re-seeds), so you can inject → reset →
+  inject again all morning without redeploying.
+- **LIVE is rate-limited.** Model calls now pass through a global rate limiter
+  (`MODEL_MAX_CONCURRENCY` / `MODEL_MIN_INTERVAL_MS`) to curb Foundry `429`s. For a single presenter
+  this is invisible; if several people hammer LIVE at once, some briefings may degrade to DEMO (the
+  screen stays correct).
 
 ---
 
@@ -102,9 +115,10 @@ which routes through the *same* ingestion path a real feed would use.
 1. Have `/desk` visible. On the News Desk, click **"Inject AI-capex breaking print"** (the one-click
    Marquee Re-Rank preset — an overnight AI-capex upgrade hitting the AI-compute basket, tickers
    `SEC-3003`/`SEC-3002`).
-2. Switch back to `/desk`. Within ~10s a **live alert banner** appears and **Hyperion & Tradewinds
-   jump to the top** of the call list, each card showing a **"⚡ RE-RANKED BY LIVE EVENTS"** callout
-   naming the driving event.
+2. Switch back to `/desk`. Within **a second or two** a **live alert banner** appears and **Hyperion &
+   Tradewinds jump to the top** of the call list, each card showing a **"⚡ RE-RANKED BY LIVE EVENTS"**
+   callout naming the driving event. *(The callout only renders for a real, event-driven re-rank — the
+   baseline call list never shows an empty box.)*
 3. **Key message:** *"The desk's morning plan isn't a snapshot — it's live. News broke, the agent
    re-scored the book, and the call order changed in front of you. No refresh, no re-run."*
 
@@ -122,9 +136,9 @@ which routes through the *same* ingestion path a real feed would use.
    - **Type:** `Issuer credit`  ·  **Severity:** `High`  ·  **Direction:** `Positive`
    - **Issuers:** `Prairie Green Renewables`  *(or **Tickers:** `SEC-3602`)*
    - Submit.
-3. Switch back to `/desk/new-issue`. Within ~10s a **live alert banner** appears, the ticker shows the
-   breaking headline, and the storyboard **folds the event in**: a **LIVE** evidence row on the
-   *Announcement* beat, a highlighted **LIVE** metric, and a **new leading talking point** —
+3. Switch back to `/desk/new-issue`. Within **a second or two** a **live alert banner** appears, the
+   ticker shows the breaking headline, and the storyboard **folds the event in**: a **LIVE** evidence
+   row on the *Announcement* beat, a highlighted **LIVE** metric, and a **new leading talking point** —
    *"Just crossed — Prairie Green senior note upsized… Lead the call with it."*
 4. **Key message:** *"Notice the difference in behavior. The call list **re-ranks** — news changes
    *who* is #1. The new-issue storyboard is about *one deal*, so news doesn't reorder anything — it
@@ -163,18 +177,23 @@ which routes through the *same* ingestion path a real feed would use.
 
 | Reaction | Where to watch | News Desk action | Targets | Expected result |
 |---|---|---|---|---|
-| Call list re-rank | `/desk` | Click **Inject AI-capex breaking print** | tickers `SEC-3003`,`SEC-3002` | Hyperion & Tradewinds jump to top (~10s), driving-event callouts |
-| Call list re-rank (custom, grounded) | `/desk` | Submit **QRTX earnings beat** — see [News Desk headlines](news-desk-headlines.md#headline-1--quartzite-semiconductors-qrtx-earnings-blowout--sec-3003) | ticker `SEC-3003`, issuer `Quartzite Semiconductors`, Technology / High / Positive | QRTX holders (Forge Hill, Crestline) jump up with RE-RANKED callouts (~10s) |
-| New Issue fold-in | `/desk/new-issue` | Submit custom: *Prairie Green senior note upsized…*, Issuer credit / High / Positive | issuer `Prairie Green Renewables` **or** ticker `SEC-3602` | LIVE banner + LIVE evidence/metric + new leading talking point (~10s) |
+| Call list re-rank | `/desk` | Click **Inject AI-capex breaking print** | tickers `SEC-3003`,`SEC-3002` | Hyperion & Tradewinds jump to top (~1–2s), driving-event callouts |
+| Call list re-rank (custom, grounded) | `/desk` | Submit **QRTX earnings beat** — see [News Desk headlines](news-desk-headlines.md#headline-1--quartzite-semiconductors-qrtx-earnings-blowout--sec-3003) | ticker `SEC-3003`, issuer `Quartzite Semiconductors`, Technology / High / Positive | QRTX holders (Forge Hill, Crestline) jump up with RE-RANKED callouts (~1–2s) |
+| New Issue fold-in | `/desk/new-issue` | Submit custom: *Prairie Green senior note upsized…*, Issuer credit / High / Positive | issuer `Prairie Green Renewables` **or** ticker `SEC-3602` | LIVE banner + LIVE evidence/metric + new leading talking point (~1–2s) |
 | Prompt re-tune (LIVE only) | `/desk` | Paste the **"flow-trading day"** override into `trading-desk-morning.md`, re-run — see [prompt-tuning demo](prompt-tuning-demo.md) | the prompt itself (needs `FOUNDRY_RECREATE_AGENTS=true`) | Call list **re-orders** — hottest open-RFQ client leads, cards lead with RFQ not news |
 
 ## Troubleshooting
 
-- **No live reaction within ~15s?** Confirm the page was already loaded *before* you injected (the SSE
-  subscription opens once the page renders), and that the event's targets match (issuer/ticker/sector/
-  client). The first frame on connect is a baseline snapshot with no toast — only events that arrive
-  *after* you subscribe and *match* the scene trigger an alert.
+- **No live reaction within a few seconds?** Confirm the page was already loaded *before* you injected
+  (the SSE subscription opens once the page renders), and that the event's targets match (issuer/ticker/
+  sector/client). The first frame on connect is a baseline snapshot with no toast — only events that
+  arrive *after* you subscribe and *match* the scene trigger an alert. In LIVE, also make sure the
+  baseline call list has finished its ~40–60s cold-start *before* you inject; once it's up, re-ranks
+  land in a second or two.
 - **Model looks slow/odd in LIVE?** It degrades to the deterministic composer automatically; the screen
-  stays correct. For a high-stakes audience, present in DEMO.
-- **Want to reset?** Re-running a scene (the "Re-run radar" / refresh control) re-pulls a clean
-  baseline; the New Issue storyboard also folds in whatever is currently in the event store.
+  stays correct. LIVE model calls are rate-limited to curb Foundry `429`s, so under heavy concurrent
+  load some briefings may take the DEMO path. For a high-stakes audience, present in DEMO.
+- **Want to reset between runs?** Run `task cloud:reset-mock-api` (restarts mock-api → injected
+  headlines drop, seed events reload). The live channel self-heals across the restart, so a fresh inject
+  after a reset still fires a re-rank. Re-running a scene (the "Re-run radar" / refresh control) also
+  re-pulls a clean baseline; the New Issue storyboard folds in whatever is currently in the event store.
