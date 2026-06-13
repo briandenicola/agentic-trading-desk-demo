@@ -45,7 +45,6 @@ public sealed class BriefingEventStream
     private sealed record TdBaseCacheEntry(
         TdBriefing Briefing,
         HashSet<string> EventIds,
-        IReadOnlyDictionary<string, ClientEntitySet> EntitySets,
         DateTimeOffset BuiltAt);
 
     /// <summary>
@@ -261,7 +260,10 @@ public sealed class BriefingEventStream
                     .ToHashSet(StringComparer.Ordinal));
             }
 
-            // LIVE: build the agent base once, then overlay injected events deterministically (fast).
+            // LIVE: cache the EXPENSIVE Foundry agent base; recompute the CHEAP deterministic entity
+            // sets fresh on every push. (Caching the entity sets risked memoizing an empty map when the
+            // per-client activity lookups transiently failed during a cold, post-reset base build —
+            // which silently disabled the overlay for the whole TTL. Recomputing keeps it self-healing.)
             var current = await FetchEventsAsync(ct);
             var currentIds = current.Select(e => e.Id).ToHashSet(StringComparer.Ordinal);
 
@@ -270,9 +272,7 @@ public sealed class BriefingEventStream
                 || !baseEntry.EventIds.IsSubsetOf(currentIds))
             {
                 var liveBrief = await sp.GetRequiredService<TdAgentRunner>().RunAsync(salespersonId, null, ct);
-                var entitySets = await sp.GetRequiredService<TdBriefingComposer>()
-                    .GetClientEntitySetsAsync(salespersonId, liveBrief.AsOf, ct);
-                baseEntry = new TdBaseCacheEntry(liveBrief, currentIds, entitySets, DateTimeOffset.UtcNow);
+                baseEntry = new TdBaseCacheEntry(liveBrief, currentIds, DateTimeOffset.UtcNow);
 
                 // Only memoize a HEALTHY base. A degraded run (Foundry 429/transient on a cold replica)
                 // or an empty call list must not stick for the whole TTL — leaving the cockpit blank on
@@ -283,8 +283,11 @@ public sealed class BriefingEventStream
                 }
             }
 
+            var entitySets = await sp.GetRequiredService<TdBriefingComposer>()
+                .GetClientEntitySetsAsync(salespersonId, baseEntry.Briefing.AsOf, ct);
+
             var (folded, driverIds) = TdBriefingLive.ApplyEvents(
-                baseEntry.Briefing, current, baseEntry.EventIds, baseEntry.EntitySets);
+                baseEntry.Briefing, current, baseEntry.EventIds, entitySets);
             return (folded, driverIds);
         }
         else if (scene == "td-new-issue")
