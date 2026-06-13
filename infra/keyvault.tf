@@ -1,3 +1,10 @@
+# Detect the public egress IP of whoever runs `terraform apply` so the Key Vault
+# firewall can allowlist them long enough to write the secrets below. This is what
+# makes a fresh-region bring-up work; re-applies refresh the IP automatically.
+data "http" "deployer_ip" {
+  url = "https://api.ipify.org"
+}
+
 resource "azurerm_key_vault" "main" {
   name                       = local.key_vault_name
   location                   = azurerm_resource_group.main.location
@@ -9,12 +16,21 @@ resource "azurerm_key_vault" "main" {
   rbac_authorization_enabled = true
   tags                       = local.common_tags
 
-  # Secure posture: public network access is disabled. Container Apps resolve
-  # secret references via the managed identity over the Azure trusted-services
-  # path, so runtime is unaffected. NOTE: this also means `terraform apply` for
-  # KV secrets must run from inside the VNet (or with the vault temporarily
-  # opened); routine infra changes are applied via `az` against the running apps.
-  public_network_access_enabled = false
+  # Secure posture: a DEFAULT-DENY firewall, not a fully-private vault.
+  # public_network_access_enabled MUST stay true for the network_acls to be
+  # honored — with it set to false Azure ignores the ACLs and blocks every
+  # caller (including the deployer), which broke fresh-region `terraform apply`
+  # of the KV secrets (ForbiddenByConnection). bypass = AzureServices keeps the
+  # Container Apps managed-identity secret-reference path working at runtime, and
+  # the deployer's current public IP is allowlisted so the bootstrap apply can
+  # write the secrets. Everything else is denied by default.
+  public_network_access_enabled = true
+
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+    ip_rules       = [chomp(data.http.deployer_ip.response_body)]
+  }
 }
 
 # Grant current deployment identity access to create secrets
