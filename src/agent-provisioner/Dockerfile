@@ -28,6 +28,13 @@ RUN dotnet publish src/agent-provisioner/agent-provisioner.csproj \
 FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine AS runtime
 WORKDIR /app
 
+# Build provenance baked into the image (see tasks/Taskfile.build.yml).
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+ENV BUILD_GIT_SHA=$GIT_SHA \
+    BUILD_TIME=$BUILD_TIME
+LABEL org.opencontainers.image.revision=$GIT_SHA
+
 # Reuse the non-root user provided by the base image (uid from APP_UID env);
 # adduser is idempotent here since the base already defines this uid.
 ARG APP_UID=1000

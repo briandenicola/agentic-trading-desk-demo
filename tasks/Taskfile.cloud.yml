@@ -17,7 +17,10 @@ version: '3'
 vars:
   INFRA_DIR: infra
   DEFAULT_REGION: swedencentral
-  TAG: '{{default "latest" .TAG}}'
+  # Short git SHA of HEAD; the default image tag so rolls are provenance-traceable.
+  GIT_SHA:
+    sh: git rev-parse --short HEAD
+  TAG: '{{default .GIT_SHA .TAG}}'
   # Region == Terraform workspace name (from `task ... -- <region>`).
   REGION: '{{default .DEFAULT_REGION .CLI_ARGS}}'
   # DEMO_MODE env var (default true) drives every mode-dependent toggle.
@@ -119,3 +122,18 @@ tasks:
     desc: Validate Terraform configuration
     cmds:
       - terraform -chdir={{.INFRA_DIR}} validate
+
+  drift:
+    desc: 'Detect config drift between Azure and Terraform for a region (exit 2 = drift). Usage: task cloud:drift -- <region>'
+    cmds:
+      - task: _init
+      # -detailed-exitcode: 0 = in sync, 2 = drift, 1 = error. Note the image-roll
+      # contract: every Container App has lifecycle.ignore_changes=[image] (images are
+      # rolled by tag via cloud:deploy / cloud:audit), so plan never flags image drift.
+      - terraform -chdir={{.INFRA_DIR}} plan -detailed-exitcode -compact-warnings {{.TF_VARS}} -var "deploy_apps=true"
+
+  audit:
+    desc: 'Prove running containers + Azure config match the repo (git SHA, /version, TF drift). Usage: task cloud:audit -- <region>'
+    cmds:
+      - task: _init
+      - powershell -NoProfile -ExecutionPolicy Bypass -File "tasks\audit.ps1" -Region "{{.REGION}}" -InfraDir "{{.INFRA_DIR}}" -ExpectedSha "{{.GIT_SHA}}" -DemoMode "{{.DEMO_MODE}}" -Environment "{{.ENVIRONMENT}}" -EnableFoundry "{{.ENABLE_FOUNDRY}}"

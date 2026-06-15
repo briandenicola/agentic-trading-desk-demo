@@ -31,6 +31,9 @@ app.MapCbEndpoints();
 app.MapTdEndpoints();
 app.MapEventEndpoints();
 
+// Build provenance: GET /version (and /api/version) report the baked git SHA.
+app.MapVersionEndpoints("mock-api");
+
 app.Run();
 
 // Exposed for WebApplicationFactory-based contract tests (T009).

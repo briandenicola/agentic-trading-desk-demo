@@ -27,6 +27,14 @@ RUN dotnet publish src/mock-api/mock-api.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 
+# Build provenance baked into the image (see tasks/Taskfile.build.yml). BUILD_GIT_SHA is
+# surfaced at runtime by the /version endpoint so a running container maps to a repo commit.
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+ENV BUILD_GIT_SHA=$GIT_SHA \
+    BUILD_TIME=$BUILD_TIME
+LABEL org.opencontainers.image.revision=$GIT_SHA
+
 # Reuse the non-root user provided by the base image (uid from APP_UID env);
 # adduser is idempotent here since the base already defines this uid.
 ARG APP_UID=1000

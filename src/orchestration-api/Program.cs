@@ -136,6 +136,10 @@ app.UseAuthorization();
 app.MapGet("/healthz", () => Results.Json(new { status = "ok" }));
 app.MapGet("/readyz", (ModeOptions m) => Results.Json(new { status = "ready", mode = m.Mode }));
 
+// --- Build provenance: GET /version and /api/version report the baked git SHA so the
+// running container can be matched to a committed-and-pushed source revision in the repo. ---
+app.MapVersionEndpoints("orchestration-api");
+
 // --- Scene endpoint: POST /api/agent/morning-brief (T016, per contracts/agent-api.yaml) ---
 // Same MorningBrief shape in both modes (Principle III). DEMO → deterministic composer;
 // LIVE → Foundry agent. The composer degrades to a structured brief with notes on

@@ -9,30 +9,34 @@ import MorningBriefScene from './scenes/MorningBrief/MorningBriefScene';
 import AdminScene from './scenes/Admin/AdminScene';
 import CockpitScene from './scenes/Cockpit/CockpitScene';
 import ChatScene from './scenes/Chat/ChatScene';
+import BuildBadge from './components/BuildBadge';
 
 export default function App() {
   return (
-    <Routes>
-      {/* Landing chooser picks a workspace. Institutional Sales & Trading (/desk) is the
-          demo focus; the Commercial Banking RM workspace (/cb) remains fully available. */}
-      <Route path="/" element={<LandingScene />} />
+    <>
+      <Routes>
+        {/* Landing chooser picks a workspace. Institutional Sales & Trading (/desk) is the
+            demo focus; the Commercial Banking RM workspace (/cb) remains fully available. */}
+        <Route path="/" element={<LandingScene />} />
 
-      {/* Institutional Sales & Trading */}
-      <Route path="/desk" element={<TradeDeskScene />} />
-      <Route path="/desk/morning-brief" element={<TdMorningBriefScene />} />
-      <Route path="/desk/new-issue" element={<TdNewIssueScene />} />
+        {/* Institutional Sales & Trading */}
+        <Route path="/desk" element={<TradeDeskScene />} />
+        <Route path="/desk/morning-brief" element={<TdMorningBriefScene />} />
+        <Route path="/desk/new-issue" element={<TdNewIssueScene />} />
 
-      {/* Commercial Banking RM */}
-      <Route path="/cb" element={<WorkspaceScene />} />
-      <Route path="/rm-briefing" element={<RmBriefingScene />} />
-      <Route path="/morning-brief" element={<MorningBriefScene />} />
-      <Route path="/cockpit" element={<CockpitScene />} />
+        {/* Commercial Banking RM */}
+        <Route path="/cb" element={<WorkspaceScene />} />
+        <Route path="/rm-briefing" element={<RmBriefingScene />} />
+        <Route path="/morning-brief" element={<MorningBriefScene />} />
+        <Route path="/cockpit" element={<CockpitScene />} />
 
-      {/* Shared surfaces */}
-      <Route path="/chat" element={<ChatScene />} />
-      <Route path="/admin" element={<AdminScene />} />
+        {/* Shared surfaces */}
+        <Route path="/chat" element={<ChatScene />} />
+        <Route path="/admin" element={<AdminScene />} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <BuildBadge />
+    </>
   );
 }

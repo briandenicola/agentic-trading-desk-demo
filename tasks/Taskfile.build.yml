@@ -12,6 +12,12 @@ version: '3'
 
 vars:
   TAG: '{{default "latest" .TAG}}'
+  # Short git SHA of HEAD - the primary, immutable image tag for provenance.
+  GIT_SHA:
+    sh: git rev-parse --short HEAD
+  # UTC build timestamp baked into the image (PowerShell for a portable ISO-8601 value).
+  BUILD_TIME:
+    sh: powershell -NoProfile -Command "[DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')"
   STAGE_DIR:
     sh: powershell -NoProfile -ExecutionPolicy Bypass -File tasks/stage-dir.ps1
   ACR_NAME:
@@ -28,8 +34,14 @@ env:
   PYTHONUTF8: '1'
 
 tasks:
+  guard-clean:
+    desc: Fail unless the working tree is clean and HEAD is pushed (override with ALLOW_DIRTY=1)
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File "tasks\guard-clean.ps1"
+
   stage:
     desc: Stage a clean, hydrated (non-OneDrive) build context for az acr build
+    deps: [guard-clean]
     cmds:
       - powershell -NoProfile -ExecutionPolicy Bypass -File "tasks\stage-build-context.ps1" -Source "." -Destination "{{.STAGE_DIR}}"
 
@@ -39,28 +51,28 @@ tasks:
       - powershell -NoProfile -Command "if (Test-Path '{{.STAGE_DIR}}') { Remove-Item -Recurse -Force '{{.STAGE_DIR}}' }"
 
   mock-api:
-    desc: Build mock-api container image and push to ACR
+    desc: Build mock-api container image and push to ACR (tags :<sha> and :latest)
     deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image mock-api:{{.TAG}} --image mock-api:latest --file "{{.STAGE_DIR}}\src\mock-api\Dockerfile" "{{.STAGE_DIR}}"
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --build-arg GIT_SHA={{.GIT_SHA}} --build-arg BUILD_TIME="{{.BUILD_TIME}}" --image mock-api:{{.GIT_SHA}} --image mock-api:latest --file "{{.STAGE_DIR}}\src\mock-api\Dockerfile" "{{.STAGE_DIR}}"
 
   orchestration-api:
-    desc: Build orchestration-api container image and push to ACR
+    desc: Build orchestration-api container image and push to ACR (tags :<sha> and :latest)
     deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image orchestration-api:{{.TAG}} --image orchestration-api:latest --file "{{.STAGE_DIR}}\src\orchestration-api\Dockerfile" "{{.STAGE_DIR}}"
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --build-arg GIT_SHA={{.GIT_SHA}} --build-arg BUILD_TIME="{{.BUILD_TIME}}" --image orchestration-api:{{.GIT_SHA}} --image orchestration-api:latest --file "{{.STAGE_DIR}}\src\orchestration-api\Dockerfile" "{{.STAGE_DIR}}"
 
   agent-provisioner:
-    desc: Build agent-provisioner container image and push to ACR
+    desc: Build agent-provisioner container image and push to ACR (tags :<sha> and :latest)
     deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image agent-provisioner:{{.TAG}} --image agent-provisioner:latest --file "{{.STAGE_DIR}}\src\agent-provisioner\Dockerfile" "{{.STAGE_DIR}}"
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --build-arg GIT_SHA={{.GIT_SHA}} --build-arg BUILD_TIME="{{.BUILD_TIME}}" --image agent-provisioner:{{.GIT_SHA}} --image agent-provisioner:latest --file "{{.STAGE_DIR}}\src\agent-provisioner\Dockerfile" "{{.STAGE_DIR}}"
 
   ui-app:
-    desc: Build ui-app container image and push to ACR
+    desc: Build ui-app container image and push to ACR (tags :<sha> and :latest)
     deps: [stage]
     cmds:
-      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --image ui-app:{{.TAG}} --image ui-app:latest --file "{{.STAGE_DIR}}\src\ui-app\Dockerfile" "{{.STAGE_DIR}}\src\ui-app"
+      - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --build-arg GIT_SHA={{.GIT_SHA}} --build-arg BUILD_TIME="{{.BUILD_TIME}}" --image ui-app:{{.GIT_SHA}} --image ui-app:latest --file "{{.STAGE_DIR}}\src\ui-app\Dockerfile" "{{.STAGE_DIR}}\src\ui-app"
 
   all:
     desc: Build all container images (stages once, then builds each)
