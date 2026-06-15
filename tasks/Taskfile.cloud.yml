@@ -20,7 +20,10 @@ vars:
   # Short git SHA of HEAD; the default image tag so rolls are provenance-traceable.
   GIT_SHA:
     sh: git rev-parse --short HEAD
-  TAG: '{{default .GIT_SHA .TAG}}'
+  # Image tag to deploy. Defaults to the git SHA for provenance; override for a one-off
+  # roll with `task cloud:deploy IMAGE_TAG=<tag> -- <region>`. Uniquely named so the root
+  # Taskfile's unrelated `TAG` var cannot shadow it.
+  IMAGE_TAG: '{{.IMAGE_TAG | default .GIT_SHA}}'
   # Region == Terraform workspace name (from `task ... -- <region>`).
   REGION: '{{default .DEFAULT_REGION .CLI_ARGS}}'
   # DEMO_MODE env var (default true) drives every mode-dependent toggle.
@@ -70,7 +73,7 @@ tasks:
       ACR_LOGIN_SERVER:
         sh: terraform -chdir={{.INFRA_DIR}} output -raw acr_login_server
     cmds:
-      - '[ "{{.DEMO_MODE}}" = "true" ] && echo "DEMO mode: no Foundry agent to provision" || az containerapp job start --name agent-provisioner-job --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/agent-provisioner:{{.TAG}}'
+      - '[ "{{.DEMO_MODE}}" = "true" ] && echo "DEMO mode: no Foundry agent to provision" || az containerapp job start --name agent-provisioner-job --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/agent-provisioner:{{.IMAGE_TAG}}'
 
   deploy:
     desc: Roll freshly rebuilt images onto the running Container Apps (manual image refresh)
@@ -84,9 +87,9 @@ tasks:
       # no-op when the image reference string is unchanged (the app keeps the old digest).
       REV_SUFFIX: 'r{{now | date "0601021504"}}'
     cmds:
-      - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
-      - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
-      - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.TAG}} --revision-suffix {{.REV_SUFFIX}}
+      - az containerapp update --name ui-app --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/ui-app:{{.IMAGE_TAG}} --revision-suffix {{.REV_SUFFIX}}
+      - az containerapp update --name orchestration-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/orchestration-api:{{.IMAGE_TAG}} --revision-suffix {{.REV_SUFFIX}}
+      - az containerapp update --name mock-api --resource-group {{.RG_NAME}} --image {{.ACR_LOGIN_SERVER}}/mock-api:{{.IMAGE_TAG}} --revision-suffix {{.REV_SUFFIX}}
 
   reset-mock-api:
     desc: 'Reset the demo - restart mock-api so admin-injected headlines drop and the seed events reload (in-memory store). Usage: task cloud:reset-mock-api'
