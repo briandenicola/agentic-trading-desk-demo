@@ -45,7 +45,8 @@ if (-not $rg) {
     Add-Result 'terraform outputs' $false 'could not read resource_group_name (wrong workspace or not deployed)'
     $rg = $null
 }
-$uiUrl = ($uiUrl ?? '').TrimEnd('/')
+if (-not $uiUrl) { $uiUrl = '' }
+$uiUrl = $uiUrl.TrimEnd('/')
 
 # --- Check 1: running image tag == expected SHA ---------------------------------------------
 $apps = @('ui-app', 'orchestration-api', 'mock-api')
