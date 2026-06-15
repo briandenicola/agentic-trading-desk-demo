@@ -35,12 +35,17 @@ function Add-Result([string]$check, [bool]$pass, [string]$detail) {
 Write-Host ''
 Write-Host "=== Provenance/parity audit - region '$Region' vs git $ExpectedSha ===" -ForegroundColor Cyan
 
+# Native tools (az, terraform) legitimately write warnings to stderr; with
+# ErrorActionPreference=Stop that aborts/empties our captures. Tolerate it here and
+# instead branch on captured output and explicit exit codes.
+$ErrorActionPreference = 'Continue'
+
 # Working tree must be clean for the SHA comparison to be meaningful.
 Add-Result 'git working tree clean' $gitClean ($(if ($gitClean) { 'no uncommitted changes' } else { 'uncommitted changes present - running image may not match source' }))
 
 # --- Terraform outputs for the selected workspace -------------------------------------------
-$rg = (terraform -chdir=$InfraDir output -raw resource_group_name 2>$null)
-$uiUrl = (terraform -chdir=$InfraDir output -raw ui_app_url 2>$null)
+$rg = (terraform "-chdir=$InfraDir" output -raw resource_group_name 2>$null)
+$uiUrl = (terraform "-chdir=$InfraDir" output -raw ui_app_url 2>$null)
 if (-not $rg) {
     Add-Result 'terraform outputs' $false 'could not read resource_group_name (wrong workspace or not deployed)'
     $rg = $null
@@ -52,11 +57,8 @@ $uiUrl = $uiUrl.TrimEnd('/')
 $apps = @('ui-app', 'orchestration-api', 'mock-api')
 if ($rg) {
     foreach ($app in $apps) {
-        try {
-            $image = (az containerapp show --name $app --resource-group $rg `
-                    --query "properties.template.containers[0].image" -o tsv 2>$null)
-        }
-        catch { $image = $null }
+        $image = (az containerapp show --name $app --resource-group $rg `
+                --query "properties.template.containers[0].image" -o tsv 2>$null | Select-Object -Last 1)
         if (-not $image) {
             Add-Result "image tag: $app" $false 'container app not found / not deployed'
             continue

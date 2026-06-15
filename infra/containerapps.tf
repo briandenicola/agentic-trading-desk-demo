@@ -87,7 +87,7 @@ resource "azurerm_container_app" "orchestration_api" {
       name   = "orchestration-api"
       image  = "${azurerm_container_registry.main.login_server}/orchestration-api:latest"
       cpu    = 0.5
-      memory = "1.0Gi"
+      memory = "1Gi"
 
       env {
         name  = "ASPNETCORE_URLS"
@@ -281,7 +281,7 @@ resource "azurerm_container_app_job" "agent_provisioner" {
       name   = "agent-provisioner"
       image  = "${azurerm_container_registry.main.login_server}/agent-provisioner:latest"
       cpu    = 0.5
-      memory = "1.0Gi"
+      memory = "1Gi"
 
       env {
         name        = "FOUNDRY_PROJECT_ENDPOINT"
