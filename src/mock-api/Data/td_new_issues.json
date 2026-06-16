@@ -1,0 +1,16 @@
+[
+  {
+    "dealId": "NI-3601",
+    "issuer": "Prairie Green Renewables",
+    "sector": "Utilities",
+    "ourRole": "Lead-Left Bookrunner",
+    "leadLeft": true,
+    "bookStatus": "Books open",
+    "pricingDate": "2026-05-26",
+    "ourAllocationControlPct": 0.45,
+    "coManagers": ["Summit Securities", "Cedar Point Partners", "Northwind Capital"],
+    "trancheSecurityIds": ["SEC-3601", "SEC-3602"],
+    "notes": "Concurrent $2.5bn debt + equity. Our desk runs the books on the new senior note — lead-left bookrunner with priority allocation control.",
+    "source": "seed"
+  }
+]

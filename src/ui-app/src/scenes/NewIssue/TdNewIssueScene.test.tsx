@@ -118,4 +118,52 @@ describe('TdNewIssueScene', () => {
     expect(screen.getByTestId('ni-outreach')).toBeInTheDocument();
     expect(screen.getAllByText(/Crestline Capital/).length).toBeGreaterThan(0);
   });
+
+  it('highlights the lead-left bookrunner role and renders the lead-left board + upload', async () => {
+    const leadLeftStory: TdNewIssueStoryboard = {
+      ...mockStory,
+      issuer: {
+        ...mockStory.issuer,
+        leadLeft: true,
+        syndicateRole: 'Lead-Left Bookrunner',
+        bookStatus: 'Books open',
+        pricingDate: '2026-05-26',
+        ourAllocationControlPct: 0.45,
+        coManagers: ['Summit Securities'],
+        tranches: mockStory.issuer.tranches.map((t) => ({ ...t, leadLeft: true })),
+      },
+      leadLeftBoard: [
+        {
+          issuer: 'Prairie Green Renewables',
+          role: 'Lead-Left Bookrunner',
+          leadLeft: true,
+          bookStatus: 'Books open',
+          pricingDate: '2026-05-26',
+          source: 'seed',
+        },
+      ],
+      outreach: {
+        ...mockStory.outreach,
+        tradeIdea: { ...mockStory.outreach.tradeIdea!, leadLeft: true },
+      },
+    };
+
+    vi.spyOn(apiClient, 'post').mockResolvedValue({ data: leadLeftStory } as AxiosResponse<TdNewIssueStoryboard>);
+
+    renderScene();
+    await screen.findByTestId('ni-storyboard');
+
+    // The issuer header announces that we run the books.
+    expect(screen.getByText(/We run the books on the left/)).toBeInTheDocument();
+
+    // The lead-left board lists the deal and offers the spreadsheet upload control.
+    const board = screen.getByTestId('ni-lead-left-board');
+    expect(board).toBeInTheDocument();
+    expect(screen.getByTestId('ni-upload-input')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Upload deals/i })).toBeInTheDocument();
+
+    // The lead-left allocation badge surfaces on the outreach trade idea.
+    fireEvent.click(screen.getByText('Prioritized outreach'));
+    expect(screen.getByText(/LEAD-LEFT ALLOCATION/)).toBeInTheDocument();
+  });
 });

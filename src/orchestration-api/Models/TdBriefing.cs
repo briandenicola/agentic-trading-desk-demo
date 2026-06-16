@@ -138,4 +138,6 @@ public sealed record TradeIdea
     public required string Side { get; init; }                   // client-side: Buy|Sell
     public string? Rationale { get; init; }
     public string? Level { get; init; }                          // indicative level / size
+    /// <summary>True when this idea is paper we run lead-left — a priority allocation on the new issue.</summary>
+    public bool? LeadLeft { get; init; }
 }

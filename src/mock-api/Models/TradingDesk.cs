@@ -151,3 +151,30 @@ public sealed record TdNarrativeTheme
     public string? Theme { get; init; }
     public string? Narrative { get; init; }
 }
+
+/// <summary>
+/// A primary new-issue deal and OUR desk's syndicate role on it (lead-left bookrunner,
+/// joint bookrunner, co-manager, …). Seeded from <c>Data/td_new_issues.json</c> and
+/// augmentable at runtime via the spreadsheet-upload path (POST <c>/mock/td/new-issues</c>,
+/// non-durable — uploads reset on restart). Drives the "lead-left" highlighting in the New
+/// Issue Radar. All data is fictional.
+/// </summary>
+public sealed record TdNewIssue
+{
+    public string DealId { get; init; } = "";
+    public string Issuer { get; init; } = "";
+    public string? Sector { get; init; }
+    /// <summary>OUR syndicate role, e.g. "Lead-Left Bookrunner", "Joint Bookrunner", "Co-Manager".</summary>
+    public string? OurRole { get; init; }
+    /// <summary>True when our desk runs the books on the left — the lead-left bookrunner.</summary>
+    public bool LeadLeft { get; init; }
+    public string? BookStatus { get; init; }            // "Books open" | "Priced" | "Announced"
+    public string? PricingDate { get; init; }           // ISO date the deal is expected to price
+    /// <summary>Share of allocation our desk controls as lead-left (0..1 fraction).</summary>
+    public double? OurAllocationControlPct { get; init; }
+    public IReadOnlyList<string>? CoManagers { get; init; }
+    /// <summary>The security ids of the deal's tranches (equity + new note).</summary>
+    public IReadOnlyList<string>? TrancheSecurityIds { get; init; }
+    public string? Notes { get; init; }
+    public string? Source { get; init; }                // "seed" | "upload"
+}
