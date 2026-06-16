@@ -440,6 +440,8 @@ export interface TradeIdea {
   side: string; // client-side: Buy | Sell
   rationale?: string;
   level?: string;
+  /** True when this idea is paper we run lead-left — a priority allocation on the new issue. */
+  leadLeft?: boolean;
 }
 
 export interface TdCallRationale {
@@ -519,6 +521,8 @@ export interface NewIssueTranche {
   assetClass: string; // Equity | Corporate Bond
   detail?: string;
   referencePrice?: number;
+  /** True when this tranche is part of a deal we run lead-left. */
+  leadLeft?: boolean;
 }
 
 export interface NewIssueIssuer {
@@ -528,6 +532,28 @@ export interface NewIssueIssuer {
   summary?: string;
   announcedAt?: string;
   tranches: NewIssueTranche[];
+  /** True when OUR desk is the lead-left bookrunner on this deal. */
+  leadLeft?: boolean;
+  /** OUR syndicate role, e.g. "Lead-Left Bookrunner", "Joint Bookrunner", "Co-Manager". */
+  syndicateRole?: string;
+  bookStatus?: string;
+  pricingDate?: string;
+  /** Share of allocation our desk controls as lead-left (0..1 fraction). */
+  ourAllocationControlPct?: number;
+  coManagers?: string[];
+}
+
+/** A primary new-issue deal the desk is tracking, with OUR syndicate role (the lead-left board). */
+export interface LeadLeftDeal {
+  issuer: string;
+  sector?: string;
+  role?: string;
+  leadLeft: boolean;
+  bookStatus?: string;
+  pricingDate?: string;
+  allocationControlPct?: number;
+  trancheSecurityIds?: string[];
+  source?: string; // seed | upload
 }
 
 export interface StoryboardMetric {
@@ -539,7 +565,7 @@ export interface StoryboardMetric {
 }
 
 export interface StoryboardEvidence {
-  kind: 'news' | 'holding' | 'rfq' | 'trade' | 'crm' | 'inquiry' | 'axe';
+  kind: 'news' | 'holding' | 'rfq' | 'trade' | 'crm' | 'inquiry' | 'axe' | 'syndicate';
   label: string;
   detail?: string;
   refId?: string;
@@ -579,11 +605,50 @@ export interface TdNewIssueStoryboard {
   outreach: TdOutreachRecommendation;
   notes?: string[];
   liveEvents?: MarketEvent[];
+  /** Every primary new-issue deal the desk is tracking (seeded + uploaded), with our role. */
+  leadLeftBoard?: LeadLeftDeal[];
 }
 
 export async function runTdNewIssue(req: TdNewIssueRequest = {}): Promise<TdNewIssueStoryboard> {
   const { data } = await apiClient.post<TdNewIssueStoryboard>('/agent/td-new-issue', req, {
     timeout: AGENT_TIMEOUT_MS,
   });
+  return data;
+}
+
+/** A lead-left deal as parsed from an uploaded spreadsheet (mock-api ingest shape). */
+export interface LeadLeftDealUpload {
+  dealId?: string;
+  issuer: string;
+  sector?: string;
+  ourRole?: string;
+  leadLeft?: boolean;
+  bookStatus?: string;
+  pricingDate?: string;
+  ourAllocationControlPct?: number;
+  coManagers?: string[];
+  trancheSecurityIds?: string[];
+  notes?: string;
+}
+
+export interface LeadLeftUploadResult {
+  added: number;
+  updated: number;
+  total: number;
+  deals: LeadLeftDeal[];
+}
+
+/**
+ * Upload possible lead-left deals (parsed client-side from .xlsx/.csv) to the new-issue store
+ * via the orchestration proxy. Non-durable — uploads reset on a mock-api restart.
+ */
+export async function uploadLeadLeftDeals(deals: LeadLeftDealUpload[]): Promise<LeadLeftUploadResult> {
+  const { data } = await apiClient.post<LeadLeftUploadResult>('/td/new-issues', deals);
+  return data;
+}
+
+/** List the current lead-left board (seeded + uploaded deals). */
+export async function listLeadLeftDeals(): Promise<LeadLeftDeal[]> {
+  const { data } = await apiClient.get<LeadLeftDeal[]>('/td/new-issues');
   return data;
 }

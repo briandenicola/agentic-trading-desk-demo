@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using OrchestrationApi;
 using OrchestrationApi.Agents;
@@ -67,6 +68,7 @@ builder.Services.AddScoped<TdAgentRunner>();
 
 // --- New Issue Radar storyboard: DEMO composer (offline) + LIVE Foundry runner. Same
 // TdNewIssueStoryboard shape in both modes (Principle III). ---
+builder.Services.AddScoped<LeadLeftEnricher>();
 builder.Services.AddScoped<TdNewIssueComposer>();
 builder.Services.AddScoped<TdNewIssueRunner>();
 
@@ -274,6 +276,57 @@ app.MapPost("/api/agent/td-new-issue", async (
     }
 
     return Results.Json(storyboard, TdNewIssueJson.Options);
+});
+
+// --- Lead-left deal board (New Issue Radar): the browser parses an .xlsx/.csv of possible
+// lead-left deals client-side and POSTs the structured deals here; we proxy to the mock-api
+// new-issue store over HTTP (Principle II). GET returns the current board (seeded + uploaded).
+// Uploads are non-durable — they reset on a mock-api restart. ---
+app.MapGet("/api/td/new-issues", async (
+    MockApiClient mockApi, [FromQuery] string? issuer, [FromQuery] string? securityId, CancellationToken ct) =>
+{
+    var query = new List<string>();
+    if (!string.IsNullOrWhiteSpace(issuer)) query.Add($"issuer={Uri.EscapeDataString(issuer)}");
+    if (!string.IsNullOrWhiteSpace(securityId)) query.Add($"securityId={Uri.EscapeDataString(securityId)}");
+    var path = "/mock/td/new-issues" + (query.Count > 0 ? "?" + string.Join("&", query) : "");
+
+    try
+    {
+        var node = await mockApi.GetJsonAsync(path, ct);
+        return Results.Json(node ?? new JsonArray());
+    }
+    catch
+    {
+        return Results.Json(Array.Empty<object>());
+    }
+});
+
+app.MapPost("/api/td/new-issues", async (
+    [FromBody] JsonNode? deals, MockApiClient mockApi, CancellationToken ct) =>
+{
+    if (deals is not JsonArray arr || arr.Count == 0)
+    {
+        return Results.Problem(
+            title: "No deals",
+            detail: "Provide a non-empty JSON array of lead-left deals.",
+            statusCode: StatusCodes.Status400BadRequest);
+    }
+
+    HttpResponseMessage response;
+    try
+    {
+        response = await mockApi.PostJsonAsync("/mock/td/new-issues", arr, ct);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(
+            title: "Upload failed",
+            detail: ex.Message,
+            statusCode: StatusCodes.Status502BadGateway);
+    }
+
+    var body = await response.Content.ReadFromJsonAsync<JsonNode>(ct);
+    return Results.Json(body ?? new JsonObject(), statusCode: (int)response.StatusCode);
 });
 
 // --- Admin / feed ingest endpoints (002 US3): same ingestion + reactive path as a real

@@ -24,6 +24,13 @@ public sealed record TdNewIssueStoryboard
     public required IReadOnlyList<TdStoryboardStep> Steps { get; init; }
     public required TdOutreachRecommendation Outreach { get; init; }
     /// <summary>
+    /// The "lead-left board": every primary new-issue deal the desk is tracking (seeded plus any
+    /// uploaded via the spreadsheet path), with OUR syndicate role on each. Lets the cockpit show
+    /// which deals we run the books on, independent of the issuer currently in focus. Null/empty
+    /// when no deals are loaded.
+    /// </summary>
+    public IReadOnlyList<LeadLeftDeal>? LeadLeftBoard { get; init; }
+    /// <summary>
     /// Injected/live market events (002 US2) that touch this issuer, its tranches, sector, or the
     /// focus client — folded in by the reactive SSE path so the storyboard reacts to the News Desk
     /// the same way the briefings do. Null/empty when nothing live is in view.
@@ -41,6 +48,16 @@ public sealed record NewIssueIssuer
     public string? Summary { get; init; }
     public string? AnnouncedAt { get; init; }                        // timestamp of the announcement
     public required IReadOnlyList<NewIssueTranche> Tranches { get; init; }
+
+    /// <summary>True when OUR desk is the lead-left bookrunner on this deal.</summary>
+    public bool? LeadLeft { get; init; }
+    /// <summary>OUR syndicate role, e.g. "Lead-Left Bookrunner", "Joint Bookrunner", "Co-Manager".</summary>
+    public string? SyndicateRole { get; init; }
+    public string? BookStatus { get; init; }                         // "Books open" | "Priced" | …
+    public string? PricingDate { get; init; }                        // expected pricing date
+    /// <summary>Share of allocation our desk controls as lead-left (0..1 fraction).</summary>
+    public double? OurAllocationControlPct { get; init; }
+    public IReadOnlyList<string>? CoManagers { get; init; }
 }
 
 /// <summary>One leg of the new issue (the primary equity or the new senior note).</summary>
@@ -51,6 +68,25 @@ public sealed record NewIssueTranche
     public required string AssetClass { get; init; }                 // "Equity" | "Corporate Bond"
     public string? Detail { get; init; }                             // "6.00% 2034 · BBB-" / "Primary equity"
     public double? ReferencePrice { get; init; }
+    /// <summary>True when this tranche is part of a deal we run lead-left.</summary>
+    public bool? LeadLeft { get; init; }
+}
+
+/// <summary>
+/// A primary new-issue deal the desk is tracking, with OUR syndicate role. Seeded from the mock
+/// systems-of-record and augmentable via the spreadsheet-upload path. Backs the lead-left board.
+/// </summary>
+public sealed record LeadLeftDeal
+{
+    public required string Issuer { get; init; }
+    public string? Sector { get; init; }
+    public string? Role { get; init; }                               // our syndicate role
+    public bool LeadLeft { get; init; }
+    public string? BookStatus { get; init; }
+    public string? PricingDate { get; init; }
+    public double? AllocationControlPct { get; init; }
+    public IReadOnlyList<string>? TrancheSecurityIds { get; init; }
+    public string? Source { get; init; }                             // "seed" | "upload"
 }
 
 /// <summary>A single beat of the storyboard, revealed one step at a time in the UI.</summary>
@@ -78,7 +114,7 @@ public sealed record StoryboardMetric
 /// <summary>A supporting record from a system-of-record (the "receipts" behind a beat).</summary>
 public sealed record StoryboardEvidence
 {
-    public required string Kind { get; init; }                       // news|holding|rfq|trade|crm|inquiry|axe
+    public required string Kind { get; init; }                       // news|holding|rfq|trade|crm|inquiry|axe|syndicate
     public required string Label { get; init; }
     public string? Detail { get; init; }
     public string? RefId { get; init; }                              // source record id (RFQ-XXXX, TRD-XXXX, ...)

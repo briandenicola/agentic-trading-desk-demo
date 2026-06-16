@@ -126,4 +126,9 @@ Return **only** a JSON object — no prose, no markdown fences — matching this
   source record in `refId`.
 - `outreach.tradeIdea.side` ∈ {`Buy`, `Sell`} (client-side).
 - `notes` is optional; include it only to explain degraded/empty results.
+- The cockpit folds in the desk's **lead-left syndicate context** (whether we run the books on this
+  deal, our role, book status, pricing date, allocation control, co-managers) after you produce the
+  storyboard, from the new-issue systems-of-record — so you do not need to populate the `leadLeft`,
+  `syndicateRole`, `bookStatus`, `pricingDate`, `ourAllocationControlPct` or `coManagers` fields. Focus
+  on the four beats and the outreach; lead-left highlighting is applied for parity with DEMO.
 - Emit raw JSON only. No additional commentary.

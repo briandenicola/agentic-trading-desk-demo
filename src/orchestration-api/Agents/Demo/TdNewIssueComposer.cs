@@ -18,7 +18,7 @@ namespace OrchestrationApi.Agents.Demo;
 /// runs are byte-identical. No model and no credentials are used. On an upstream gap it
 /// degrades to a structured storyboard carrying <c>notes</c> (FR-011).
 /// </summary>
-public sealed class TdNewIssueComposer(MockApiClient mockApi)
+public sealed class TdNewIssueComposer(MockApiClient mockApi, LeadLeftEnricher leadLeft)
 {
     public const string DefaultIssuerSecurityId = "SEC-3601";   // Prairie Green Renewables (equity)
     public const string DefaultClientId = "CL-2015";            // Crestline Capital
@@ -274,7 +274,7 @@ public sealed class TdNewIssueComposer(MockApiClient mockApi)
             ],
         };
 
-        return new TdNewIssueStoryboard
+        var storyboard = new TdNewIssueStoryboard
         {
             Mode = "DEMO",
             AsOf = asOf.ToString("yyyy-MM-dd"),
@@ -285,6 +285,9 @@ public sealed class TdNewIssueComposer(MockApiClient mockApi)
             Outreach = outreach,
             Notes = notes.Count > 0 ? notes : null,
         };
+
+        // Fold in the desk's lead-left syndicate context (over HTTP) so DEMO and LIVE match.
+        return await leadLeft.EnrichAsync(storyboard, ct);
     }
 
     // ---------------------------------------------------------------- evidence builders

@@ -74,6 +74,23 @@ public static class TdEndpoints
         app.MapGet("/mock/td/narrative-themes", (TdDataStore store) =>
             Results.Json(store.NarrativeThemes()));
 
+        // --- New-issue deals + our syndicate role (lead-left bookrunner highlighting) ---
+        // GET lists seeded + uploaded deals (optional issuer / securityId filter); POST ingests
+        // deals parsed from an uploaded spreadsheet (non-durable — resets on restart).
+        app.MapGet("/mock/td/new-issues", (string? issuer, string? securityId, TdNewIssueStore store) =>
+            Results.Json(store.List(issuer, securityId)));
+
+        app.MapPost("/mock/td/new-issues", (MockApi.Models.TdNewIssue[]? deals, TdNewIssueStore store) =>
+        {
+            if (deals is null || deals.Length == 0)
+                return Results.Json(new { error = "Provide at least one new-issue deal." }, statusCode: StatusCodes.Status400BadRequest);
+
+            var (added, updated, all) = store.Ingest(deals);
+            return Results.Json(
+                new { added, updated, total = all.Count, deals = all },
+                statusCode: StatusCodes.Status201Created);
+        });
+
         // --- Readiness probe for the trading-desk dataset ---
         app.MapGet("/mock/td/readyz", (TdDataStore store) =>
             store.IsReady

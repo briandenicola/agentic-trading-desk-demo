@@ -26,6 +26,7 @@ public sealed class TdNewIssueRunner(
     IConfiguration config,
     TdBriefingTools tools,
     TdNewIssueComposer composer,
+    LeadLeftEnricher leadLeft,
     ILogger<TdNewIssueRunner> logger)
 {
     private const string AgentName = "trading-desk-new-issue";
@@ -104,7 +105,8 @@ public sealed class TdNewIssueRunner(
             }
 
             runSpan?.SetStatus(ActivityStatusCode.Ok);
-            return storyboard with { Mode = "LIVE" };
+            // Fold in the desk's lead-left syndicate context so LIVE matches DEMO (Principle III).
+            return await leadLeft.EnrichAsync(storyboard with { Mode = "LIVE" }, ct);
         }
         catch (Exception ex)
         {
