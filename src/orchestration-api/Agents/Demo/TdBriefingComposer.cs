@@ -224,36 +224,72 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
             .Take(4)
             .ToList();
 
+        // Match a public news item to our own published research on the same name — directly, or
+        // via a shared issuer (equity headline ↔ the issuer's bonds) — so we can connect the public
+        // tape to the internal house view (constitution: news is a catalyst, not the headline).
+        JsonNode? ResearchFor(string? sid)
+        {
+            if (string.IsNullOrWhiteSpace(sid)) return null;
+            var direct = relevantResearch.FirstOrDefault(r => Eq(Str(r, "relatedSecurityId"), sid));
+            if (direct is not null) return direct;
+            var issuer = securities.TryGetValue(sid, out var sec) ? Str(sec, "issuer") : null;
+            if (issuer is null) return null;
+            return relevantResearch.FirstOrDefault(r =>
+            {
+                var rsid = Str(r, "relatedSecurityId");
+                var rIssuer = rsid is not null && securities.TryGetValue(rsid, out var rs) ? Str(rs, "issuer") : null;
+                return rIssuer is not null && Eq(rIssuer, issuer);
+            });
+        }
+
         var newsScore = 0;
+        var pairScore = 0;
+        var pairedResearchIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var n in relevantNews)
         {
             newsScore += NewsItem + (IsStrongSentiment(Str(n, "sentiment")) ? SentimentBoost : 0);
             var sid = Str(n, "relatedSecurityId");
+            var detail = Str(n, "summary");
+            var paired = ResearchFor(sid);
+            if (paired is not null)
+            {
+                pairScore += NewsResearchPair;
+                var rid = Str(paired, "researchId");
+                if (rid is not null) pairedResearchIds.Add(rid);
+                detail = $"{detail} — connects to our internal research ({Str(paired, "ratingAction")}: {Str(paired, "targetOrSpreadView")}).";
+            }
             whyNow.Add(new WhyNowDriver
             {
                 Kind = "news",
                 Label = $"{Str(n, "sentiment") ?? "Neutral"} news on {SecName(securities, sid)}: {Str(n, "headline")}",
-                Detail = Str(n, "summary"),
+                Detail = detail,
                 SecurityId = sid,
                 RefId = Str(n, "newsId"),
             });
         }
-        newsScore = Math.Min(newsScore, 80);
+        newsScore = Math.Min(newsScore, 50);
+        pairScore = Math.Min(pairScore, 30);
         var researchScore = 0;
         foreach (var r in relevantResearch)
         {
             researchScore += ResearchAction;
             var sid = Str(r, "relatedSecurityId");
+            var rid = Str(r, "researchId");
+            var label = $"{Str(r, "ratingAction")} on {SecName(securities, sid)} — {Str(r, "title")}";
+            if (rid is not null && pairedResearchIds.Contains(rid))
+            {
+                label = $"{label} (confirms the public tape)";
+            }
             whyNow.Add(new WhyNowDriver
             {
                 Kind = "research",
-                Label = $"{Str(r, "ratingAction")} on {SecName(securities, sid)} — {Str(r, "title")}",
+                Label = label,
                 Detail = $"{Str(r, "analystName")}: {Str(r, "shortSummary")} ({Str(r, "targetOrSpreadView")})",
                 SecurityId = sid,
-                RefId = Str(r, "researchId"),
+                RefId = rid,
             });
         }
-        newsScore = Math.Min(newsScore + researchScore, 100);
+        newsScore = Math.Min(newsScore + researchScore + pairScore, 100);
 
         // --- (b) open RFQs awaiting follow-up ---
         var rfqScore = 0;
@@ -302,6 +338,34 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
             });
         }
         inquiryScore = Math.Min(inquiryScore, 60);
+
+        // --- (c2) engaged-but-didn't-trade: the client signalled two-sided intent (an RFQ or an
+        //     inquiry) on a name but has NO executed trade on it. The hottest unconverted lead —
+        //     boost it hard and lead the card with it so we call to CONVERT the interest. ---
+        var tradedSids = trades
+            .Select(t => Str(t, "securityId"))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var engagedSids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var rfq in rfqs) AddIf(engagedSids, Str(rfq, "securityId"));
+        foreach (var inq in inquiries) AddIf(engagedSids, Str(inq, "inferredSecurity"));
+        var engagedNoTradeSids = engagedSids
+            .Where(s => !tradedSids.Contains(s))
+            .OrderBy(s => s, StringComparer.Ordinal)
+            .ToList();
+        var engagedNoTradeScore = Math.Min(engagedNoTradeSids.Count * EngagedNoTrade, 80);
+        if (engagedNoTradeSids.Count > 0)
+        {
+            var names = string.Join(", ", engagedNoTradeSids.Take(3).Select(s => SecName(securities, s)));
+            whyNow.Add(new WhyNowDriver
+            {
+                Kind = "engaged",
+                Label = $"Engaged but hasn't traded — {names}",
+                Detail = "Client showed two-sided intent (RFQ / inquiry) but no execution on the name yet — highest-conviction follow-up: call to convert the interest.",
+                SecurityId = engagedNoTradeSids[0],
+            });
+        }
 
         // --- (d) inventory axes matching this client's book (top 4 by desk size) ---
         var axeScore = 0;
@@ -355,16 +419,16 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
             });
         }
 
-        var raw = newsScore + rfqScore + inquiryScore + axeScore + crmScore;
+        var raw = newsScore + rfqScore + inquiryScore + engagedNoTradeScore + axeScore + crmScore;
         var rationale = new TdCallRationale
         {
             NewsRelevance = Intensity(newsScore),
-            OpenRfqWeight = Intensity(rfqScore),
+            OpenRfqWeight = Intensity(rfqScore + engagedNoTradeScore),
             InquiryWeight = Intensity(inquiryScore),
             InventoryAxeMatch = Intensity(axeScore),
             Urgency = Intensity(crmScore),
             CompositeScore = Intensity(raw),
-            Explanation = BuildExplanation(client, newsScore, rfqScore, inquiryScore, axeScore, crmScore),
+            Explanation = BuildExplanation(client, newsScore, rfqScore, inquiryScore, engagedNoTradeScore, axeScore, crmScore),
         };
 
         return new ScoredClient
@@ -425,7 +489,8 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
         {
             var point = d.Kind switch
             {
-                "news" => $"Lead with the tape: {d.Label}. Frame the read-through for their book.",
+                "engaged" => $"Convert the interest: {d.Label}. They engaged but haven't traded — lead with a level and close it.",
+                "news" => $"Use the tape as the hook: {d.Label}. Tie it to our internal research read and their book.",
                 "research" => $"Walk through desk research — {d.Label}. Position it against their current exposure.",
                 "rfq" => $"Close the loop on the open RFQ: {d.Label}. Ask if it's still live and offer a level.",
                 "inquiry" => $"Pick up their inquiry: {d.Label}. Bring colour and a two-sided market.",
@@ -453,6 +518,7 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
         }
         return top.Kind switch
         {
+            "engaged" => $"Call {name} to convert engaged-but-unfilled interest — {top.Label}. They showed intent without trading; lead with a level and close it.",
             "axe" => $"Call {name} first on the axe — {top.Label}. They're a natural counterparty; lead with the level.",
             "rfq" => $"Call {name} to revive the open RFQ — {top.Label}. Quote a level and lock the trade.",
             "news" => $"Call {name} on the overnight tape — {top.Label}. Bring the read-through and an actionable idea.",
@@ -714,14 +780,15 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
 
     // ---------------------------------------------------------------- helpers
 
-    private static string BuildExplanation(JsonNode client, int newsScore, int rfqScore, int inquiryScore, int axeScore, int crmScore)
+    private static string BuildExplanation(JsonNode client, int newsScore, int rfqScore, int inquiryScore, int engagedNoTradeScore, int axeScore, int crmScore)
     {
         var name = Str(client, "clientName") ?? "This client";
         var parts = new List<string>();
-        if (newsScore > 0) parts.Add($"news/research relevance to their book ({newsScore})");
+        if (engagedNoTradeScore > 0) parts.Add($"engaged-but-didn't-trade interest to convert ({engagedNoTradeScore})");
         if (rfqScore > 0) parts.Add($"open RFQ follow-ups ({rfqScore})");
         if (inquiryScore > 0) parts.Add($"live inquiries ({inquiryScore})");
         if (axeScore > 0) parts.Add($"a dealer axe matching their demand ({axeScore})");
+        if (newsScore > 0) parts.Add($"news/research catalysts on their book ({newsScore})");
         if (crmScore > 0) parts.Add($"an open CRM thread ({crmScore})");
         return parts.Count == 0
             ? $"{name} has no fresh signals today — a relationship check-in."
@@ -738,9 +805,9 @@ public sealed class TdBriefingComposer(MockApiClient mockApi, EventTools eventTo
     {
         int Weight(string kind) => kind switch
         {
-            // Lead with the timely catalyst (news/research), then our axe as the commercial hook,
-            // then open loops (rfq/inquiry) and relationship context.
-            "news" => 6, "research" => 5, "axe" => 4, "rfq" => 3, "inquiry" => 2, "crm" => 1, _ => 0,
+            // Lead with client engagement — especially the engaged-but-didn't-trade lead — then our
+            // axe, then open loops, with the news/research catalyst and relationship context behind.
+            "engaged" => 8, "rfq" => 7, "inquiry" => 6, "axe" => 5, "holding" => 4, "research" => 3, "news" => 2, "crm" => 1, _ => 0,
         };
         return drivers
             .OrderByDescending(d => Weight(d.Kind))

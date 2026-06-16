@@ -12,6 +12,7 @@ const BAND_COLOR: Record<number, string> = {
 };
 
 const KIND_COLOR: Record<string, string> = {
+  engaged: mint.green,
   news: mint.cyan,
   research: mint.violetBright,
   rfq: mint.amber,
@@ -22,6 +23,7 @@ const KIND_COLOR: Record<string, string> = {
 };
 
 const KIND_LABEL: Record<string, string> = {
+  engaged: 'ENGAGED · NO TRADE',
   news: 'NEWS',
   research: 'RESEARCH',
   rfq: 'OPEN RFQ',

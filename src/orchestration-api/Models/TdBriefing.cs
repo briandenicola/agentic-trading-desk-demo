@@ -123,7 +123,7 @@ public sealed record TdCallRationale
 /// <summary>A concrete reason to call this client now, traced to a system-of-record record.</summary>
 public sealed record WhyNowDriver
 {
-    public required string Kind { get; init; }                   // news|research|rfq|inquiry|holding|axe|crm
+    public required string Kind { get; init; }                   // engaged|news|research|rfq|inquiry|holding|axe|crm
     public required string Label { get; init; }                  // short headline
     public string? Detail { get; init; }                         // supporting text
     public string? SecurityId { get; init; }

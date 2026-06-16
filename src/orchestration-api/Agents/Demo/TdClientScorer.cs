@@ -17,23 +17,30 @@ namespace OrchestrationApi.Agents.Demo;
 /// </summary>
 public static class TdClientScorer
 {
-    // News / research relevance
-    public const int NewsItem = 12;
-    public const int ResearchAction = 16;
-    public const int SentimentBoost = 6;          // strong (Positive/Negative) vs Mixed/Neutral
+    // News / research relevance — the CATALYST that explains "why now", deliberately weighted
+    // BELOW client-engagement signals so the briefing leads with actionable, engaged clients
+    // rather than the loudest headline.
+    public const int NewsItem = 7;
+    public const int ResearchAction = 10;
+    public const int SentimentBoost = 4;          // strong (Positive/Negative) vs Mixed/Neutral
+    public const int NewsResearchPair = 10;       // public news paired with our own internal research on the same name
 
-    // Open RFQ follow-up
-    public const int RfqQuoted = 22;              // quoted, awaiting client decision
-    public const int RfqNoFollowUp = 12;          // received, never closed out
-    public const int RfqPassed = 8;               // we passed; revisit appetite
+    // Open RFQ follow-up — direct, two-sided client engagement.
+    public const int RfqQuoted = 24;              // quoted, awaiting client decision
+    public const int RfqNoFollowUp = 16;          // received, never closed out
+    public const int RfqPassed = 10;              // we passed; revisit appetite
 
-    // Inquiries
-    public const int InquiryUrgent = 26;
-    public const int InquiryRecent = 12;
-    public const int InquiryAmbiguous = 8;        // missing inferred security/direction → clarify
+    // Inquiries — the client raised it / mentioned it in chat.
+    public const int InquiryUrgent = 28;
+    public const int InquiryRecent = 14;
+    public const int InquiryAmbiguous = 10;       // missing inferred security/direction → clarify
+
+    // Engaged-but-didn't-trade — the hottest unconverted lead: the client signalled intent via an
+    // RFQ or inquiry on a security but has NO matching executed trade on it. Added once per name.
+    public const int EngagedNoTrade = 26;
 
     // Inventory axe match (our axe ↔ a security the client trades)
-    public const int AxeMatch = 18;
+    public const int AxeMatch = 22;
 
     // CRM urgency
     public const int CrmHigh = 22;
