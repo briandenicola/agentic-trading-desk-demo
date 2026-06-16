@@ -166,4 +166,50 @@ describe('TdNewIssueScene', () => {
     fireEvent.click(screen.getByText('Prioritized outreach'));
     expect(screen.getByText(/LEAD-LEFT ALLOCATION/)).toBeInTheDocument();
   });
+
+  it('drives the radar from an uploaded deal on the lead-left board', async () => {
+    const driverStory: TdNewIssueStoryboard = {
+      ...mockStory,
+      leadLeftBoard: [
+        {
+          dealId: 'NI-3601',
+          issuer: 'Prairie Green Renewables',
+          role: 'Lead-Left Bookrunner',
+          leadLeft: true,
+          trancheSecurityIds: ['SEC-3601', 'SEC-3602'],
+          source: 'seed',
+        },
+        {
+          dealId: 'NI-up001',
+          issuer: 'Cobalt Ridge Mining',
+          role: 'Lead-Left Bookrunner',
+          leadLeft: true,
+          bookStatus: 'Books open',
+          trancheSecurityIds: ['SEC-9001'],
+          source: 'upload',
+        },
+      ],
+    };
+
+    const postSpy = vi
+      .spyOn(apiClient, 'post')
+      .mockResolvedValue({ data: driverStory } as AxiosResponse<TdNewIssueStoryboard>);
+
+    renderScene();
+    await screen.findByTestId('ni-storyboard');
+
+    // The seeded deal (SEC-3601) is driving the radar by default.
+    expect(screen.getByText('DRIVING RADAR')).toBeInTheDocument();
+
+    // Click "Drive radar" on the uploaded Cobalt Ridge deal → re-runs focused on SEC-9001.
+    const driveButtons = screen.getAllByTestId('ni-drive-radar');
+    const cobalt = driveButtons.find((b) => !(b as HTMLButtonElement).disabled);
+    fireEvent.click(cobalt!);
+
+    expect(postSpy).toHaveBeenCalledWith(
+      '/agent/td-new-issue',
+      { payload: { issuerSecurityId: 'SEC-9001', clientId: 'CL-2015', date: '2026-05-22' } },
+      expect.objectContaining({ timeout: expect.any(Number) }),
+    );
+  });
 });
