@@ -24,15 +24,18 @@ export function useTdNewIssue(key: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [liveAlert, setLiveAlert] = useState<LiveAlert | null>(null);
+  // The new-issue security currently driving the radar. Defaults to the demo issuer
+  // (Prairie Green), but the lead-left board can re-point it at an uploaded deal.
+  const [driver, setDriver] = useState<string>(NI_ISSUER_SECURITY);
   const didAutoRun = useRef(false);
 
   const load = useCallback(
-    async (force = false) => {
+    async (force = false, issuerSecurityId: string = NI_ISSUER_SECURITY, clientId: string = NI_CLIENT) => {
       setLoading(true);
       setError(null);
       try {
         const req = {
-          payload: { issuerSecurityId: NI_ISSUER_SECURITY, clientId: NI_CLIENT, date: NI_DATE },
+          payload: { issuerSecurityId, clientId, date: NI_DATE },
         };
         const result = force
           ? await runTdNewIssue(req)
@@ -47,14 +50,21 @@ export function useTdNewIssue(key: string) {
     [key, setStory],
   );
 
-  const reload = useCallback(() => {
-    void load(true);
-  }, [load]);
+  // Re-run the radar. Pass an override to drive it from a specific deal/security; omit to
+  // re-run the deal currently in focus.
+  const reload = useCallback(
+    (override?: { issuerSecurityId?: string; clientId?: string }) => {
+      const next = override?.issuerSecurityId?.trim() || driver || NI_ISSUER_SECURITY;
+      setDriver(next);
+      void load(true, next, override?.clientId?.trim() || NI_CLIENT);
+    },
+    [load, driver],
+  );
 
   useEffect(() => {
     if (didAutoRun.current || story !== null) return;
     didAutoRun.current = true;
-    void load(false);
+    void load(false, NI_ISSUER_SECURITY, NI_CLIENT);
   }, [story, load]);
 
   // Reactive live push: once the storyboard is on screen, subscribe to the New Issue
@@ -71,12 +81,12 @@ export function useTdNewIssue(key: string) {
           setLiveAlert(update.alert);
         },
       },
-      { persona: NI_ISSUER_SECURITY },
+      { persona: driver },
     );
     return unsubscribe;
-  }, [hasStory, setStory]);
+  }, [hasStory, setStory, driver]);
 
   const dismissAlert = useCallback(() => setLiveAlert(null), []);
 
-  return { story, loading, error, reload, liveAlert, dismissAlert };
+  return { story, loading, error, reload, liveAlert, dismissAlert, activeIssuerSecurity: driver };
 }

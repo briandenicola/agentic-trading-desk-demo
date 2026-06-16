@@ -127,6 +127,7 @@ public sealed class LeadLeftEnricher(MockApiClient mockApi)
 
     private static LeadLeftDeal ToDeal(JsonNode d) => new()
     {
+        DealId = Str(d, "dealId"),
         Issuer = Str(d, "issuer") ?? "Unknown issuer",
         Sector = Str(d, "sector"),
         Role = Str(d, "ourRole"),

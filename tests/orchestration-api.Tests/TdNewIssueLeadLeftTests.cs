@@ -58,6 +58,48 @@ public sealed class TdNewIssueLeadLeftTests : IClassFixture<WebApplicationFactor
     }
 
     [Fact]
+    public async Task Demo_storyboard_can_be_driven_from_an_uploaded_deal()
+    {
+        using var backing = new MockApiBackedFactory();
+        var client = backing.CreateDemoClient(_factory);
+
+        // Upload a brand-new deal whose tranche security has no market-data interest wired.
+        var upload = new[]
+        {
+            new
+            {
+                issuer = "Cobalt Ridge Mining",
+                sector = "Materials",
+                ourRole = "Lead-Left Bookrunner",
+                leadLeft = true,
+                bookStatus = "Books open",
+                pricingDate = "2026-06-10",
+                ourAllocationControlPct = 0.5,
+                trancheSecurityIds = new[] { "SEC-9001" },
+            },
+        };
+        (await client.PostAsJsonAsync("/api/td/new-issues", upload)).StatusCode.Should().Be(HttpStatusCode.Created);
+
+        // Drive the radar from that uploaded deal's tranche security id.
+        var response = await client.PostAsJsonAsync(
+            "/api/agent/td-new-issue",
+            new { payload = new { issuerSecurityId = "SEC-9001" } });
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = (await response.Content.ReadFromJsonAsync<JsonNode>())!;
+
+        // The storyboard is now focused on the uploaded issuer, not the default (Prairie Green).
+        var issuer = body["issuer"]!.AsObject();
+        issuer["name"]!.GetValue<string>().Should().Be("Cobalt Ridge Mining");
+        issuer["leadLeft"]!.GetValue<bool>().Should().BeTrue();
+        issuer["syndicateRole"]!.GetValue<string>().Should().Contain("Lead-Left");
+
+        // It is seeded coherently (an announcement beat exists) and the board still carries the deal.
+        body["steps"]!.AsArray().Should().Contain(s => s!["id"]!.GetValue<string>() == "announcement");
+        body["leadLeftBoard"]!.AsArray()
+            .Should().Contain(d => d!["issuer"]!.GetValue<string>() == "Cobalt Ridge Mining");
+    }
+
+    [Fact]
     public async Task Upload_proxy_ingests_deals_and_lists_them()
     {
         using var backing = new MockApiBackedFactory();

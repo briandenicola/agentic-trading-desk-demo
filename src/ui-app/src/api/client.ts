@@ -545,6 +545,7 @@ export interface NewIssueIssuer {
 
 /** A primary new-issue deal the desk is tracking, with OUR syndicate role (the lead-left board). */
 export interface LeadLeftDeal {
+  dealId?: string;
   issuer: string;
   sector?: string;
   role?: string;

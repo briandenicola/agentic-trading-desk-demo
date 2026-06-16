@@ -20,6 +20,7 @@ import CampaignRoundedIcon from '@mui/icons-material/CampaignRounded';
 import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
 import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
+import RadarRoundedIcon from '@mui/icons-material/RadarRounded';
 import WorkspacePremiumRoundedIcon from '@mui/icons-material/WorkspacePremiumRounded';
 import CommandCenterShell from '../../components/CommandCenterShell';
 import LiveAlertBanner from '../../components/LiveAlertBanner';
@@ -36,7 +37,7 @@ import type {
 } from '../../api/client';
 import { uploadLeadLeftDeals } from '../../api/client';
 import { parseLeadLeftSpreadsheet } from './parseLeadLeftDeals';
-import { useTdNewIssue } from './useTdNewIssue';
+import { useTdNewIssue, NI_ISSUER_SECURITY } from './useTdNewIssue';
 import { ChatDockProvider, useChatDock } from '../Workspace/ChatOverlay';
 import { tdChatConfig } from '../TradeDesk/tdChatConfig';
 
@@ -361,7 +362,21 @@ function OutreachCard({ story, onOpenChat }: { story: TdNewIssueStoryboard; onOp
   );
 }
 
-function LeadLeftBoardPanel({ board, onUploaded }: { board: LeadLeftDeal[]; onUploaded: () => void }) {
+function LeadLeftBoardPanel({
+  board,
+  onUploaded,
+  onDrive,
+  activeDriver,
+  driveBusy,
+  onReset,
+}: {
+  board: LeadLeftDeal[];
+  onUploaded: () => void;
+  onDrive: (deal: LeadLeftDeal) => void;
+  activeDriver?: string;
+  driveBusy?: boolean;
+  onReset?: () => void;
+}) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
@@ -400,6 +415,18 @@ function LeadLeftBoardPanel({ board, onUploaded }: { board: LeadLeftDeal[]; onUp
           Possible deals we run · {board.length}
         </Typography>
         <Box sx={{ flex: 1 }} />
+        {onReset && (
+          <Button
+            size="small"
+            variant="text"
+            onClick={onReset}
+            disabled={driveBusy}
+            sx={{ fontSize: 9, fontWeight: 700 }}
+            data-testid="ni-reset-driver"
+          >
+            Reset to default
+          </Button>
+        )}
         <input
           ref={fileRef}
           type="file"
@@ -419,6 +446,10 @@ function LeadLeftBoardPanel({ board, onUploaded }: { board: LeadLeftDeal[]; onUp
         </Button>
       </Box>
 
+      <Typography sx={{ fontSize: 10, color: mint.textFaint, mb: 1 }}>
+        Upload possible lead-left deals, then “Drive radar” to re-run the New Issue Radar focused on that deal.
+      </Typography>
+
       {msg && (
         <Alert severity={msg.kind} sx={{ mb: 1, fontSize: 12, py: 0 }} onClose={() => setMsg(null)}>
           {msg.text}
@@ -431,46 +462,74 @@ function LeadLeftBoardPanel({ board, onUploaded }: { board: LeadLeftDeal[]; onUp
             No deals loaded yet. Upload a spreadsheet of possible lead-left deals to factor them into the radar.
           </Typography>
         )}
-        {board.map((d, i) => (
-          <Box
-            key={`${d.issuer}-${d.source ?? 'seed'}-${i}`}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              py: 0.5,
-              borderBottom: `1px solid ${mint.borderSoft}`,
-            }}
-          >
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Typography sx={{ fontSize: 12, fontWeight: 700, color: mint.text }}>{d.issuer}</Typography>
-                {d.leadLeft && <LeadLeftBadge />}
-              </Box>
-              {(d.role || d.bookStatus) && (
-                <Typography sx={{ fontSize: 10, color: mint.textDim }}>
-                  {d.role}
-                  {d.role && d.bookStatus ? ' · ' : ''}
-                  {d.bookStatus}
-                </Typography>
-              )}
-            </Box>
-            {d.pricingDate && (
-              <Typography sx={{ fontSize: 10, color: mint.textFaint }}>prices {d.pricingDate}</Typography>
-            )}
-            <Chip
-              label={(d.source ?? 'seed').toUpperCase()}
-              size="small"
+        {board.map((d, i) => {
+          const driver = d.trancheSecurityIds?.[0];
+          const isActive = driver != null && driver === activeDriver;
+          return (
+            <Box
+              key={`${d.issuer}-${d.source ?? 'seed'}-${i}`}
+              data-testid="ni-lead-left-row"
               sx={{
-                height: 16,
-                fontSize: 8,
-                color: d.source === 'upload' ? mint.cyan : mint.textFaint,
-                bgcolor: 'transparent',
-                border: `1px solid ${d.source === 'upload' ? mint.cyan : mint.borderHard}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                py: 0.5,
+                px: 0.75,
+                borderRadius: 1,
+                borderBottom: `1px solid ${mint.borderSoft}`,
+                bgcolor: isActive ? `${mint.blue}14` : 'transparent',
+                border: isActive ? `1px solid ${mint.blue}` : '1px solid transparent',
               }}
-            />
-          </Box>
-        ))}
+            >
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: mint.text }}>{d.issuer}</Typography>
+                  {d.leadLeft && <LeadLeftBadge />}
+                  {isActive && (
+                    <Chip
+                      label="DRIVING RADAR"
+                      size="small"
+                      sx={{ height: 15, fontSize: 8, fontWeight: 800, color: mint.blue, bgcolor: 'transparent', border: `1px solid ${mint.blue}` }}
+                    />
+                  )}
+                </Box>
+                {(d.role || d.bookStatus) && (
+                  <Typography sx={{ fontSize: 10, color: mint.textDim }}>
+                    {d.role}
+                    {d.role && d.bookStatus ? ' · ' : ''}
+                    {d.bookStatus}
+                  </Typography>
+                )}
+              </Box>
+              {d.pricingDate && (
+                <Typography sx={{ fontSize: 10, color: mint.textFaint }}>prices {d.pricingDate}</Typography>
+              )}
+              <Chip
+                label={(d.source ?? 'seed').toUpperCase()}
+                size="small"
+                sx={{
+                  height: 16,
+                  fontSize: 8,
+                  color: d.source === 'upload' ? mint.cyan : mint.textFaint,
+                  bgcolor: 'transparent',
+                  border: `1px solid ${d.source === 'upload' ? mint.cyan : mint.borderHard}`,
+                }}
+              />
+              <Button
+                size="small"
+                variant={isActive ? 'contained' : 'outlined'}
+                disabled={driveBusy || driver == null || isActive}
+                onClick={() => onDrive(d)}
+                startIcon={<RadarRoundedIcon sx={{ fontSize: 14 }} />}
+                sx={{ minWidth: 0, py: 0.1, px: 0.9, fontSize: 9, fontWeight: 700 }}
+                title={driver == null ? 'Add a tranche security id to drive the radar from this deal' : 'Re-run the radar focused on this deal'}
+                data-testid="ni-drive-radar"
+              >
+                {isActive ? 'Driving' : 'Drive radar'}
+              </Button>
+            </Box>
+          );
+        })}
       </Stack>
     </Paper>
   );
@@ -486,7 +545,7 @@ export default function TdNewIssueScene() {
 
 function TdNewIssueInner() {
   const { openChat } = useChatDock();
-  const { story, loading, error, reload, liveAlert, dismissAlert } = useTdNewIssue('td-new-issue/story');
+  const { story, loading, error, reload, liveAlert, dismissAlert, activeIssuerSecurity } = useTdNewIssue('td-new-issue/story');
   const [stepIdx, setStepIdx] = useState(0);
 
   const steps = useMemo(() => (story ? [...story.steps].sort((a, b) => a.order - b.order) : []), [story]);
@@ -534,7 +593,7 @@ function TdNewIssueInner() {
         <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
           <Button
             variant="contained"
-            onClick={reload}
+            onClick={() => reload()}
             disabled={loading}
             startIcon={loading ? <CircularProgress size={16} /> : <RefreshRoundedIcon />}
           >
@@ -611,7 +670,18 @@ function TdNewIssueInner() {
             </Paper>
 
             {/* Lead-left board + spreadsheet upload */}
-            <LeadLeftBoardPanel board={story.leadLeftBoard ?? []} onUploaded={reload} />
+            <LeadLeftBoardPanel
+              board={story.leadLeftBoard ?? []}
+              onUploaded={reload}
+              onDrive={(deal) => reload({ issuerSecurityId: deal.trancheSecurityIds?.[0] })}
+              activeDriver={activeIssuerSecurity}
+              driveBusy={loading}
+              onReset={
+                activeIssuerSecurity !== NI_ISSUER_SECURITY
+                  ? () => reload({ issuerSecurityId: NI_ISSUER_SECURITY })
+                  : undefined
+              }
+            />
 
             {/* Beat progress rail */}
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }} data-testid="ni-beats">

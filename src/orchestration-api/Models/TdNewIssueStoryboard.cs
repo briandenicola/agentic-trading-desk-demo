@@ -78,6 +78,7 @@ public sealed record NewIssueTranche
 /// </summary>
 public sealed record LeadLeftDeal
 {
+    public string? DealId { get; init; }                             // stable id (e.g. NI-3601 / NI-up001)
     public required string Issuer { get; init; }
     public string? Sector { get; init; }
     public string? Role { get; init; }                               // our syndicate role

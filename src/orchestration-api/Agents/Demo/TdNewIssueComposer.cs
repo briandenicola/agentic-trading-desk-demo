@@ -38,7 +38,11 @@ public sealed class TdNewIssueComposer(MockApiClient mockApi, LeadLeftEnricher l
         var equity = equityInterest?["security"];
         if (equity is null)
         {
-            return BuildDegraded(equityId, focusClientId, asOf, notes);
+            // No market-data security for this id — but it may be a freshly uploaded lead-left deal
+            // (the "drive the radar from an uploaded deal" path). Seed a coherent storyboard from the
+            // new-issue store deal, then let the lead-left enricher fold in our syndicate context.
+            var seeded = await BuildFromUploadedDealAsync(equityId, focusClientId, asOf, notes, ct);
+            return await leadLeft.EnrichAsync(seeded, ct);
         }
 
         var issuerName = Str(equity, "issuer") ?? Str(equity, "securityName") ?? "the issuer";
@@ -359,6 +363,118 @@ public sealed class TdNewIssueComposer(MockApiClient mockApi, LeadLeftEnricher l
                 Date = Str(r, "rfqDate"),
                 SecurityId = debtId,
             });
+        }
+        return list;
+    }
+
+    private async Task<TdNewIssueStoryboard> BuildFromUploadedDealAsync(
+        string driverSecurityId, string clientId, DateOnly asOf, List<string> notes, CancellationToken ct)
+    {
+        // Find the new-issue deal whose tranche carries the requested security id (the deal the user
+        // chose to drive the radar). The new-issue store holds seeded + uploaded deals.
+        var deals = await GetArrayAsync($"/mock/td/new-issues?securityId={Encode(driverSecurityId)}", notes, ct);
+        var deal = deals.FirstOrDefault();
+        if (deal is null)
+        {
+            return BuildDegraded(driverSecurityId, clientId, asOf, notes);
+        }
+
+        var issuerName = Str(deal, "issuer") ?? "the issuer";
+        var sector = Str(deal, "sector");
+        var role = Str(deal, "ourRole");
+        var bookStatus = Str(deal, "bookStatus");
+        var pricingDate = Str(deal, "pricingDate");
+        var dealNotes = Str(deal, "notes");
+        var trancheIds = StrList(deal, "trancheSecurityIds");
+
+        var tranches = trancheIds.Count > 0
+            ? trancheIds.Select((id, i) => new NewIssueTranche
+            {
+                SecurityId = id,
+                SecurityName = id,
+                AssetClass = i == 0 ? "Equity" : "New issue tranche",
+                Detail = i == 0 ? "Primary equity" : "New issue tranche",
+            }).ToList()
+            : [new NewIssueTranche { SecurityId = driverSecurityId, SecurityName = driverSecurityId, AssetClass = "New issue tranche" }];
+
+        var issuer = new NewIssueIssuer
+        {
+            Name = issuerName,
+            Sector = sector,
+            Headline = $"{issuerName} announces a new issue",
+            Summary = dealNotes,
+            Tranches = tranches,
+        };
+
+        var announcementStep = new TdStoryboardStep
+        {
+            Id = "announcement",
+            Order = 1,
+            Beat = "New issue announced",
+            Title = $"{issuerName} is in the market",
+            Narration =
+                $"{issuerName} has a new issue in the pipeline" +
+                (sector is not null ? $" in {sector}" : "") + ". " +
+                "It is on our lead-left board, so the desk's syndicate role is the trigger for who we call first.",
+            Metrics =
+            [
+                new StoryboardMetric { Label = "Status", Value = bookStatus ?? "On the board", Tone = "accent" },
+                new StoryboardMetric { Label = "Tranches", Value = tranches.Count.ToString(CultureInfo.InvariantCulture) },
+            ],
+            Evidence = [],
+        };
+
+        var outreachStep = new TdStoryboardStep
+        {
+            Id = "outreach",
+            Order = 2,
+            Beat = "Prioritized outreach",
+            Title = "Lead with our allocation",
+            Narration =
+                "No existing market-data interest has been wired for this freshly added deal yet — lead the conversation " +
+                "with the desk's syndicate role and priority allocation, then layer in client cross-references as they trade.",
+            Metrics = [],
+            Evidence = [],
+        };
+
+        // Resolve the focus client name where possible (the master may exist even if the security does not).
+        var client = await GetJsonAsync($"/mock/td/clients/{Encode(clientId)}", notes, ct);
+        var clientName = Str(client, "clientName") ?? clientId;
+
+        var outreach = new TdOutreachRecommendation
+        {
+            ClientId = clientId,
+            ClientName = clientName,
+            ClientType = Str(client, "clientType"),
+            Headline = $"Offer priority paper on {issuerName}",
+            TalkingPoints = [],
+            SuggestedAction = $"Call {clientName} to offer a priority allocation on the {issuerName} new issue" +
+                (pricingDate is not null ? $" before books close ({pricingDate})." : "."),
+        };
+
+        notes.Add($"Storyboard driven from the lead-left board deal for '{issuerName}' ({driverSecurityId}); no market-data interest is wired for this security yet.");
+
+        return new TdNewIssueStoryboard
+        {
+            Mode = "DEMO",
+            AsOf = asOf.ToString("yyyy-MM-dd"),
+            Title = "New Issue Radar",
+            Subtitle = $"{issuerName} · {role ?? "new issue"} · driven from an uploaded deal",
+            Issuer = issuer,
+            Steps = [announcementStep, outreachStep],
+            Outreach = outreach,
+            Notes = notes.Count > 0 ? notes : null,
+        };
+    }
+
+    private static List<string> StrList(JsonNode? node, string key)
+    {
+        if (node?[key] is not JsonArray arr) return [];
+        var list = new List<string>();
+        foreach (var item in arr)
+        {
+            var s = item?.GetValue<string>();
+            if (!string.IsNullOrWhiteSpace(s)) list.Add(s!);
         }
         return list;
     }
