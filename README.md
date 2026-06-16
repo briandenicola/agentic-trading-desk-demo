@@ -13,8 +13,8 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 | Route | Scene | Purpose |
 |---|---|---|
 | `/` , `/rm-briefing` | **RM Daily Briefing** | Commercial Banking RM briefing + prioritized call list |
-| `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list (news/research/RFQ/inquiry/inventory-axe driven), trade ideas + talking points; re-ranks live over SSE. Each call card has a seeded **Open Chat** grounded in `/mock/td/*` |
-| `/desk/new-issue` | **New Issue Radar** (Institutional Sales & Trading) | Guided new-issue storyboard: a concurrent debt+equity issue prints, the desk cross-references an existing equity holder who's actively trading the new note, and lands on a prioritized "call now" with allocation, talking points + draft message |
+| `/desk` , `/desk/morning-brief` | **Trading Desk** (Institutional Sales & Trading) | Coverage-salesperson morning planning + prioritized client call list ranked **engagement-first** — open RFQs, inquiries/chat mentions, inventory-axe matches, and especially clients who **engaged but didn't trade** — with news/research demoted to a supporting **catalyst** (public headlines paired to our internal research view by issuer); trade ideas + talking points; re-ranks live over SSE. Each call card has a seeded **Open Chat** grounded in `/mock/td/*` |
+| `/desk/new-issue` | **New Issue Radar** (Institutional Sales & Trading) | Guided new-issue storyboard: a concurrent debt+equity issue prints, the desk cross-references an existing equity holder who's actively trading the new note, and lands on a prioritized "call now" with allocation, talking points + draft message. Features a **Lead-Left Board** that highlights deals we run lead-left, and lets you **upload a spreadsheet (.xlsx/.csv) of possible lead-left deals** — parsed entirely in-browser — and "Drive radar" to re-run the radar focused on an uploaded deal |
 | `/morning-brief` | **Trading Morning Brief** | Municipal-sales morning brief + ranked outreach |
 | `/cockpit` | **Cockpit** | 3-column M.INT dashboard (Client / Ticker / Overall "Morning Call") with the live alert banner |
 | `/chat` | **AI Chat** | Grounded Markets-Intelligence assistant — multi-turn Q&A over the same systems-of-record (who to call, a customer, the market, complaints, pipeline) |
@@ -172,4 +172,5 @@ infra\                   Terraform for ACA, ACR, Key Vault, Foundry
 tasks\                   Taskfile includes for local, build, and cloud workflows
 contracts\               morning-brief and agent API schemas
 openapi\tools.yaml       tool contract for Foundry/MCP import
+samples\                 sample upload files (e.g. lead-left-deals.csv for the New Issue Radar)
 ```
