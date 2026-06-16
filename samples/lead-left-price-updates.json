@@ -1,0 +1,28 @@
+[
+  {
+    "type": "issuer_credit",
+    "headline": "Brightgate Energy equity gaps +6% as the lead-left follow-on prices at a tight 2% discount",
+    "summary": "The concurrent equity tranche (SEC-3006) on our lead-left Brightgate deal priced at a 2% discount to last and traded up ~6% in the grey market on a 3x-covered book. Existing holders are marking up; expect demand for the new senior notes to follow.",
+    "source": "Syndicate Desk (fictional)",
+    "severity": "high",
+    "direction": "positive",
+    "affectedEntities": {
+      "tickers": ["SEC-3006"],
+      "issuers": ["Brightgate Energy Co"],
+      "sectors": ["Energy"]
+    }
+  },
+  {
+    "type": "issuer_credit",
+    "headline": "Brightgate 5.625% 2029 tightens 18bp after the new 6.10% 2034 tranche covers 3.4x",
+    "summary": "Strong demand for the new 2034 senior note (SEC-3650) on our lead-left Brightgate deal dragged the existing 5.625% 2029 (SEC-3105) 18bp tighter on the print. Holders of the 2029 are sitting on a mark-to-market gain; natural switch into the new tranche.",
+    "source": "Credit Desk (fictional)",
+    "severity": "medium",
+    "direction": "positive",
+    "affectedEntities": {
+      "tickers": ["SEC-3105", "SEC-3650"],
+      "issuers": ["Brightgate Energy Co"],
+      "sectors": ["Energy"]
+    }
+  }
+]
