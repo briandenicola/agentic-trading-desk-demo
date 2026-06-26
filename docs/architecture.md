@@ -38,6 +38,8 @@ data and are described in `openapi\tools.yaml` (v0.2.0) alongside the original t
 
 ## Three-layer flow
 
+![Application architecture — React UI scenes call POST /api/agent/{scene} into the orchestration-api, which switches on DEMO_MODE between deterministic C# composers and LIVE Foundry runners, calls HTTP-only tools, and reaches data exclusively through the mock-api stores and fixtures.](src-architecture.png)
+
 ```
 src\ui-app\ ─ POST /api/agent/{rm-briefing,td-briefing,td-new-issue,morning-brief} ─► src\orchestration-api\
                                                      │
@@ -50,7 +52,22 @@ src\ui-app\ ─ POST /api/agent/{rm-briefing,td-briefing,td-new-issue,morning-br
 
 Data flows left-to-right only. The frontend is mode-blind. Orchestration code reaches
 data **exclusively** over the mock-api HTTP seam — it never reads fixtures in-process
-(Principle II / FR-002).
+(Principle II / FR-002). The diagram above maps these layers onto the actual `src/`
+folders; the editable source is [`src-architecture.excalidraw`](src-architecture.excalidraw).
+
+## Deployment topology (Azure Container Apps)
+
+![Azure deployment topology — a Resource Group holds a Container Apps Environment running ui-app (external ingress), orchestration-api and mock-api (internal), plus the agent-provisioner job; alongside ACR, Key Vault, a user-assigned managed identity, Application Insights / Log Analytics, and — in FULL mode — Azure AI Foundry.](infra-architecture.png)
+
+Terraform (`infra/*.tf`, one workspace per region) provisions a **Container Apps Environment**
+with three apps — `ui-app` (the only public ingress), `orchestration-api`, and `mock-api` (both
+internal) — plus the `agent-provisioner` Container App **job**. Supporting platform services are
+**ACR** (image pulls via managed identity), **Key Vault** (Foundry endpoint + App Insights
+connection secrets), a **user-assigned managed identity** (AcrPull + KV Secrets User), and
+**Application Insights / Log Analytics**. `DEMO_MODE` selects DEMO vs. FULL: in FULL mode
+`enable_foundry` also stands up **Azure AI Foundry** (AIServices account + project + model
+deployments) reached over `FOUNDRY_PROJECT_ENDPOINT`. Editable source:
+[`infra-architecture.excalidraw`](infra-architecture.excalidraw).
 
 ## Where the orchestrator vs. the agent live
 

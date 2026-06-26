@@ -47,6 +47,15 @@ The frontend is mode-blind: DEMO and LIVE return the same `MorningBrief` / `RmBr
 mock API HTTP seam; it never reads fixtures in-process. A background poller diffs the event store and
 broadcasts one consolidated re-synthesized briefing per scene over SSE when events arrive.
 
+### Diagrams
+
+| Diagram | Preview | Source |
+|---|---|---|
+| **Application architecture** — `src/` code map: UI scenes → orchestration-api (DEMO/LIVE runners, tools) → mock-api stores | [![Application architecture](docs/src-architecture.png)](docs/src-architecture.png) | [`docs/src-architecture.excalidraw`](docs/src-architecture.excalidraw) |
+| **Azure deployment topology** — `infra/*.tf`: Resource Group, Container Apps Environment, the three apps + provisioner job, ACR/Key Vault/MI/App Insights, and Azure AI Foundry | [![Azure deployment topology](docs/infra-architecture.png)](docs/infra-architecture.png) | [`docs/infra-architecture.excalidraw`](docs/infra-architecture.excalidraw) |
+
+The `.excalidraw` sources are editable at [aka.ms/excalidraw](https://aka.ms/excalidraw).
+
 ### Orchestrator vs. agent
 
 - **Orchestrator** (the per-scene runners, the tool functions, `MAX_TOOL_HOPS`, the event fan-out, JSON→DTO mapping) runs **inside the `orchestration-api` Container App**.
