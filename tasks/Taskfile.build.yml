@@ -75,7 +75,7 @@ tasks:
       - az acr build --registry {{.ACR_NAME}} --resource-group {{.RG_NAME}} --build-arg GIT_SHA={{.GIT_SHA}} --build-arg BUILD_TIME="{{.BUILD_TIME}}" --image ui-app:{{.GIT_SHA}} --image ui-app:latest --file "{{.STAGE_DIR}}\src\ui-app\Dockerfile" "{{.STAGE_DIR}}\src\ui-app"
 
   all:
-    desc: Build all container images (stages once, then builds each)
+    desc: 'Step 2/3 of the cloud deploy - build & push all container images to ACR (stages once, then builds each)'
     deps:
       - mock-api
       - orchestration-api
