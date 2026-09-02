@@ -142,11 +142,16 @@ task up -- canadacentral
 $env:DEMO_MODE = 'false'; task up -- swedencentral
 ```
 
-`task up` runs: `cloud:apply-infra` (environment incl. ACR/Key Vault/Foundry) → `build:all`
+`task up` runs: `cloud:apply-infra` (environment incl. ACR + Key Vault/Foundry in FULL mode) → `build:all`
 (push images to ACR) → `cloud:apply-apps` (Container Apps) → `cloud:provision` (Foundry agent job,
 FULL only) → `cloud:url`. Tear down with `task down -- <region>`.
 
-Terraform provisions the Container Apps environment, ACR, Key Vault, managed identity, App Insights, and — in FULL mode — Azure AI Foundry (account, project, gpt-5.4-mini deployment, connection, capability hosts). Only `ui-app` has public ingress; the APIs are internal.
+Terraform provisions the Container Apps environment, ACR, managed identity, App Insights, and — in
+FULL mode — Azure AI Foundry (account, project, gpt-5.4-mini deployment, connection, capability
+hosts) **plus Key Vault**. In pure DEMO mode (`enable_foundry=false`) Key Vault is **skipped
+entirely** — the container apps carry their (non-Foundry) config as direct Container App secrets — so
+demo deployments don't trip Key Vault subscription policies. Only `ui-app` has public ingress; the
+APIs are internal.
 
 ## Observability & traceability
 

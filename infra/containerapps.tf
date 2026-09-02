@@ -158,14 +158,16 @@ resource "azurerm_container_app" "orchestration_api" {
 
   secret {
     name                = "foundry-project-endpoint"
-    key_vault_secret_id = azurerm_key_vault_secret.foundry_endpoint.id
-    identity            = azurerm_user_assigned_identity.main.id
+    value               = local.use_key_vault ? null : local.foundry_project_endpoint
+    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.foundry_endpoint[*].id) : null
+    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
   }
 
   secret {
     name                = "app-insights-connection-string"
-    key_vault_secret_id = azurerm_key_vault_secret.app_insights_connection_string.id
-    identity            = azurerm_user_assigned_identity.main.id
+    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
+    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
+    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
   }
 
   ingress {
@@ -232,8 +234,9 @@ resource "azurerm_container_app" "mock_api" {
 
   secret {
     name                = "app-insights-connection-string"
-    key_vault_secret_id = azurerm_key_vault_secret.app_insights_connection_string.id
-    identity            = azurerm_user_assigned_identity.main.id
+    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
+    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
+    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
   }
 
   ingress {
@@ -324,14 +327,16 @@ resource "azurerm_container_app_job" "agent_provisioner" {
 
   secret {
     name                = "foundry-project-endpoint"
-    key_vault_secret_id = azurerm_key_vault_secret.foundry_endpoint.id
-    identity            = azurerm_user_assigned_identity.main.id
+    value               = local.use_key_vault ? null : local.foundry_project_endpoint
+    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.foundry_endpoint[*].id) : null
+    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
   }
 
   secret {
     name                = "app-insights-connection-string"
-    key_vault_secret_id = azurerm_key_vault_secret.app_insights_connection_string.id
-    identity            = azurerm_user_assigned_identity.main.id
+    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
+    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
+    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
   }
 
   replica_timeout_in_seconds = 1800

@@ -103,12 +103,14 @@ variable "foundry_specialist_model_capacity" {
 # Foundry provisioning toggle
 # When false, all Azure AI Foundry resources (AI account, model deployment,
 # project, connections, capability host, and Foundry-scoped role assignments)
-# are skipped. The container apps still receive the COMPUTED
-# local.foundry_project_endpoint / local.model_deployment_name strings, which
-# are never resolved at runtime because DEMO_MODE=1. Use enable_foundry=false
-# for demo-only deployments.
+# are skipped, AND Key Vault (+ its secrets and role assignments) is skipped —
+# see locals.use_key_vault. The container apps still receive the COMPUTED
+# local.foundry_project_endpoint / local.model_deployment_name strings (which
+# are never resolved at runtime because DEMO_MODE=1), and carry the remaining
+# config as direct Container App secrets instead of Key Vault references. Use
+# enable_foundry=false for demo-only deployments (no Foundry, no Key Vault).
 variable "enable_foundry" {
-  description = "Provision Azure AI Foundry resources (true) or skip them for demo-only deploys (false)"
+  description = "Provision Azure AI Foundry + Key Vault (true) or skip them for demo-only deploys (false)"
   type        = bool
   default     = true
 }
@@ -121,8 +123,9 @@ variable "demo_mode" {
 }
 
 # Container Apps 3-step deploy gate.
-# Step 1: apply with deploy_apps=false -> environment only (ACR, CAE, Key Vault,
-#         identity, Foundry) so there is a registry to push images to.
+# Step 1: apply with deploy_apps=false -> environment only (ACR, CAE, identity,
+#         and in FULL mode Key Vault + Foundry) so there is a registry to push
+#         images to.
 # Step 2: `az acr build` pushes the application images.
 # Step 3: apply with deploy_apps=true -> the Container Apps + job, which now have
 #         real images to pull. This avoids the "manifest unknown" failure that
