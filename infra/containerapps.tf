@@ -4,6 +4,13 @@ resource "azurerm_container_app_environment" "main" {
   resource_group_name        = azurerm_resource_group.main.name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
   tags                       = local.common_tags
+
+  workload_profile {
+    name                  = "Consumption"
+    workload_profile_type = "Consumption"
+    minimum_count         = 0
+    maximum_count         = 0
+  }
 }
 
 # UI App (external ingress)
@@ -13,6 +20,7 @@ resource "azurerm_container_app" "ui_app" {
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
   revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
   tags                         = local.common_tags
 
   identity {
@@ -70,6 +78,7 @@ resource "azurerm_container_app" "orchestration_api" {
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
   revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
   tags                         = local.common_tags
 
   identity {
@@ -193,6 +202,7 @@ resource "azurerm_container_app" "mock_api" {
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
   revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
   tags                         = local.common_tags
 
   identity {
@@ -259,6 +269,7 @@ resource "azurerm_container_app_job" "agent_provisioner" {
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
   location                     = azurerm_resource_group.main.location
+  workload_profile_name        = "Consumption"
   tags                         = local.common_tags
 
   identity {

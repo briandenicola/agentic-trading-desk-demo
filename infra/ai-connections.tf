@@ -22,7 +22,7 @@ resource "azapi_resource" "project_connection" {
       category                    = "AzureOpenAI"
       target                      = try(azapi_resource.ai_account[0].output.properties.endpoint, "https://${local.ai_account_name}.openai.azure.com/")
       authType                    = "AAD"
-      isSharedToAll               = true
+      isSharedToAll               = false
       sharedUserList              = []
       useWorkspaceManagedIdentity = false
       metadata = {
