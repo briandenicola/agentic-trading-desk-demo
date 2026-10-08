@@ -143,8 +143,9 @@ $env:DEMO_MODE = 'false'; task up -- swedencentral
 ```
 
 `task up` runs: `cloud:apply-infra` (environment incl. ACR + Foundry in FULL mode) → `build:all`
-(push images to ACR) → `cloud:apply-apps` (Container Apps) → `cloud:provision` (Foundry agent job,
-FULL only) → `cloud:url`. Tear down with `task down -- <region>`.
+(push images to ACR) → `cloud:apply-apps` (Container Apps) → `cloud:deploy` (roll apps to immutable
+git-SHA image tags) → `cloud:provision` (Foundry agent job, FULL only) → `cloud:url`. Tear down with
+`task down -- <region>`.
 
 Terraform provisions the Container Apps environment, ACR, managed identity, App Insights, and — in
 FULL mode — Azure AI Foundry (account, project, gpt-5.4-mini deployment, connection, capability

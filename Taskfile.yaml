@@ -63,6 +63,7 @@ tasks:
       - task: cloud:apply-infra   # 1. environment (ACR, CAE, identity, Foundry)
       - task: build:all           # 2. build + push images to ACR
       - task: cloud:apply-apps    # 3. Container Apps against the pushed images
+      - task: cloud:deploy        #    roll apps to the immutable git-SHA image tags
       - task: cloud:provision     #    start the Foundry agent job (FULL mode only)
       - task: cloud:url
 

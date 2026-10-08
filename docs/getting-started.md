@@ -133,9 +133,10 @@ task cloud:url -- swedencentral     # print the public UI URL
 task down -- <region>               # tear down
 ```
 
-`task up` runs `cloud:apply-infra` → `build:all` → `cloud:apply-apps` → `cloud:provision` (FULL only)
-→ `cloud:url`. To roll freshly rebuilt images onto already-running apps without a full apply, use
-`task cloud:deploy -- <region>` (forces a new revision per app).
+`task up` runs `cloud:apply-infra` → `build:all` → `cloud:apply-apps` → `cloud:deploy` (immutable
+git-SHA image tags) → `cloud:provision` (FULL only) → `cloud:url`. To roll freshly rebuilt images
+onto already-running apps without a full apply, use `task cloud:deploy -- <region>` (forces a new
+revision per app).
 
 > The deployment has no Key Vault dependency. Terraform stores the generated Foundry endpoint and
 > Application Insights connection string directly as Container App secrets; access to Foundry uses
