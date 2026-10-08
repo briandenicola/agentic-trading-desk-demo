@@ -7,7 +7,7 @@ dotenv: ['.env']
 vars:
   SOLUTION: AgenticTradersDesk.sln
   TAG: agentic-traders-desk
-
+  
 includes:
   local: ./tasks/Taskfile.local.yml
   cloud: ./tasks/Taskfile.cloud.yml
