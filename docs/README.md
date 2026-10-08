@@ -18,7 +18,7 @@
 | Diagram | Source (editable) | Preview |
 |---------|-------------------|---------|
 | Application architecture (`src/` code map: UI → orchestration-api → mock-api) | `docs/src-architecture.excalidraw` | `docs/src-architecture.png` |
-| Azure deployment topology (`infra/*.tf`: RG, Container Apps Env, ACR/Key Vault/MI/App Insights, Foundry) | `docs/infra-architecture.excalidraw` | `docs/infra-architecture.png` |
+| Azure deployment topology (`infra/*.tf`: RG, Container Apps Env, ACR/MI/App Insights, Foundry) | `docs/infra-architecture.excalidraw` | `docs/infra-architecture.png` |
 | Agentic trading intelligence north-star (orchestrator + agent pipeline) | `docs/trader_agent_diagram.excalidraw` | `docs/Traders Agent Diagram.png` |
 | Intent engineering | `docs/intent_engineering.excalidraw` | `docs/Intent Engineering.png` |
 

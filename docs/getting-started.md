@@ -36,8 +36,8 @@ Copy-Item .env.example .env
 | `EVENT_FANOUT_MAX_CONCURRENCY` | `4` | Per-event specialist fan-out concurrency (LIVE). |
 
 > Never put secret values in `.env.example`. Local LIVE uses `DefaultAzureCredential`; deployed
-> FULL/LIVE environments use Key Vault, while pure DEMO deployments skip Key Vault and carry config
-> as direct Container App secrets.
+> environments store Terraform-generated configuration directly as Container App secrets and use
+> managed identity for Foundry authentication.
 
 ## 3. Run locally — DEMO mode
 
@@ -137,10 +137,9 @@ task down -- <region>               # tear down
 → `cloud:url`. To roll freshly rebuilt images onto already-running apps without a full apply, use
 `task cloud:deploy -- <region>` (forces a new revision per app).
 
-> **Key Vault note**: Key Vault is provisioned **only in FULL/LIVE mode** (`enable_foundry=true`);
-> pure DEMO deployments skip it and set the container apps' secrets directly. When present, KV access
-> is gated by Azure RBAC (managed identity) with the public endpoint enabled; routine post-deploy
-> changes are applied with `az` against the running apps/jobs.
+> The deployment has no Key Vault dependency. Terraform stores the generated Foundry endpoint and
+> Application Insights connection string directly as Container App secrets; access to Foundry uses
+> the app's managed identity.
 
 ## 7. Troubleshooting
 

@@ -51,7 +51,7 @@ tasks:
       - terraform -chdir={{.INFRA_DIR}} plan -compact-warnings {{.TF_VARS}} -var "deploy_apps=true"
 
   # 3-step Container Apps deploy (see infra/variables.tf deploy_apps).
-  # Step 1 of 3: environment only (ACR, CAE, identity; Key Vault + Foundry in FULL mode).
+  # Step 1 of 3: environment only (ACR, CAE, identity; Foundry in FULL mode).
   # Step 2 of 3: `task build:all` — build & push the images to ACR (separate namespace).
   apply-infra:
     desc: 'Step 1/3 - provision the environment (no Container Apps). Step 2/3 is `task build:all`. Usage: task cloud:apply-infra -- <region>'

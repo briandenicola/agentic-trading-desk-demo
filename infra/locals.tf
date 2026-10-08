@@ -1,18 +1,11 @@
 locals {
-  # Key Vault is only provisioned alongside Azure AI Foundry (FULL/LIVE mode).
-  # In pure DEMO mode (enable_foundry = false) we skip Key Vault entirely to avoid
-  # subscription policy friction, and the container apps carry the (non-Foundry)
-  # secrets directly as Container App secrets instead of Key Vault references.
-  use_key_vault = var.enable_foundry
-
   # Reference-repo naming: random pet + random id, no static prefix. Names that
-  # disallow dashes (ACR, Key Vault) are stripped and length-capped to limits.
+  # disallow dashes (ACR) are stripped and length-capped to limits.
   resource_name = "${random_pet.this.id}-${random_id.this.dec}"
 
   # Resource naming (all derive from the random resource_name token)
   resource_group_name = "${local.resource_name}-rg"
   acr_name            = substr(replace("${local.resource_name}acr", "-", ""), 0, 50)
-  key_vault_name      = substr("${replace(local.resource_name, "-", "")}kv", 0, 24)
   uai_name            = "${local.resource_name}-id"
   log_workspace_name  = "${local.resource_name}-logs"
   app_insights_name   = "${local.resource_name}-appi"

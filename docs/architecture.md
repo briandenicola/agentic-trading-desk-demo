@@ -57,7 +57,7 @@ folders; the editable source is [`src-architecture.excalidraw`](src-architecture
 
 ## Deployment topology (Azure Container Apps)
 
-![Azure deployment topology — a Resource Group holds a Container Apps Environment running ui-app (external ingress), orchestration-api and mock-api (internal), plus the agent-provisioner job; alongside ACR, Key Vault, a user-assigned managed identity, Application Insights / Log Analytics, and — in FULL mode — Azure AI Foundry.](infra-architecture.png)
+![Azure deployment topology — a Resource Group holds a Container Apps Environment running ui-app (external ingress), orchestration-api and mock-api (internal), plus the agent-provisioner job; alongside ACR, a user-assigned managed identity, Application Insights / Log Analytics, and — in FULL mode — Azure AI Foundry.](infra-architecture.png)
 
 Terraform (`infra/*.tf`, one workspace per region) provisions a **Container Apps Environment**
 with three apps — `ui-app` (the only public ingress), `orchestration-api`, and `mock-api` (both
@@ -65,10 +65,9 @@ internal) — plus the `agent-provisioner` Container App **job**. Supporting pla
 **ACR** (image pulls via managed identity), a **user-assigned managed identity**, and
 **Application Insights / Log Analytics**. `DEMO_MODE` selects DEMO vs. FULL: in FULL mode
 `enable_foundry` also stands up **Azure AI Foundry** (AIServices account + project + model
-deployments) reached over `FOUNDRY_PROJECT_ENDPOINT`, **plus Key Vault** holding the Foundry
-endpoint + App Insights connection secrets (referenced by the apps via managed identity). In pure
-DEMO mode Key Vault is **skipped** and the apps carry those values as direct Container App secrets,
-so demo deployments don't require Key Vault. Editable source:
+deployments) reached over `FOUNDRY_PROJECT_ENDPOINT`. Terraform-generated configuration values are
+stored directly as Container App secrets in both modes, while Foundry authentication uses managed
+identity. The deployment has no Key Vault dependency. Editable source:
 [`infra-architecture.excalidraw`](infra-architecture.excalidraw).
 
 ## Where the orchestrator vs. the agent live
@@ -409,4 +408,3 @@ title + action bar):
   eyebrow, a composite-score chip, structured talking-point editors, a personal-note field, and a
   collapsible "Why this ranking?" rationale (wallet / engagement / event-relevance / composite bars +
   explanation). The plan stays human-in-the-loop and demo-only — approval issues no outbound call.
-

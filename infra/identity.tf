@@ -14,14 +14,6 @@ resource "azurerm_role_assignment" "acr_pull" {
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
 
-# Key Vault Secrets User for runtime config (only when Key Vault exists — FULL/LIVE)
-resource "azurerm_role_assignment" "kv_secrets_user" {
-  count                = local.use_key_vault ? 1 : 0
-  scope                = azurerm_key_vault.main[0].id
-  role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_user_assigned_identity.main.principal_id
-}
-
 # Cognitive Services OpenAI User for Foundry model access
 resource "azurerm_role_assignment" "openai_user" {
   count                = var.enable_foundry ? 1 : 0

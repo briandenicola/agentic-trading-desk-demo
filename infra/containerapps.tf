@@ -157,17 +157,13 @@ resource "azurerm_container_app" "orchestration_api" {
   }
 
   secret {
-    name                = "foundry-project-endpoint"
-    value               = local.use_key_vault ? null : local.foundry_project_endpoint
-    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.foundry_endpoint[*].id) : null
-    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
+    name  = "foundry-project-endpoint"
+    value = local.foundry_project_endpoint
   }
 
   secret {
-    name                = "app-insights-connection-string"
-    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
-    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
-    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
+    name  = "app-insights-connection-string"
+    value = azurerm_application_insights.main.connection_string
   }
 
   ingress {
@@ -186,8 +182,7 @@ resource "azurerm_container_app" "orchestration_api" {
   }
 
   depends_on = [
-    azurerm_role_assignment.acr_pull,
-    azurerm_role_assignment.kv_secrets_user
+    azurerm_role_assignment.acr_pull
   ]
 }
 
@@ -233,10 +228,8 @@ resource "azurerm_container_app" "mock_api" {
   }
 
   secret {
-    name                = "app-insights-connection-string"
-    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
-    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
-    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
+    name  = "app-insights-connection-string"
+    value = azurerm_application_insights.main.connection_string
   }
 
   ingress {
@@ -255,8 +248,7 @@ resource "azurerm_container_app" "mock_api" {
   }
 
   depends_on = [
-    azurerm_role_assignment.acr_pull,
-    azurerm_role_assignment.kv_secrets_user
+    azurerm_role_assignment.acr_pull
   ]
 }
 
@@ -326,17 +318,13 @@ resource "azurerm_container_app_job" "agent_provisioner" {
   }
 
   secret {
-    name                = "foundry-project-endpoint"
-    value               = local.use_key_vault ? null : local.foundry_project_endpoint
-    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.foundry_endpoint[*].id) : null
-    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
+    name  = "foundry-project-endpoint"
+    value = local.foundry_project_endpoint
   }
 
   secret {
-    name                = "app-insights-connection-string"
-    value               = local.use_key_vault ? null : azurerm_application_insights.main.connection_string
-    key_vault_secret_id = local.use_key_vault ? one(azurerm_key_vault_secret.app_insights_connection_string[*].id) : null
-    identity            = local.use_key_vault ? azurerm_user_assigned_identity.main.id : null
+    name  = "app-insights-connection-string"
+    value = azurerm_application_insights.main.connection_string
   }
 
   replica_timeout_in_seconds = 1800
@@ -354,7 +342,6 @@ resource "azurerm_container_app_job" "agent_provisioner" {
   }
 
   depends_on = [
-    azurerm_role_assignment.acr_pull,
-    azurerm_role_assignment.kv_secrets_user
+    azurerm_role_assignment.acr_pull
   ]
 }

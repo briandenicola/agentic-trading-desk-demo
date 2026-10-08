@@ -27,7 +27,7 @@ the repository root.
 | Scene schemas | [`specs/001-morning-planning-outreach/contracts/`](../specs/001-morning-planning-outreach/contracts/) | `MorningBrief` / agent API JSON schemas. |
 | Environment template | [`.env.example`](../.env.example) | All configuration variables (no secrets). |
 | Agent prompts | [`src/orchestration-api/Prompts/`](../src/orchestration-api/Prompts/) | `rm-daily-briefing`, `morning-brief`, `event-specialist`, `markets-assistant`, `briefing-synthesizer`. |
-| Infrastructure | [`infra/`](../infra/) | Terraform for ACA, ACR, Key Vault, identity, App Insights, Foundry. |
+| Infrastructure | [`infra/`](../infra/) | Terraform for ACA, ACR, identity, App Insights, Foundry. |
 | Task workflows | [`tasks/`](../tasks/) | `Taskfile.local.yml`, `Taskfile.build.yml`, `Taskfile.cloud.yml`. |
 
 ## Reference architecture
@@ -42,7 +42,6 @@ the repository root.
 | Microsoft Agent Framework | <https://learn.microsoft.com/agent-framework/> |
 | Azure AI Foundry | <https://learn.microsoft.com/azure/ai-foundry/> |
 | Azure Container Apps | <https://learn.microsoft.com/azure/container-apps/> |
-| Azure Key Vault | <https://learn.microsoft.com/azure/key-vault/> |
 | Azure Container Registry | <https://learn.microsoft.com/azure/container-registry/> |
 | .NET 10 | <https://learn.microsoft.com/dotnet/> |
 | React 19 | <https://react.dev/> |

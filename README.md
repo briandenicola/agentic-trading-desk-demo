@@ -25,7 +25,7 @@ agents and push a re-synthesized briefing to the open cockpit live over SSE.
 - **Agents/API**: C# / .NET 10, Microsoft Agent Framework, Azure AI Foundry in LIVE mode
 - **UI**: React 19 + TypeScript + MUI v9
 - **Mock systems of record**: C# Minimal API serving fictional fixtures through `openapi/tools.yaml` endpoints
-- **Runtime**: Azure Container Apps, ACR, Key Vault, managed identity, Terraform
+- **Runtime**: Azure Container Apps, ACR, managed identity, Terraform
 - **Observability**: Serilog + OpenTelemetry via `src\shared\Observability`
 
 ## Architecture
@@ -52,7 +52,7 @@ broadcasts one consolidated re-synthesized briefing per scene over SSE when even
 | Diagram | Preview | Source |
 |---|---|---|
 | **Application architecture** — `src/` code map: UI scenes → orchestration-api (DEMO/LIVE runners, tools) → mock-api stores | [![Application architecture](docs/src-architecture.png)](docs/src-architecture.png) | [`docs/src-architecture.excalidraw`](docs/src-architecture.excalidraw) |
-| **Azure deployment topology** — `infra/*.tf`: Resource Group, Container Apps Environment, the three apps + provisioner job, ACR/Key Vault/MI/App Insights, and Azure AI Foundry | [![Azure deployment topology](docs/infra-architecture.png)](docs/infra-architecture.png) | [`docs/infra-architecture.excalidraw`](docs/infra-architecture.excalidraw) |
+| **Azure deployment topology** — `infra/*.tf`: Resource Group, Container Apps Environment, the three apps + provisioner job, ACR/MI/App Insights, and Azure AI Foundry | [![Azure deployment topology](docs/infra-architecture.png)](docs/infra-architecture.png) | [`docs/infra-architecture.excalidraw`](docs/infra-architecture.excalidraw) |
 
 The `.excalidraw` sources are editable at [aka.ms/excalidraw](https://aka.ms/excalidraw).
 
@@ -142,16 +142,15 @@ task up -- canadacentral
 $env:DEMO_MODE = 'false'; task up -- swedencentral
 ```
 
-`task up` runs: `cloud:apply-infra` (environment incl. ACR + Key Vault/Foundry in FULL mode) → `build:all`
+`task up` runs: `cloud:apply-infra` (environment incl. ACR + Foundry in FULL mode) → `build:all`
 (push images to ACR) → `cloud:apply-apps` (Container Apps) → `cloud:provision` (Foundry agent job,
 FULL only) → `cloud:url`. Tear down with `task down -- <region>`.
 
 Terraform provisions the Container Apps environment, ACR, managed identity, App Insights, and — in
 FULL mode — Azure AI Foundry (account, project, gpt-5.4-mini deployment, connection, capability
-hosts) **plus Key Vault**. In pure DEMO mode (`enable_foundry=false`) Key Vault is **skipped
-entirely** — the container apps carry their (non-Foundry) config as direct Container App secrets — so
-demo deployments don't trip Key Vault subscription policies. Only `ui-app` has public ingress; the
-APIs are internal.
+hosts). Terraform-generated configuration is stored directly as Container App secrets in both modes;
+Foundry authentication uses the app's managed identity. The deployment has no Key Vault dependency.
+Only `ui-app` has public ingress; the APIs are internal.
 
 ## Observability & traceability
 
@@ -182,7 +181,7 @@ src\orchestration-api\   /api/agent/{scene}(+/stream), /api/events, /api/chat, D
 src\mock-api\            fictional system-of-record endpoints + reactive event store (/mock/events)
 src\agent-provisioner\   idempotent Foundry agent registration job (7 agents)
 src\shared\Observability\ Serilog, OTEL, correlation id, JSON errors
-infra\                   Terraform for ACA, ACR, Key Vault, Foundry
+infra\                   Terraform for ACA, ACR, managed identity, App Insights, Foundry
 tasks\                   Taskfile includes for local, build, and cloud workflows
 contracts\               morning-brief and agent API schemas
 openapi\tools.yaml       tool contract for Foundry/MCP import
