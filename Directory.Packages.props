@@ -25,7 +25,7 @@
 
   <!-- Web / API -->
   <ItemGroup>
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="11.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
   </ItemGroup>
 
