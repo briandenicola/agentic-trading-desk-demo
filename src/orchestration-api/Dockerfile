@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0-alpine AS build
 WORKDIR /src
 
 # Copy solution and project files for restore layer
