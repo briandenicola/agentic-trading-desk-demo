@@ -1,0 +1,55 @@
+# Minor and patch updates are batched into one PR per ecosystem.
+# Major updates still arrive as individual PRs for manual review.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      github-actions-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      nuget-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: "/src/ui-app"
+    schedule:
+      interval: weekly
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      pip-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories:
+      - "/src/agent-provisioner"
+      - "/src/mock-api"
+      - "/src/orchestration-api"
+      - "/src/ui-app"
+    schedule:
+      interval: weekly
+    groups:
+      docker-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: terraform
+    directory: "/infra"
+    schedule:
+      interval: weekly
+    groups:
+      terraform-minor-patch:
+        update-types: [minor, patch]
