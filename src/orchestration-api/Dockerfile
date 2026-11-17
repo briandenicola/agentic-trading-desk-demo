@@ -24,7 +24,7 @@ RUN dotnet publish src/orchestration-api/orchestration-api.csproj \
     --no-restore
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0-alpine AS runtime
 WORKDIR /app
 
 # Build provenance baked into the image (see tasks/Taskfile.build.yml). BUILD_GIT_SHA is
