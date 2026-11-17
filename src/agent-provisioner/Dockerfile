@@ -25,7 +25,7 @@ RUN dotnet publish src/agent-provisioner/agent-provisioner.csproj \
     --no-restore
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/runtime:11.0-alpine AS runtime
 WORKDIR /app
 
 # Build provenance baked into the image (see tasks/Taskfile.build.yml).
